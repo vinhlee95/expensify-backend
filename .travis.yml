@@ -8,5 +8,5 @@ install:
 script:
   - npm run test
 notifications:
-  slack: kentsclub:uHb84aeLAKMA5ofu25d5N8tq
+  slack: kentsclub:usyDxwg8QdASFIucMiO06rWF
   email: false
