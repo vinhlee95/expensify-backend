@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"typeRoots": ["./node_modules/@types", "./src/typings"],
+		"target": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"noEmit": true,
+		"noUnusedLocals": true,
+		"strict": true,
+		"strictNullChecks": false,
+		"esModuleInterop": true,
+		"skipLibCheck": true
+	},
+	"include": ["src"],
+	"exclude": ["dist", "node_modules"]
+}
