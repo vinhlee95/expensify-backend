@@ -9,7 +9,7 @@ const config = {
 		googleClientSecret: 'dummyGoogleClientSecret',
 	},
 	mailSender: 'test<noreply@test.com>',
-	dbUrl: `mongodb://localhost:${mongoPort}/node-boilerplate-test`,
+	dbUrl: `mongodb://localhost:${mongoPort}/expensify-test`,
 }
 
 export default config
