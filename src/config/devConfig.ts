@@ -7,7 +7,7 @@ const config = {
 		jwt: 'jwtdev',
 	},
 	mailSender: 'dev<noreply@dev.com>',
-	dbUrl: `mongodb://localhost:${mongoPort}/node-boilerplate-dev`,
+	dbUrl: `mongodb://localhost:${mongoPort}/expensify-dev`,
 }
 
 export default config
