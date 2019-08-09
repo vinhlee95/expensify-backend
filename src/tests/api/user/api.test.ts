@@ -9,7 +9,7 @@ import {
 	findUserWithRoleAndSignIn,
 	getRoleWithoutPermission,
 	getRoleWithPermisison,
-	siginUser,
+	signInUser,
 	sortArrayByField,
 	getRecordsWithPagination,
 } from '../../utils/common'
@@ -414,7 +414,7 @@ describe('[USERS API]', () => {
 				const noAccessRightUser = await addUser(
 					createMockUser(undefined, userStatus),
 				)
-				const noAccessRightToken = siginUser(noAccessRightUser)
+				const noAccessRightToken = signInUser(noAccessRightUser)
 
 				// Action
 				const results = await Promise.all([
