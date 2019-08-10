@@ -3,7 +3,7 @@ import {Types} from 'mongoose'
 import {normalizeEmail} from 'validator'
 
 import {User, UserRole, UserStatus} from '../../resources/user/user.interface'
-import { Team } from '../../resources/team/team.interface';
+import {Team} from '../../resources/team/team.interface'
 
 export const createMockId = () => {
 	const ObjectId = Types.ObjectId
@@ -27,5 +27,5 @@ export const createMockUser = (
 
 export const createMockTeam = (): Team => ({
 	name: faker.internet.userName(),
-	description: faker.lorem.sentence()
+	description: faker.lorem.sentence(),
 })

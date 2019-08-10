@@ -5,9 +5,7 @@ import * as userServices from '../user/user.service'
 
 // Utils
 import createLogger from '../../utils/logger'
-import apiError from '../../utils/apiError'
 const logger = createLogger(module)
-
 
 interface teamData {
 	name: string
@@ -19,7 +17,10 @@ interface teamData {
  * @param teamData
  * @param userId
  */
-export const createOne = async (teamData: teamData, userId: string): Promise<TeamDocument> => {
+export const createOne = async (
+	teamData: teamData,
+	userId: string,
+): Promise<TeamDocument> => {
 	logger.debug(`Create new team: %o`, teamData)
 
 	const newTeam = await TeamModel.create(teamData)

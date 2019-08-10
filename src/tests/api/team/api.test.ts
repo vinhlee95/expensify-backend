@@ -2,13 +2,13 @@ import httpStatus from 'http-status'
 import _ from 'lodash'
 import faker from 'faker'
 
-import { getRoleWithPermisison, signInUser, apiRequest } from '../../utils/common';
-import { Permission } from '../../../middlewares/permission';
-import { addUser } from '../../utils/db';
-import { createMockUser, createMockTeam } from '../../utils/mock';
-import { UserRole, UserStatus } from '../../../resources/user/user.interface';
-import { UserDocument } from '../../../resources/user/user.model';
-import { ErrorCode } from '../../../utils/apiError';
+import {getRoleWithPermisison, signInUser, apiRequest} from '../../utils/common'
+import {Permission} from '../../../middlewares/permission'
+import {addUser} from '../../utils/db'
+import {createMockUser, createMockTeam} from '../../utils/mock'
+import {UserRole, UserStatus} from '../../../resources/user/user.interface'
+import {UserDocument} from '../../../resources/user/user.model'
+import {ErrorCode} from '../../../utils/apiError'
 
 describe('[TEAMS API]', () => {
 	const roleWithUserWrite = getRoleWithPermisison(Permission.UserWrite)
@@ -66,12 +66,12 @@ describe('[TEAMS API]', () => {
 			// Arrange
 
 			// Action
-			const results = await Promise.all([
-				apiRequest.post('/api/teams'),
-			])
+			const results = await Promise.all([apiRequest.post('/api/teams')])
 
 			// Expect
-			results.forEach(res => expect(res.status).toEqual(httpStatus.UNAUTHORIZED))
+			results.forEach(res =>
+				expect(res.status).toEqual(httpStatus.UNAUTHORIZED),
+			)
 		})
 	})
 
@@ -89,7 +89,7 @@ describe('[TEAMS API]', () => {
 				apiRequest
 					.get('/api/users/me')
 					.set('Authorization', noAccessRightToken)
-					.send(teamData)
+					.send(teamData),
 			])
 
 			// Expect

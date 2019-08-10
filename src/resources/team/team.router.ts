@@ -27,11 +27,6 @@ router
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
 	.route('/')
-	.post(
-		writeUser,
-		validateCreateTeam(),
-		teamController.createOne
-	)
-
+	.post(writeUser, validateCreateTeam(), teamController.createOne)
 
 export default router

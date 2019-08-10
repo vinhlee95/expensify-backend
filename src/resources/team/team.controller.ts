@@ -13,7 +13,7 @@ export const createOne: RequestHandler = async (req, res, next) => {
 		const userId = req.user._id
 		const team = await services.createOne(req.body, userId)
 		return res.json(successResponse(team, true))
-	} catch(error) {
+	} catch (error) {
 		next(error)
 	}
 }
