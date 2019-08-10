@@ -24,11 +24,11 @@ export const createOne = async (
 	logger.debug(`Create new team: %o`, teamData)
 
 	const newTeam = await TeamModel.create(teamData)
-	const teamId = newTeam._id
+	const teamIds = newTeam._id
 
 	// Save team id to user object
 	const user = await userServices.getUserById(userId)
-	user.teamId.push(teamId)
+	user.teamIds.push(teamIds)
 	await user.save()
 
 	return newTeam

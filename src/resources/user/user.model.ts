@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
 			enum: ['initial', 'active', 'disabled'],
 			default: 'initial',
 		},
-		teamId: [mongoose.Schema.Types.ObjectId],
+		teamIds: [mongoose.Schema.Types.ObjectId],
 
 		passport: {
 			password: {

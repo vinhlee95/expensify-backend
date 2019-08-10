@@ -25,7 +25,7 @@ describe('[Team service]', () => {
 
 				// Expect
 				expect(createdTeam.name).toEqual(team.name)
-				expect(updatedUser.teamId[0]).toEqual(team._id)
+				expect(updatedUser.teamIds[0]).toEqual(team._id)
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
