@@ -1,18 +1,17 @@
-import {TeamDocument} from '../../../resources/team/team.model'
-import {addTeam, addUser} from '../../utils/db'
+import {addUser} from '../../utils/db'
 import {createMockTeam, createMockUser} from '../../utils/mock'
 import {createOne} from '../../../resources/team/team.service'
 import {UserDocument} from '../../../resources/user/user.model'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
-import {getUserById} from '../../../resources/user/user.service'
+import {Team} from '../../../resources/team/team.interface'
 
 describe('[Team service]', () => {
-	let team: TeamDocument
+	let team: Team
 	let user: UserDocument
 
 	beforeEach(async done => {
 		user = await addUser(createMockUser(UserRole.User, UserStatus.Active))
-		team = await addTeam(createMockTeam())
+		team = await createMockTeam()
 		done()
 	})
 
@@ -21,11 +20,10 @@ describe('[Team service]', () => {
 			try {
 				// Action
 				const createdTeam = await createOne(team, user._id)
-				const updatedUser = await getUserById(user._id)
 
 				// Expect
 				expect(createdTeam.name).toEqual(team.name)
-				expect(updatedUser.teamIds[0]).toEqual(team._id)
+				expect(createdTeam.creatorId).toEqual(user._id.toString())
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}

@@ -13,6 +13,10 @@ const teamSchema = new mongoose.Schema(
 		description: {
 			type: String,
 		},
+		creatorId: {
+			type: String,
+			required: true,
+		},
 	},
 	{timestamps: true},
 )

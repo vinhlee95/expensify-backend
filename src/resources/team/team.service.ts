@@ -18,7 +18,7 @@ export const createOne = async (
 ): Promise<TeamDocument> => {
 	logger.debug(`Create new team: %o`, teamData)
 
-	const newTeam = await TeamModel.create(teamData)
+	const newTeam = await TeamModel.create({...teamData, creatorId: userId})
 	const teamIds = newTeam._id
 
 	// Save team id to user object

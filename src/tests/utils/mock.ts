@@ -25,7 +25,8 @@ export const createMockUser = (
 	status,
 })
 
-export const createMockTeam = (): Team => ({
+export const createMockTeam = (creatorId?: string): Team => ({
 	name: faker.internet.userName(),
 	description: faker.lorem.sentence(),
+	creatorId: creatorId || faker.random.uuid(),
 })
