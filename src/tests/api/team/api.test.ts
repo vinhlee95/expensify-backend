@@ -33,7 +33,7 @@ describe('[TEAMS API]', () => {
 				.send(teamData)
 
 			// Expect
-			expect(result.status).toEqual(httpStatus.CREATED)
+			expect(result.status).toEqual(httpStatus.OK)
 			expect(result.body.data.name).toEqual(teamData.name)
 		})
 
