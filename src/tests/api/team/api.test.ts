@@ -5,7 +5,7 @@ import faker from 'faker'
 import { getRoleWithPermisison, signInUser, apiRequest } from '../../utils/common';
 import { Permission } from '../../../middlewares/permission';
 import { addUser } from '../../utils/db';
-import { createMockUser, createMockTeam, createMockId } from '../../utils/mock';
+import { createMockUser, createMockTeam } from '../../utils/mock';
 import { UserRole, UserStatus } from '../../../resources/user/user.interface';
 import { UserDocument } from '../../../resources/user/user.model';
 import { ErrorCode } from '../../../utils/apiError';
