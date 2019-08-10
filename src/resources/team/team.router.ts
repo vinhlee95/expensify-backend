@@ -6,7 +6,7 @@ import * as teamController from './team.controller'
 
 const router = Router()
 
-const writeUser = protect([Permission.UserWrite])
+const writeTeam = protect([Permission.WriteTeam])
 
 // POST request to create a new team
 router
@@ -27,6 +27,6 @@ router
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
 	.route('/')
-	.post(writeUser, validateCreateTeam(), teamController.createOne)
+	.post(writeTeam, validateCreateTeam(), teamController.createOne)
 
 export default router

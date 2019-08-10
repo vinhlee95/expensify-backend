@@ -15,8 +15,8 @@ import {
  */
 const router = Router()
 
-const writeUser = protect([Permission.UserWrite])
-const readUser = protect([Permission.UserRead])
+const writeUser = protect([Permission.WriteUser])
+const readUser = protect([Permission.ReadUser])
 
 /**
  * @swagger

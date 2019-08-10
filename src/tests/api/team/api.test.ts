@@ -11,7 +11,7 @@ import {UserDocument} from '../../../resources/user/user.model'
 import {ErrorCode} from '../../../utils/apiError'
 
 describe('[TEAMS API]', () => {
-	const roleWithUserWrite = getRoleWithPermisison(Permission.UserWrite)
+	const roleWithWriteUser = getRoleWithPermisison(Permission.WriteUser)
 
 	let user: UserDocument
 	let token: string
@@ -22,7 +22,7 @@ describe('[TEAMS API]', () => {
 	})
 
 	describe('POST /api/teams', () => {
-		it(`[${roleWithUserWrite}]. should return 201 with new created team`, async () => {
+		it(`[${roleWithWriteUser}]. should return 201 with new created team`, async () => {
 			// Arrange
 			const teamData = createMockTeam()
 
@@ -37,7 +37,7 @@ describe('[TEAMS API]', () => {
 			expect(result.body.data.name).toEqual(teamData.name)
 		})
 
-		it(`[${roleWithUserWrite}]. should return 400 when team name is neither provided nor a string`, async () => {
+		it(`[${roleWithWriteUser}]. should return 400 when team name is neither provided nor a string`, async () => {
 			// Arrange
 			const noNameData = {}
 			const nonStringNameData = {name: faker.random.number}
