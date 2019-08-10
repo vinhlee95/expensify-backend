@@ -87,7 +87,7 @@ describe('[TEAMS API]', () => {
 			// Action
 			const results = await Promise.all([
 				apiRequest
-					.get('/api/users/me')
+					.post('/api/teams')
 					.set('Authorization', noAccessRightToken)
 					.send(teamData),
 			])
