@@ -5,9 +5,11 @@ Object {
   "admin": Array [
     "user:read",
     "user:write",
+    "team:write",
   ],
   "user": Array [
     "user:read",
+    "team:write",
   ],
 }
 `;

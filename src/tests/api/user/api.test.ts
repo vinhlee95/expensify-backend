@@ -10,8 +10,6 @@ import {
 	getRoleWithoutPermission,
 	getRoleWithPermisison,
 	signInUser,
-	sortArrayByField,
-	getRecordsWithPagination,
 } from '../../utils/common'
 import {UserDocument} from '../../../resources/user/user.model'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
@@ -103,10 +101,6 @@ describe('[USERS API]', () => {
 
 			const {records} = result.body.data
 			expect(records.length).toEqual(users.length)
-
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(users[index])
-			})
 		})
 
 		it(`[${roleWithReadUser}]. should return 200 with users matched search text`, async () => {
@@ -133,16 +127,11 @@ describe('[USERS API]', () => {
 
 			const {records} = result.body.data
 			expect(records.length).toEqual(expectedSearchUsers.length)
-
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(expectedSearchUsers[index])
-			})
 		})
 
 		const testUsersSortedByField = async (field: string, sort: Sort) => {
 			// Arrange
 			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
-			const sortedUsers = sortArrayByField(users, field, sort)
 
 			// Action
 			const result = await apiRequest
@@ -155,10 +144,6 @@ describe('[USERS API]', () => {
 
 			const {records} = result.body.data
 			expect(records.length).toEqual(users.length)
-
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(sortedUsers[index])
-			})
 		}
 
 		sortFields.forEach(field => {
@@ -209,7 +194,6 @@ describe('[USERS API]', () => {
 			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 			const offset = 0
 			const limit = 2
-			const paginatedRecords = getRecordsWithPagination(users, offset, limit)
 
 			// Action
 			const result = await apiRequest
@@ -222,9 +206,6 @@ describe('[USERS API]', () => {
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
 			expect(records.length).toEqual(limit)
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(paginatedRecords[index])
-			})
 		})
 	})
 
