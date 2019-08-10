@@ -59,7 +59,7 @@ export const signup = async (
 
 	const token = newToken(user)
 
-	return Promise.resolve({token})
+	return Promise.resolve({token, userId: user._id})
 }
 
 /**
