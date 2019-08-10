@@ -1,8 +1,6 @@
 import TeamModel, {TeamDocument} from './team.model'
 import {Team} from './team.interface'
-
-// Services
-import * as userServices from '../user/user.service'
+import UserModel from '../user/user.model'
 
 // Utils
 import createLogger from '../../utils/logger'
@@ -24,7 +22,7 @@ export const createOne = async (
 	const teamIds = newTeam._id
 
 	// Save team id to user object
-	const user = await userServices.getUserById(userId)
+	const user = await UserModel.findById(userId)
 	user.teamIds.push(teamIds)
 	await user.save()
 
