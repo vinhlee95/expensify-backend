@@ -1,4 +1,5 @@
 import TeamModel, {TeamDocument} from './team.model'
+import {Team} from './team.interface'
 
 // Services
 import * as userServices from '../user/user.service'
@@ -7,10 +8,6 @@ import * as userServices from '../user/user.service'
 import createLogger from '../../utils/logger'
 const logger = createLogger(module)
 
-interface teamData {
-	name: string
-	description?: string
-}
 /**
  * Create new team
  *
@@ -18,7 +15,7 @@ interface teamData {
  * @param userId
  */
 export const createOne = async (
-	teamData: teamData,
+	teamData: Team,
 	userId: string,
 ): Promise<TeamDocument> => {
 	logger.debug(`Create new team: %o`, teamData)
