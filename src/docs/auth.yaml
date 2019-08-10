@@ -14,6 +14,8 @@ components:
       properties:
         token:
           type: string
+        userId:
+          type: string
 
 #-------------------------------
 # Reusable parameters
@@ -146,7 +148,7 @@ components:
     #-------------------------------
     # Authentication response
 
-    TokenResponse:  # Can be referenced as '#/components/responses/TokenResponse'
+    AuthenticationResponse:  # Can be referenced as '#/components/responses/AuthenticationResponse'
       description: A JSON object containing token
       content:
         application/json:

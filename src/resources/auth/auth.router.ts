@@ -31,7 +31,7 @@ const router = Router()
  *       $ref: '#/components/requestBodies/AuthSignUp'
  *     responses:
  *       '201':
- *         $ref: '#/components/responses/TokenResponse'
+ *         $ref: '#/components/responses/AuthenticationResponse'
  *       default:
  *         $ref: '#/components/responses/ErrorResponse'
  */
@@ -49,7 +49,7 @@ router.route('/signup').post(validateSignUp(), authController.signup)
  *       $ref: '#/components/requestBodies/AuthSignIn'
  *     responses:
  *       '200':
- *         $ref: '#/components/responses/TokenResponse'
+ *         $ref: '#/components/responses/AuthenticationResponse'
  *       default:
  *         $ref: '#/components/responses/ErrorResponse'
  */
