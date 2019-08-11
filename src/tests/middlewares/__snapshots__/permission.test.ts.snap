@@ -6,10 +6,12 @@ Object {
     "user:read",
     "user:write",
     "team:write",
+    "team:read",
   ],
   "user": Array [
     "user:read",
     "team:write",
+    "team:read",
   ],
 }
 `;
