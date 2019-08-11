@@ -11,6 +11,24 @@ const readTeam = protect([Permission.ReadTeam])
 
 // POST request to create a new team
 router
+	.route('/')
+	/**
+	 * @swagger
+	 *
+	 * /api/teams:
+	 *   get:
+	 *     tags:
+	 *       - Team
+	 *     summary: Get teams by user id
+	 *     parameters:
+	 *     - $ref: '#/components/parameters/userId'
+	 *     responses:
+	 *       '201':
+	 *         $ref: '#/components/responses/TeamsResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.get(readTeam, validateGetTeam(), teamController.getByUserId)
 	/**
 	 * @swagger
 	 *
@@ -27,8 +45,6 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.route('/')
-	.get(readTeam, validateGetTeam(), teamController.getByUserId)
 	.post(writeTeam, validateCreateTeam(), teamController.createOne)
 
 export default router
