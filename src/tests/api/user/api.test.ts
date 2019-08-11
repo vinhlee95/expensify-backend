@@ -9,9 +9,7 @@ import {
 	findUserWithRoleAndSignIn,
 	getRoleWithoutPermission,
 	getRoleWithPermisison,
-	siginUser,
-	sortArrayByField,
-	getRecordsWithPagination,
+	signInUser,
 } from '../../utils/common'
 import {UserDocument} from '../../../resources/user/user.model'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
@@ -24,9 +22,9 @@ describe('[USERS API]', () => {
 	const notAllowedUpdateUserFields = ['email', 'password']
 	const notAllowedUpdateMeFields = ['email', 'password', 'role']
 
-	const roleWithUserRead = getRoleWithPermisison(Permission.UserRead)
-	const roleWithUserWrite = getRoleWithPermisison(Permission.UserWrite)
-	const roleWithoutUserWrite = getRoleWithoutPermission(Permission.UserWrite)
+	const roleWithReadUser = getRoleWithPermisison(Permission.ReadUser)
+	const roleWithWriteUser = getRoleWithPermisison(Permission.WriteUser)
+	const roleWithoutWriteUser = getRoleWithoutPermission(Permission.WriteUser)
 
 	let users: UserDocument[]
 	let dummyUser: UserDocument
@@ -42,9 +40,9 @@ describe('[USERS API]', () => {
 	})
 
 	describe('GET /api/users/:id', () => {
-		it(`[${roleWithUserRead}]. should return 200 with found user`, async () => {
+		it(`[${roleWithReadUser}]. should return 200 with found user`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 
 			// Action
 			const result = await apiRequest
@@ -56,9 +54,9 @@ describe('[USERS API]', () => {
 			expect(result.body.data).toEqualUser(dummyUser)
 		})
 
-		it(`[${roleWithUserRead}]. should return 404 when user not found`, async () => {
+		it(`[${roleWithReadUser}]. should return 404 when user not found`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 
 			const mockId = createMockId()
 
@@ -73,9 +71,9 @@ describe('[USERS API]', () => {
 	})
 
 	describe('GET /api/users/me', () => {
-		it(`[${roleWithUserRead}]. should return 200 with my profile`, async () => {
+		it(`[${roleWithReadUser}]. should return 200 with my profile`, async () => {
 			// Arrange
-			const {user, token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {user, token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 
 			// Action
 			const result = await apiRequest
@@ -89,9 +87,9 @@ describe('[USERS API]', () => {
 	})
 
 	describe('GET /api/users', () => {
-		it(`[${roleWithUserRead}]. should return 200 with all users`, async () => {
+		it(`[${roleWithReadUser}]. should return 200 with all users`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 
 			// Action
 			const result = await apiRequest
@@ -103,15 +101,11 @@ describe('[USERS API]', () => {
 
 			const {records} = result.body.data
 			expect(records.length).toEqual(users.length)
-
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(users[index])
-			})
 		})
 
-		it(`[${roleWithUserRead}]. should return 200 with users matched search text`, async () => {
+		it(`[${roleWithReadUser}]. should return 200 with users matched search text`, async () => {
 			// Arrange
-			const {token, user} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token, user} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 
 			const searchText = user.firstName.substring(1)
 			const searchField = ['firstName', 'lastName', 'email']
@@ -133,16 +127,11 @@ describe('[USERS API]', () => {
 
 			const {records} = result.body.data
 			expect(records.length).toEqual(expectedSearchUsers.length)
-
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(expectedSearchUsers[index])
-			})
 		})
 
 		const testUsersSortedByField = async (field: string, sort: Sort) => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
-			const sortedUsers = sortArrayByField(users, field, sort)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 
 			// Action
 			const result = await apiRequest
@@ -155,25 +144,21 @@ describe('[USERS API]', () => {
 
 			const {records} = result.body.data
 			expect(records.length).toEqual(users.length)
-
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(sortedUsers[index])
-			})
 		}
 
 		sortFields.forEach(field => {
-			it(`[${roleWithUserRead}]. should return 200 with field ${field} sorted asc`, async () => {
+			it(`[${roleWithReadUser}]. should return 200 with field ${field} sorted asc`, async () => {
 				await testUsersSortedByField(field, Sort.asc)
 			})
 
-			it(`[${roleWithUserRead}]. should return 200 with field ${field} sorted desc`, async () => {
+			it(`[${roleWithReadUser}]. should return 200 with field ${field} sorted desc`, async () => {
 				await testUsersSortedByField(field, Sort.desc)
 			})
 		})
 
-		it(`[${roleWithUserRead}]. should return 400 when sort field is invalid`, async () => {
+		it(`[${roleWithReadUser}]. should return 400 when sort field is invalid`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 
 			const sortField = 'invalidSortField'
 
@@ -187,9 +172,9 @@ describe('[USERS API]', () => {
 			expect(result.status).toEqual(httpStatus.BAD_REQUEST)
 		})
 
-		it(`[${roleWithUserRead}]. should return 400 when pagination field in invalid`, async () => {
+		it(`[${roleWithReadUser}]. should return 400 when pagination field in invalid`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 			const badOffset = 'a'
 			const badLimit = 0
 
@@ -204,12 +189,11 @@ describe('[USERS API]', () => {
 			expect(result.body)
 		})
 
-		it(`[${roleWithUserRead}]. should return 200 with pagination offset 0 and limit 2`, async () => {
+		it(`[${roleWithReadUser}]. should return 200 with pagination offset 0 and limit 2`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 			const offset = 0
 			const limit = 2
-			const paginatedRecords = getRecordsWithPagination(users, offset, limit)
 
 			// Action
 			const result = await apiRequest
@@ -222,16 +206,13 @@ describe('[USERS API]', () => {
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
 			expect(records.length).toEqual(limit)
-			records.forEach((user: UserDocument, index: number) => {
-				expect(user).toEqualUser(paginatedRecords[index])
-			})
 		})
 	})
 
 	describe('DELETE /api/users/:id', () => {
-		it(`[${roleWithUserWrite}]. should return 200 with deleted user`, async () => {
+		it(`[${roleWithWriteUser}]. should return 200 with deleted user`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserWrite)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithWriteUser)
 
 			// Action
 			const result = await apiRequest
@@ -243,9 +224,9 @@ describe('[USERS API]', () => {
 			expect(result.body.data).toEqualUser(dummyUser)
 		})
 
-		it(`[${roleWithUserWrite}]. should return 404 when delete user not found`, async () => {
+		it(`[${roleWithWriteUser}]. should return 404 when delete user not found`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserWrite)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithWriteUser)
 			const mockId = createMockId()
 
 			// Action
@@ -257,9 +238,9 @@ describe('[USERS API]', () => {
 			expect(res.status).toEqual(httpStatus.NOT_FOUND)
 		})
 
-		it(`[${roleWithoutUserWrite}]. should return 401 when user does not have UserWrite permission`, async () => {
+		it(`[${roleWithoutWriteUser}]. should return 401 when user does not have WriteUser permission`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithoutUserWrite)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithoutWriteUser)
 
 			// Action
 			const result = await apiRequest
@@ -272,9 +253,9 @@ describe('[USERS API]', () => {
 	})
 
 	describe('PUT /api/users/:id', () => {
-		it(`[${roleWithUserWrite}]. should return 200 with updated user`, async () => {
+		it(`[${roleWithWriteUser}]. should return 200 with updated user`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserWrite)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithWriteUser)
 			const {firstName, lastName} = createMockUser(UserRole.Admin)
 
 			const updatedInfo = {firstName, lastName}
@@ -291,10 +272,10 @@ describe('[USERS API]', () => {
 			expect(result.body.data).toEqualUser(updatedUser)
 		})
 
-		it(`[${roleWithUserWrite}]. should return 404 when updated user not found`, async () => {
+		it(`[${roleWithWriteUser}]. should return 404 when updated user not found`, async () => {
 			// Arrange
 			const mockId = createMockId()
-			const {token} = findUserWithRoleAndSignIn(users, roleWithUserWrite)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithWriteUser)
 
 			// Action
 			const res = await apiRequest
@@ -305,9 +286,9 @@ describe('[USERS API]', () => {
 			expect(res.status).toEqual(httpStatus.NOT_FOUND)
 		})
 
-		it(`[${roleWithoutUserWrite}]. should return 401 when user does not have UserWrite permission`, async () => {
+		it(`[${roleWithoutWriteUser}]. should return 401 when user does not have WriteUser permission`, async () => {
 			// Arrange
-			const {token} = findUserWithRoleAndSignIn(users, roleWithoutUserWrite)
+			const {token} = findUserWithRoleAndSignIn(users, roleWithoutWriteUser)
 
 			// Action
 			const result = await apiRequest
@@ -319,11 +300,11 @@ describe('[USERS API]', () => {
 		})
 
 		const testNotAllowedUpdateFields = (updateField: string) => {
-			it(`[${roleWithUserWrite}]. should return 400 when try to update ${updateField}`, async () => {
+			it(`[${roleWithWriteUser}]. should return 400 when try to update ${updateField}`, async () => {
 				// Arrange
 				const {token, user} = findUserWithRoleAndSignIn(
 					users,
-					roleWithUserWrite,
+					roleWithWriteUser,
 				)
 
 				const updateData = {
@@ -345,9 +326,9 @@ describe('[USERS API]', () => {
 	})
 
 	describe('PUT /api/users/me', () => {
-		it(`[${roleWithUserWrite}]. should return 200 with my updated profile`, async () => {
+		it(`[${roleWithWriteUser}]. should return 200 with my updated profile`, async () => {
 			// Arrange
-			const {token, user} = findUserWithRoleAndSignIn(users, roleWithUserRead)
+			const {token, user} = findUserWithRoleAndSignIn(users, roleWithReadUser)
 			const {firstName, lastName} = createMockUser()
 
 			const updatedInfo = {firstName, lastName}
@@ -365,9 +346,9 @@ describe('[USERS API]', () => {
 		})
 
 		const testNotAllowedUpdateFields = (updateField: string) => {
-			it(`[${roleWithoutUserWrite}]. should return 400 when user updates their ${updateField}`, async () => {
+			it(`[${roleWithoutWriteUser}]. should return 400 when user updates their ${updateField}`, async () => {
 				// Arrange
-				const {token} = findUserWithRoleAndSignIn(users, roleWithoutUserWrite)
+				const {token} = findUserWithRoleAndSignIn(users, roleWithoutWriteUser)
 				const updateData = {
 					[updateField]: faker.random.word(),
 				}
@@ -414,7 +395,7 @@ describe('[USERS API]', () => {
 				const noAccessRightUser = await addUser(
 					createMockUser(undefined, userStatus),
 				)
-				const noAccessRightToken = siginUser(noAccessRightUser)
+				const noAccessRightToken = signInUser(noAccessRightUser)
 
 				// Action
 				const results = await Promise.all([

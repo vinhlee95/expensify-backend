@@ -118,6 +118,20 @@ components:
       schema:
         type: string
 
+    name: # Can be referenced as '#/components/parameters/name'
+      in: query
+      name: name
+      description: Name
+      schema:
+        type: string
+
+    description: # Can be referenced as '#/components/parameters/description'
+      in: query
+      name: description
+      description: description
+      schema:
+        type: string
+
 #-------------------------------
 # Reusable responses
 #-------------------------------

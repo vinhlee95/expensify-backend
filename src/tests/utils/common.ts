@@ -15,7 +15,7 @@ export const apiRequest = request(app)
  *
  * @param user
  */
-export const siginUser = (user: UserDocument) => {
+export const signInUser = (user: UserDocument) => {
 	return `Bearer ${newToken(user)}`
 }
 
@@ -30,7 +30,7 @@ export const findUserWithRoleAndSignIn = (
 	role: UserRole,
 ) => {
 	const user = users.find(user => user.role === role)
-	const token = siginUser(user)
+	const token = signInUser(user)
 	return {token, user}
 }
 
