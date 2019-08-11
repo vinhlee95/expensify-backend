@@ -12,7 +12,7 @@ const baseConfig = {
 	isProd: env === 'production',
 	isTest: env === 'test',
 	port: process.env.PORT || 3000,
-	clientHost: process.env.CLIENT_HOST,
+	clientHost: process.env.CLIENT_HOST || 'http://localhost:3001',
 	mailSender: process.env.MAIL_SENDER,
 	dbUrl: process.env.DATABASE_URL,
 	secrets: {

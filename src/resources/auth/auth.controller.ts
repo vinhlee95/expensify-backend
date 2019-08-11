@@ -173,6 +173,7 @@ export const getActivateAccount: RequestHandler = async (req, res, next) => {
 
 		return res.render('auth/activate', {
 			message: 'Activate user successfully',
+			clientHost: config.clientHost,
 		})
 	} catch (error) {
 		return next(error)
