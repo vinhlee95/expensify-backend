@@ -1,7 +1,7 @@
 import {Router} from 'express'
 import {Permission, protect} from '../../middlewares/permission'
 
-import {validateCreateTeam, validateGetTeam} from './team.validator'
+import {validateCreateTeam, validateGetTeams} from './team.validator'
 import * as teamController from './team.controller'
 
 const router = Router()
@@ -28,7 +28,7 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.get(readTeam, validateGetTeam(), teamController.getByUserId)
+	.get(readTeam, validateGetTeams(), teamController.getByUserId)
 	/**
 	 * @swagger
 	 *

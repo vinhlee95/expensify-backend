@@ -1,6 +1,6 @@
 import TeamModel, {TeamDocument} from './team.model'
 import {Team} from './team.interface'
-import UserModel, {UserDocument} from '../user/user.model'
+import UserModel from '../user/user.model'
 
 // Utils
 import createLogger from '../../utils/logger'
@@ -34,7 +34,7 @@ export const createOne = async (
  *
  * @param userId
  */
-export const getByUserId = async (userId: string): Promise<UserDocument> => {
+export const getByUserId = async (userId: string): Promise<[TeamDocument]> => {
 	logger.debug(`Get teams by user id: %o`, userId)
 
 	let query = UserModel.findOne({_id: userId})
@@ -42,5 +42,5 @@ export const getByUserId = async (userId: string): Promise<UserDocument> => {
 	query.lean()
 	const data = await query.exec()
 
-	return Promise.resolve(data)
+	return Promise.resolve(data.teams)
 }

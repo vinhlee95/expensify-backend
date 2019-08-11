@@ -11,7 +11,7 @@ export const validateCreateTeam = () => {
 	]
 }
 
-export const validateGetTeam = () => {
+export const validateGetTeams = () => {
 	return [
 		query('userId', 'User id must be a string').isString(),
 		handleValidationError,

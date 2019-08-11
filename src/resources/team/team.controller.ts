@@ -27,8 +27,8 @@ export const createOne: RequestHandler = async (req, res, next) => {
 export const getByUserId: RequestHandler = async (req, res, next) => {
 	try {
 		const {userId} = req.query
-		const data = await services.getByUserId(userId)
-		return res.json(successResponse(data.teams))
+		const teams = await services.getByUserId(userId)
+		return res.json(successResponse(teams))
 	} catch (error) {
 		next(error)
 	}

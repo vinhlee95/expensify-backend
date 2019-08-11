@@ -1,3 +1,5 @@
+import {TeamDocument} from '../team/team.model'
+
 export interface User {
 	firstName: string
 	lastName: string
@@ -6,7 +8,7 @@ export interface User {
 	status?: UserStatus
 	passport: Passport
 	teamIds?: [string]
-	teams?: [object]
+	teams?: [TeamDocument]
 }
 
 interface Passport {
