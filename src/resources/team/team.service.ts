@@ -1,6 +1,6 @@
 import TeamModel, {TeamDocument} from './team.model'
 import {Team} from './team.interface'
-import UserModel from '../user/user.model'
+import UserModel, {UserDocument} from '../user/user.model'
 
 // Utils
 import createLogger from '../../utils/logger'
@@ -26,5 +26,21 @@ export const createOne = async (
 	user.teamIds.push(teamIds)
 	await user.save()
 
-	return newTeam
+	return Promise.resolve(newTeam)
+}
+
+/**
+ * Get teams by user id
+ *
+ * @param userId
+ */
+export const getByUserId = async (userId: string): Promise<UserDocument> => {
+	logger.debug(`Get teams by user id: %o`, userId)
+
+	let query = UserModel.findOne({_id: userId})
+	query.populate({path: 'teams', select: 'name description'})
+	query.lean()
+	const data = await query.exec()
+
+	return Promise.resolve(data)
 }
