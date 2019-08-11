@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import {RequestHandler} from 'express'
 import {query, ErrorFormatter, validationResult} from 'express-validator/check'
 import apiError from '../utils/apiError'
@@ -26,6 +27,20 @@ export const validateCommonQueries = () => {
 			.optional()
 			.toInt()
 			.isInt({min: 1}),
+	]
+}
+
+const hasObjectIdType = (id: any) => mongoose.Types.ObjectId.isValid(id)
+/**
+ * Middleware to validate MongoDB id
+ */
+export const validateId = () => {
+	return [
+		query('userId', 'must be a hash string')
+			.optional()
+			.custom(value => {
+				return hasObjectIdType(value)
+			}),
 	]
 }
 
