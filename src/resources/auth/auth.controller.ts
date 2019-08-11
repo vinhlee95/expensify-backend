@@ -57,9 +57,7 @@ export const signin: RequestHandler = (req, res, next) => {
 
 		if (user) {
 			const token = newToken(user)
-			return res.json(
-				successResponse({token, user: {userId: user._id, status: user.status}}),
-			)
+			return res.json(successResponse({token, userId: user._id}))
 		}
 	})(req, res, next)
 }

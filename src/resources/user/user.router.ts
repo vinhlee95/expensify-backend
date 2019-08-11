@@ -6,6 +6,7 @@ import {
 	validateUpdateMe,
 	validateUpdateUser,
 } from './user.validator'
+import {checkToken} from '../../middlewares/auth'
 
 /**
  * @swagger
@@ -56,7 +57,7 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.get(readUser, userController.getMe)
+	.get(checkToken(), userController.getMe)
 	/**
 	 * @swagger
 	 *
