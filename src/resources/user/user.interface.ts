@@ -6,6 +6,7 @@ export interface User {
 	status?: UserStatus
 	passport: Passport
 	teamIds?: [string]
+	teams?: [object]
 }
 
 interface Passport {

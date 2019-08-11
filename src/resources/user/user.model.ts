@@ -77,6 +77,14 @@ userSchema.pre<UserDocument>('save', function(next) {
 	next()
 })
 
+userSchema.virtual('teams', {
+	ref: 'team',
+	localField: 'teamIds',
+	foreignField: '_id',
+	justOne: false,
+	options: {sort: {name: -1}, limit: 100},
+})
+
 /**
  * Check user's password
  *
