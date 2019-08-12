@@ -13,7 +13,7 @@ export const createMockId = () => {
 
 export const createMockUser = (
 	role: UserRole = UserRole.User,
-	status?: UserStatus,
+	status: UserStatus = UserStatus.Active,
 ): User => ({
 	firstName: faker.name.firstName(),
 	lastName: faker.name.lastName(),
@@ -28,5 +28,5 @@ export const createMockUser = (
 export const createMockTeam = (creatorId?: string): Team => ({
 	name: faker.internet.userName(),
 	description: faker.lorem.sentence(),
-	creatorId: creatorId || faker.random.uuid(),
+	creator: creatorId || faker.random.uuid(),
 })

@@ -1,29 +1,36 @@
-import {addUser} from '../../utils/db'
+import {addTeam, addUser} from '../../utils/db'
 import {createMockTeam, createMockUser} from '../../utils/mock'
 import {createOne, getByUserId} from '../../../resources/team/team.service'
 import {UserDocument} from '../../../resources/user/user.model'
-import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {Team} from '../../../resources/team/team.interface'
 
 describe('[Team service]', () => {
-	let team: Team
 	let user: UserDocument
+	let userTeams: Team[]
 
-	beforeEach(async done => {
-		user = await addUser(createMockUser(UserRole.User, UserStatus.Active))
-		team = await createMockTeam()
-		done()
+	beforeEach(async () => {
+		user = await addUser(createMockUser())
+		const otherUser = await addUser(createMockUser())
+		const [team1, team2] = await Promise.all([
+			addTeam(createMockTeam(user.id)),
+			addTeam(createMockTeam(user.id)),
+			addTeam(createMockTeam(otherUser.id)),
+		])
+		userTeams = [team1, team2]
 	})
 
 	describe('createOne', () => {
 		it('should return correct team and add save team id to user', async () => {
 			try {
+				// Arrange
+				const mockTeam = createMockTeam(user.id)
+
 				// Action
-				const createdTeam = await createOne(team, user._id)
+				const createdTeam = await createOne(mockTeam, user.id)
 
 				// Expect
-				expect(createdTeam.name).toEqual(team.name)
-				expect(createdTeam.creatorId).toEqual(user._id.toString())
+				expect(createdTeam.name).toEqual(mockTeam.name)
+				expect(createdTeam.creator).toEqual(user.id.toString())
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
@@ -34,11 +41,12 @@ describe('[Team service]', () => {
 		it('should return all teams that user belongs to', async () => {
 			try {
 				// Action
-				await createOne(team, user._id)
-				const teams = await getByUserId(user._id)
+				const teams = await getByUserId(user.id)
+
+				console.log('TEAMSSS: ', userTeams)
 
 				// Expect
-				expect(teams.length).toEqual(1)
+				expect(teams.length).toEqual(userTeams.length)
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}

@@ -1,10 +1,10 @@
-import mongoose, {Document} from 'mongoose'
+import mongoose, {Document, Schema} from 'mongoose'
 
 import {Team} from './team.interface'
 
 export interface TeamDocument extends Document, Team {}
 
-const teamSchema = new mongoose.Schema(
+const teamSchema = new Schema(
 	{
 		name: {
 			type: String,
@@ -13,8 +13,9 @@ const teamSchema = new mongoose.Schema(
 		description: {
 			type: String,
 		},
-		creatorId: {
-			type: String,
+		creator: {
+			type: Schema.Types.ObjectId,
+			ref: 'user',
 			required: true,
 		},
 	},

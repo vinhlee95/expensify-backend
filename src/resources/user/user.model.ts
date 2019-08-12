@@ -1,4 +1,4 @@
-import mongoose, {Document} from 'mongoose'
+import mongoose, {Document, Schema} from 'mongoose'
 import {OathProvider, User} from './user.interface'
 import bcrypt from 'bcryptjs'
 import uuid from 'uuid/v4'
@@ -43,7 +43,13 @@ const userSchema = new mongoose.Schema(
 			enum: ['initial', 'active', 'disabled'],
 			default: 'initial',
 		},
-		teamIds: [mongoose.Schema.Types.ObjectId],
+		teams: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'team',
+				required: true,
+			},
+		],
 
 		passport: {
 			password: {
@@ -75,14 +81,6 @@ userSchema.pre<UserDocument>('save', function(next) {
 	this.revokeOldToken()
 
 	next()
-})
-
-userSchema.virtual('teams', {
-	ref: 'team',
-	localField: 'teamIds',
-	foreignField: '_id',
-	justOne: false,
-	options: {sort: {name: -1}, limit: 100},
 })
 
 /**

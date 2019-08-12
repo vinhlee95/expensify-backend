@@ -1,5 +1,4 @@
 import httpStatus from 'http-status'
-import _ from 'lodash'
 import faker from 'faker'
 
 import {getRoleWithPermisison, signInUser, apiRequest} from '../../utils/common'
@@ -9,17 +8,32 @@ import {createMockUser, createMockTeam} from '../../utils/mock'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {UserDocument} from '../../../resources/user/user.model'
 import {ErrorCode} from '../../../utils/apiError'
+import {TeamDocument} from '../../../resources/team/team.model'
 
 describe('[TEAMS API]', () => {
 	const roleWithWriteTeam = getRoleWithPermisison(Permission.WriteTeam)
 	const roleWithReadTeam = getRoleWithPermisison(Permission.ReadTeam)
 
-	let user: UserDocument
+	let user1: UserDocument
+	let user2: UserDocument
+	let user1Teams: TeamDocument[]
+
 	let token: string
 
 	beforeEach(async () => {
-		user = await addUser(createMockUser(UserRole.Admin))
-		token = signInUser(user)
+		;[user1, user2] = await Promise.all([
+			addUser(createMockUser()),
+			addUser(createMockUser(UserRole.Admin)),
+		])
+		const [team1, team2] = await Promise.all([
+			addTeam(createMockTeam(user1.id)),
+			addTeam(createMockTeam(user1.id)),
+			addTeam(createMockTeam(user2.id)),
+		])
+
+		user1Teams = [team1, team2]
+
+		token = signInUser(user1)
 	})
 
 	describe('GET /api/teams', () => {
@@ -31,20 +45,18 @@ describe('[TEAMS API]', () => {
 			// Expect
 			expect(result.status).toEqual(httpStatus.BAD_REQUEST)
 		})
-	})
 
-	describe('GET /api/teams', () => {
 		it(`[${roleWithReadTeam}]. should return 200 with teams that user belongs to`, async () => {
-			// Arrange
-			await addTeam(createMockTeam(user._id))
 			// Action
 			const result = await apiRequest
 				.get('/api/teams')
 				.set('Authorization', token)
-				.query({userId: user._id.toString()})
+				.query({userId: user1.id.toString()})
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
+			console.log('Result status: ', result.body)
+			expect(result.body.data.length).toEqual(user1Teams.length)
 		})
 	})
 
@@ -89,7 +101,7 @@ describe('[TEAMS API]', () => {
 	})
 
 	describe('Authentication and authorization', () => {
-		it('should return 201 when there is no token', async () => {
+		it('should return 401 when there is no token', async () => {
 			// Arrange
 
 			// Action
@@ -117,6 +129,7 @@ describe('[TEAMS API]', () => {
 					.post('/api/teams')
 					.set('Authorization', noAccessRightToken)
 					.send(teamData),
+				apiRequest.get('/api/teams').set('Authorization', noAccessRightToken),
 			])
 
 			// Expect

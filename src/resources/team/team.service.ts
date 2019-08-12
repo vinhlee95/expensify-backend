@@ -19,11 +19,11 @@ export const createOne = async (
 	logger.debug(`Create new team: %o`, teamData)
 
 	const newTeam = await TeamModel.create({...teamData, creatorId: userId})
-	const teamIds = newTeam._id
+	const teamIds = newTeam.id
 
 	// Save team id to user object
 	const user = await UserModel.findById(userId)
-	user.teamIds.push(teamIds)
+	user.teams.push(teamIds)
 	await user.save()
 
 	return Promise.resolve(newTeam)
@@ -37,10 +37,15 @@ export const createOne = async (
 export const getByUserId = async (userId: string): Promise<[TeamDocument]> => {
 	logger.debug(`Get teams by user id: %o`, userId)
 
-	let query = UserModel.findOne({_id: userId})
-	query.populate({path: 'teams', select: 'name description'})
-	query.lean()
-	const data = await query.exec()
+	const teams = await UserModel.findById(userId)
+		.populate('teams')
+		.lean()
+		.exec()
 
-	return Promise.resolve(data.teams)
+	const allTeams = await TeamModel.find({}).exec()
+
+	console.log('TEAMS: ', teams)
+	console.log('ALL TEAMS: ', allTeams)
+
+	return Promise.resolve(teams)
 }
