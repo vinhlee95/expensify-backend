@@ -8,18 +8,12 @@ import {addUser} from '../../utils/db'
 import TeamModel from '../../../resources/team/team.model'
 
 describe('[Team Model]', () => {
-	// const requiredFields = ['name', 'creator']
-
-	let mockUser: UserDocument
-	let mockTeam: Team
-
-	beforeEach(async () => {
-		mockUser = await addUser(createMockUser(UserRole.User, UserStatus.Active))
-		mockTeam = createMockTeam(mockUser.id)
-	})
-
 	it('should create new team when team data is valid', async () => {
 		// Action
+		const user: UserDocument = await addUser(
+			createMockUser(UserRole.User, UserStatus.Active),
+		)
+		const mockTeam: Team = createMockTeam(user.id)
 		const createdTeam = await TeamModel.create(mockTeam)
 
 		// Expect
