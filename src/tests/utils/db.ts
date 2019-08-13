@@ -1,7 +1,7 @@
 import {UserRole, UserStatus, User} from '../../resources/user/user.interface'
 import UserModel, {UserDocument} from '../../resources/user/user.model'
 import TeamModel, {TeamDocument} from '../../resources/team/team.model'
-import {createMockUser, createMockTeam} from './mock'
+import {createMockUser} from './mock'
 import {Team} from '../../resources/team/team.interface'
 
 export const addUser = (user: User): Promise<UserDocument> => {
@@ -13,10 +13,14 @@ export const addUser = (user: User): Promise<UserDocument> => {
 	return newUser.save()
 }
 
-export const addTeam = (team: Team): Promise<TeamDocument> => {
-	const mockTeam = team || createMockTeam()
+export const addTeam = async (team: Team): Promise<TeamDocument> => {
+	const mockTeam = team
 
-	const creator = 
-	const newTeam = new TeamModel(mockTeam)
-	return newTeam.save()
+	const newTeam = await TeamModel.create(mockTeam)
+
+	const user = await UserModel.findById(team.creator)
+	user.teams.push(newTeam.id)
+	await user.save()
+
+	return newTeam
 }
