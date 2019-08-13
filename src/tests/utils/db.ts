@@ -17,7 +17,6 @@ export const addTeam = async (team: Team): Promise<TeamDocument> => {
 	const mockTeam = team
 
 	const newTeam = await TeamModel.create(mockTeam)
-
 	const user = await UserModel.findById(team.creator)
 	user.teams.push(newTeam.id)
 	await user.save()

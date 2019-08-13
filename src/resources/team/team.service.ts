@@ -24,19 +24,3 @@ export const createOne = async (teamData: Team): Promise<TeamDocument> => {
 
 	return Promise.resolve(newTeam)
 }
-
-/**
- * Get teams by user id
- *
- * @param userId
- */
-export const getByUserId = async (userId: string): Promise<[TeamDocument]> => {
-	logger.debug(`Get teams by user id: %o`, userId)
-
-	const user = await UserModel.findById(userId)
-		.populate('teams')
-		.lean()
-		.exec()
-
-	return Promise.resolve(user.teams)
-}

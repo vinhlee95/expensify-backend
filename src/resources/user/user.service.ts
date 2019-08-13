@@ -4,6 +4,7 @@ import createLogger from '../../utils/logger'
 import apiError from '../../utils/apiError'
 import * as _ from 'lodash'
 import {Sort} from '../../middlewares/validator'
+import {TeamDocument} from '../team/team.model'
 
 const logger = createLogger(module)
 
@@ -114,4 +115,15 @@ export const deleteOne = async (id: string): Promise<UserDocument> => {
 	}
 
 	return Promise.resolve(removedUser)
+}
+
+export const getMyTeams = async (userId: string): Promise<[TeamDocument]> => {
+	logger.debug(`Get teams by user id: %o`, userId)
+
+	const user = await UserModel.findById(userId)
+		.populate('teams')
+		.lean()
+		.exec()
+
+	return Promise.resolve(user.teams)
 }

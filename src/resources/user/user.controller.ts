@@ -110,3 +110,19 @@ export const deleteOne: RequestHandler = async (req, res, next) => {
 		return next(e)
 	}
 }
+
+/**
+ * Get my teams
+ *
+ * @param req
+ * @param res
+ */
+export const getMyTeams: RequestHandler = async (req, res, next) => {
+	try {
+		const {_id} = req.user
+		const teams = await services.getMyTeams(_id)
+		return res.json(successResponse(teams))
+	} catch (error) {
+		next(error)
+	}
+}

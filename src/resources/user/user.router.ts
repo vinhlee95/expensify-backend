@@ -18,6 +18,7 @@ const router = Router()
 
 const writeUser = protect([Permission.WriteUser])
 const readUser = protect([Permission.ReadUser])
+const readTeam = protect([Permission.ReadTeam])
 
 /**
  * @swagger
@@ -135,5 +136,23 @@ router
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
 	.delete(writeUser, userController.deleteOne)
+
+router
+	.route('/me/teams')
+	/**
+	 * @swagger
+	 *
+	 * /api/users/teams:
+	 *   get:
+	 *     tags:
+	 *       - User
+	 *     summary: Get user's own teams
+	 *     responses:
+	 *       '201':
+	 *         $ref: '#/components/responses/TeamsResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.get(readTeam, userController.getMyTeams)
 
 export default router

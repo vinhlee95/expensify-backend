@@ -3,60 +3,21 @@ import faker from 'faker'
 
 import {getRoleWithPermisison, signInUser, apiRequest} from '../../utils/common'
 import {Permission} from '../../../middlewares/permission'
-import {addUser, addTeam} from '../../utils/db'
+import {addUser} from '../../utils/db'
 import {createMockUser, createMockTeam} from '../../utils/mock'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {UserDocument} from '../../../resources/user/user.model'
 import {ErrorCode} from '../../../utils/apiError'
-import {TeamDocument} from '../../../resources/team/team.model'
 
 describe('[TEAMS API]', () => {
 	const roleWithWriteTeam = getRoleWithPermisison(Permission.WriteTeam)
-	const roleWithReadTeam = getRoleWithPermisison(Permission.ReadTeam)
 
 	let user1: UserDocument
-	let user2: UserDocument
-	let user1Teams: TeamDocument[]
-
 	let token: string
 
 	beforeEach(async () => {
-		;[user1, user2] = await Promise.all([
-			addUser(createMockUser()),
-			addUser(createMockUser(UserRole.Admin)),
-		])
-		const [team1, team2] = await Promise.all([
-			addTeam(createMockTeam(user1.id)),
-			addTeam(createMockTeam(user1.id)),
-			addTeam(createMockTeam(user2.id)),
-		])
-
-		user1Teams = [team1, team2]
-
+		user1 = await addUser(createMockUser(UserRole.User))
 		token = signInUser(user1)
-	})
-
-	describe('GET /api/teams', () => {
-		it(`[${roleWithReadTeam}]. should return 400 user id is not provided as a param`, async () => {
-			// Action
-			const result = await apiRequest
-				.get('/api/teams')
-				.set('Authorization', token)
-			// Expect
-			expect(result.status).toEqual(httpStatus.BAD_REQUEST)
-		})
-
-		it(`[${roleWithReadTeam}]. should return 200 with teams that user belongs to`, async () => {
-			// Action
-			const result = await apiRequest
-				.get('/api/teams')
-				.set('Authorization', token)
-				.query({userId: user1.id.toString()})
-
-			// Expect
-			expect(result.status).toEqual(httpStatus.OK)
-			expect(result.body.data.length).toEqual(user1Teams.length)
-		})
 	})
 
 	describe('POST /api/teams', () => {
@@ -128,7 +89,6 @@ describe('[TEAMS API]', () => {
 					.post('/api/teams')
 					.set('Authorization', noAccessRightToken)
 					.send(teamData),
-				apiRequest.get('/api/teams').set('Authorization', noAccessRightToken),
 			])
 
 			// Expect
