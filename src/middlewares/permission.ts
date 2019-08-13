@@ -11,6 +11,7 @@ export enum Permission {
 	ReadUser = 'user:read',
 	WriteUser = 'user:write',
 	WriteTeam = 'team:write',
+	ReadTeam = 'team:read',
 }
 
 type PermissionRole = {[key in UserRole]: Permission[]}
@@ -20,8 +21,13 @@ export const permissionRole: PermissionRole = {
 		Permission.ReadUser,
 		Permission.WriteUser,
 		Permission.WriteTeam,
+		Permission.ReadTeam,
 	],
-	[UserRole.User]: [Permission.ReadUser, Permission.WriteTeam],
+	[UserRole.User]: [
+		Permission.ReadUser,
+		Permission.WriteTeam,
+		Permission.ReadTeam,
+	],
 }
 
 /**

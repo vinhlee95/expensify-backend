@@ -10,8 +10,9 @@ import * as services from './team.service'
  */
 export const createOne: RequestHandler = async (req, res, next) => {
 	try {
-		const userId = req.user._id
-		const team = await services.createOne(req.body, userId)
+		const userId = req.user.id
+		const newTeam = {...req.body, creator: userId}
+		const team = await services.createOne(newTeam)
 		return res.json(successResponse(team, true))
 	} catch (error) {
 		next(error)

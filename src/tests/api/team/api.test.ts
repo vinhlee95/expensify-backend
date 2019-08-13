@@ -1,5 +1,4 @@
 import httpStatus from 'http-status'
-import _ from 'lodash'
 import faker from 'faker'
 
 import {getRoleWithPermisison, signInUser, apiRequest} from '../../utils/common'
@@ -11,20 +10,20 @@ import {UserDocument} from '../../../resources/user/user.model'
 import {ErrorCode} from '../../../utils/apiError'
 
 describe('[TEAMS API]', () => {
-	const roleWithWriteUser = getRoleWithPermisison(Permission.WriteUser)
+	const roleWithWriteTeam = getRoleWithPermisison(Permission.WriteTeam)
 
-	let user: UserDocument
+	let user1: UserDocument
 	let token: string
 
 	beforeEach(async () => {
-		user = await addUser(createMockUser(UserRole.Admin))
-		token = signInUser(user)
+		user1 = await addUser(createMockUser(UserRole.User))
+		token = signInUser(user1)
 	})
 
 	describe('POST /api/teams', () => {
-		it(`[${roleWithWriteUser}]. should return 201 with new created team`, async () => {
+		it(`[${roleWithWriteTeam}]. should return 201 with new created team`, async () => {
 			// Arrange
-			const teamData = createMockTeam()
+			const teamData = createMockTeam(user1.id)
 
 			// Action
 			const result = await apiRequest
@@ -37,7 +36,7 @@ describe('[TEAMS API]', () => {
 			expect(result.body.data.name).toEqual(teamData.name)
 		})
 
-		it(`[${roleWithWriteUser}]. should return 400 when team name is neither provided nor a string`, async () => {
+		it(`[${roleWithWriteTeam}]. should return 400 when team name is neither provided nor a string`, async () => {
 			// Arrange
 			const noNameData = {}
 			const nonStringNameData = {name: faker.random.number}
@@ -62,7 +61,7 @@ describe('[TEAMS API]', () => {
 	})
 
 	describe('Authentication and authorization', () => {
-		it('should return 201 when there is no token', async () => {
+		it('should return 401 when there is no token', async () => {
 			// Arrange
 
 			// Action
@@ -82,7 +81,7 @@ describe('[TEAMS API]', () => {
 				createMockUser(undefined, userStatus),
 			)
 			const noAccessRightToken = signInUser(noAccessRightUser)
-			const teamData = createMockTeam()
+			const teamData = createMockTeam(noAccessRightUser.id)
 
 			// Action
 			const results = await Promise.all([

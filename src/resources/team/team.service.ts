@@ -12,19 +12,15 @@ const logger = createLogger(module)
  * @param teamData
  * @param userId
  */
-export const createOne = async (
-	teamData: Team,
-	userId: string,
-): Promise<TeamDocument> => {
+export const createOne = async (teamData: Team): Promise<TeamDocument> => {
 	logger.debug(`Create new team: %o`, teamData)
 
-	const newTeam = await TeamModel.create({...teamData, creatorId: userId})
-	const teamIds = newTeam._id
+	const newTeam = await TeamModel.create(teamData)
 
 	// Save team id to user object
-	const user = await UserModel.findById(userId)
-	user.teamIds.push(teamIds)
+	const user = await UserModel.findById(teamData.creator)
+	user.teams.push(newTeam.id)
 	await user.save()
 
-	return newTeam
+	return Promise.resolve(newTeam)
 }

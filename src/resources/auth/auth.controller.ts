@@ -34,9 +34,9 @@ export const signup: RequestHandler = async (req, res, next) => {
 	const activateUserPath = `${host}/auth/active`
 
 	try {
-		const token = await services.signup(newUser, activateUserPath)
+		const data = await services.signup(newUser, activateUserPath)
 
-		return res.json(successResponse(token))
+		return res.json(successResponse(data))
 	} catch (err) {
 		return next(err)
 	}
@@ -57,7 +57,7 @@ export const signin: RequestHandler = (req, res, next) => {
 
 		if (user) {
 			const token = newToken(user)
-			return res.json(successResponse({token}))
+			return res.json(successResponse({token, userId: user._id}))
 		}
 	})(req, res, next)
 }
@@ -171,6 +171,7 @@ export const getActivateAccount: RequestHandler = async (req, res, next) => {
 
 		return res.render('auth/activate', {
 			message: 'Activate user successfully',
+			clientHost: config.clientHost,
 		})
 	} catch (error) {
 		return next(error)

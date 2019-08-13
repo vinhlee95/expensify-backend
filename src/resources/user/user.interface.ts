@@ -5,7 +5,7 @@ export interface User {
 	role?: UserRole
 	status?: UserStatus
 	passport: Passport
-	teamIds?: [string]
+	teams?: [string]
 }
 
 interface Passport {

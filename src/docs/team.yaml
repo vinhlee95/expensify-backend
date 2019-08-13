@@ -58,13 +58,21 @@ components:
             - $ref: '#/components/schemas/Response'
             - properties:
                 data:
-                  type: object
-                  properties:
-                    name:
-                      type: string
-                    description:
-                      type: string
-                  required:
-                      - name
+                  $ref: '#/components/schemas/Team'
+              required:
+              - data
+
+    TeamsResponse:  # Can be referenced as '#/components/responses/TeamsResponse'
+      description: A JSON array containing teams
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Team'
               required:
               - data

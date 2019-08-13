@@ -1,8 +1,8 @@
 import httpStatus from 'http-status'
 import _ from 'lodash'
 import faker from 'faker'
-import {addUser} from '../../utils/db'
-import {createMockId, createMockUser} from '../../utils/mock'
+import {addUser, addTeam} from '../../utils/db'
+import {createMockId, createMockUser, createMockTeam} from '../../utils/mock'
 import {
 	apiRequest,
 	filterArrayBySearchText,
@@ -16,6 +16,7 @@ import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {ErrorCode} from '../../../utils/apiError'
 import {Permission} from '../../../middlewares/permission'
 import {Sort} from '../../../middlewares/validator'
+import {TeamDocument} from '../../../resources/team/team.model'
 
 describe('[USERS API]', () => {
 	const sortFields = ['firstName', 'lastName', 'email', 'role']
@@ -25,18 +26,42 @@ describe('[USERS API]', () => {
 	const roleWithReadUser = getRoleWithPermisison(Permission.ReadUser)
 	const roleWithWriteUser = getRoleWithPermisison(Permission.WriteUser)
 	const roleWithoutWriteUser = getRoleWithoutPermission(Permission.WriteUser)
+	const roleWithReadTeam = getRoleWithPermisison(Permission.ReadTeam)
 
 	let users: UserDocument[]
+	let user: UserDocument
 	let dummyUser: UserDocument
+	let dummyUserTeams: TeamDocument[]
 
 	beforeEach(async () => {
 		// Arrange
-
-		;[dummyUser] = users = await Promise.all([
+		;[dummyUser, user] = users = await Promise.all([
 			addUser(createMockUser()),
 			addUser(createMockUser(UserRole.User)),
 			addUser(createMockUser(UserRole.Admin)),
 		])
+
+		const [team1, team2] = await Promise.all([
+			addTeam(createMockTeam(dummyUser.id)),
+			addTeam(createMockTeam(dummyUser.id)),
+			addTeam(createMockTeam(user.id)),
+		])
+
+		dummyUserTeams = [team1, team2]
+	})
+
+	describe('GET /api/users/teams', () => {
+		it(`[${roleWithReadTeam}]. should return 200 with teams that user belongs to`, async () => {
+			const token = signInUser(dummyUser)
+			// Action
+			const result = await apiRequest
+				.get('/api/users/me/teams')
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(dummyUserTeams.length)
+		})
 	})
 
 	describe('GET /api/users/:id', () => {
@@ -400,9 +425,6 @@ describe('[USERS API]', () => {
 				// Action
 				const results = await Promise.all([
 					apiRequest.get('/api/users').set('Authorization', noAccessRightToken),
-					apiRequest
-						.get('/api/users/me')
-						.set('Authorization', noAccessRightToken),
 					apiRequest
 						.put('/api/users/me')
 						.set('Authorization', noAccessRightToken),

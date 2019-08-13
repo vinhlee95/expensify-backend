@@ -10,6 +10,7 @@ const writeTeam = protect([Permission.WriteTeam])
 
 // POST request to create a new team
 router
+	.route('/')
 	/**
 	 * @swagger
 	 *
@@ -26,7 +27,6 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.route('/')
 	.post(writeTeam, validateCreateTeam(), teamController.createOne)
 
 export default router
