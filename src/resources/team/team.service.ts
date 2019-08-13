@@ -12,18 +12,14 @@ const logger = createLogger(module)
  * @param teamData
  * @param userId
  */
-export const createOne = async (
-	teamData: Team,
-	userId: string,
-): Promise<TeamDocument> => {
+export const createOne = async (teamData: Team): Promise<TeamDocument> => {
 	logger.debug(`Create new team: %o`, teamData)
 
-	const newTeam = await TeamModel.create({...teamData, creatorId: userId})
-	const teamIds = newTeam.id
+	const newTeam = await TeamModel.create(teamData)
 
 	// Save team id to user object
-	const user = await UserModel.findById(userId)
-	user.teams.push(teamIds)
+	const user = await UserModel.findById(teamData.creator)
+	user.teams.push(newTeam.id)
 	await user.save()
 
 	return Promise.resolve(newTeam)
@@ -37,15 +33,10 @@ export const createOne = async (
 export const getByUserId = async (userId: string): Promise<[TeamDocument]> => {
 	logger.debug(`Get teams by user id: %o`, userId)
 
-	const teams = await UserModel.findById(userId)
+	const user = await UserModel.findById(userId)
 		.populate('teams')
 		.lean()
 		.exec()
 
-	const allTeams = await TeamModel.find({}).exec()
-
-	console.log('TEAMS: ', teams)
-	console.log('ALL TEAMS: ', allTeams)
-
-	return Promise.resolve(teams)
+	return Promise.resolve(user.teams)
 }

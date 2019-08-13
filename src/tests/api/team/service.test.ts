@@ -26,11 +26,11 @@ describe('[Team service]', () => {
 				const mockTeam = createMockTeam(user.id)
 
 				// Action
-				const createdTeam = await createOne(mockTeam, user.id)
+				const createdTeam = await createOne(mockTeam)
 
 				// Expect
 				expect(createdTeam.name).toEqual(mockTeam.name)
-				expect(createdTeam.creator).toEqual(user.id.toString())
+				expect(createdTeam.creator.toString()).toEqual(user.id)
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
@@ -42,8 +42,6 @@ describe('[Team service]', () => {
 			try {
 				// Action
 				const teams = await getByUserId(user.id)
-
-				console.log('TEAMSSS: ', userTeams)
 
 				// Expect
 				expect(teams.length).toEqual(userTeams.length)

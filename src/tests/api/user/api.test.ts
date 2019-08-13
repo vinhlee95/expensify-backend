@@ -401,9 +401,6 @@ describe('[USERS API]', () => {
 				const results = await Promise.all([
 					apiRequest.get('/api/users').set('Authorization', noAccessRightToken),
 					apiRequest
-						.get('/api/users/me')
-						.set('Authorization', noAccessRightToken),
-					apiRequest
 						.put('/api/users/me')
 						.set('Authorization', noAccessRightToken),
 					apiRequest

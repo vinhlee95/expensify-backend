@@ -55,7 +55,6 @@ describe('[TEAMS API]', () => {
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
-			console.log('Result status: ', result.body)
 			expect(result.body.data.length).toEqual(user1Teams.length)
 		})
 	})
@@ -63,7 +62,7 @@ describe('[TEAMS API]', () => {
 	describe('POST /api/teams', () => {
 		it(`[${roleWithWriteTeam}]. should return 201 with new created team`, async () => {
 			// Arrange
-			const teamData = createMockTeam()
+			const teamData = createMockTeam(user1.id)
 
 			// Action
 			const result = await apiRequest
@@ -121,7 +120,7 @@ describe('[TEAMS API]', () => {
 				createMockUser(undefined, userStatus),
 			)
 			const noAccessRightToken = signInUser(noAccessRightUser)
-			const teamData = createMockTeam()
+			const teamData = createMockTeam(noAccessRightUser.id)
 
 			// Action
 			const results = await Promise.all([
