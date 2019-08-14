@@ -142,7 +142,7 @@ router
 	/**
 	 * @swagger
 	 *
-	 * /api/users/teams:
+	 * /api/users/me/teams:
 	 *   get:
 	 *     tags:
 	 *       - User
