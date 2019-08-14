@@ -1,0 +1,50 @@
+components:
+#-------------------------------
+# Reusable schemas (data models)
+#-------------------------------
+  schemas:
+
+    #-------------------------------
+    # Categories
+
+    Category:  # Can be referenced as '#/components/schemas/Category'
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        team:
+          type: string
+      required:
+        - name
+        - type
+        - team
+
+#-------------------------------
+# Reusable responses
+#-------------------------------
+
+  responses:
+
+    #-------------------------------
+    # Category
+
+    CategoriesResponse:  # Can be referenced as '#/components/responses/CategoriesResponse'
+      description: A JSON object containing categories
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Category'
+              required:
+              - data
