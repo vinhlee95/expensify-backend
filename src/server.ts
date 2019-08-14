@@ -15,6 +15,7 @@ import {seed} from './utils/seeder'
 import userRouter from './resources/user/user.router'
 import authRouter from './resources/auth/auth.router'
 import teamRouter from './resources/team/team.router'
+import categoryRouter from './resources/category/category.router'
 import createLogger from './utils/logger'
 
 const logger = createLogger(module)
@@ -55,6 +56,8 @@ app.use('/auth', authRouter)
 app.use('/api/users', userRouter)
 
 app.use('/api/teams', teamRouter)
+
+app.use('/api/categories', categoryRouter)
 
 app.use('/api-docs', swagger)
 
