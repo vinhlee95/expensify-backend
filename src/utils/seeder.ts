@@ -4,6 +4,7 @@ import UserModel from '../resources/user/user.model'
 import createLogger from '../utils/logger'
 import {createMockTeam} from '../tests/utils/mock'
 import TeamModel from '../resources/team/team.model'
+import {addTeam, addUser} from '../tests/utils/db'
 
 const logger = createLogger(module)
 
@@ -36,13 +37,13 @@ const cleanDB = async () => {
 }
 
 const createUsers = () => {
-	return mockUsers.map(mockUser => UserModel.create(mockUser))
+	return mockUsers.map(mockUser => addUser(mockUser))
 }
 
 const createTeams = (creatorId: string) => {
 	const mockTeams = _.times(6, () => createMockTeam(creatorId))
 
-	return mockTeams.map(mockTeam => TeamModel.create(mockTeam))
+	return mockTeams.map(mockTeam => addTeam(mockTeam))
 }
 
 export const seed = async () => {
