@@ -17,3 +17,18 @@ export const getMany: RequestHandler = async (req, res, next) => {
 		next(error)
 	}
 }
+
+/**
+ * Get many
+ *
+ * @param req
+ * @param res
+ */
+export const createOne: RequestHandler = async (req, res, next) => {
+	try {
+		const newCategory = await services.createOne(req.body, req.user)
+		return res.json(successResponse(newCategory, true))
+	} catch(error) {
+		next(error)
+	}
+}

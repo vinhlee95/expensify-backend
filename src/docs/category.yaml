@@ -18,12 +18,41 @@ components:
           type: string
         type:
           type: string
-        team:
+        teamId:
           type: string
       required:
         - name
         - type
         - team
+
+#-------------------------------
+# Reusable bodies
+#-------------------------------
+
+  requestBodies:
+    #-------------------------------
+    # CategoryCreate
+
+    CategoryCreate: # Can be referenced as '#/components/requestBodies/CategoryCreate'
+      description: Category to create
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              type:
+                type: string
+              teamId:
+                type: string
+            required:
+              - name
+              - type
+              - teamId
 
 #-------------------------------
 # Reusable responses
@@ -35,7 +64,7 @@ components:
     # Category
 
     CategoriesResponse:  # Can be referenced as '#/components/responses/CategoriesResponse'
-      description: A JSON object containing categories
+      description: A JSON array containing categories
       content:
         application/json:
           schema:
@@ -45,6 +74,21 @@ components:
                 data:
                   type: array
                   items:
+                    $ref: '#components/schemas/Category'
+              required:
+              - data
+
+    CategoryResponse:  # Can be referenced as '#/components/responses/CategoryResponse'
+      description: A JSON object containing categories
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: object
+                  properties:
                     $ref: '#components/schemas/Category'
               required:
               - data

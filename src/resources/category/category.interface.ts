@@ -7,5 +7,5 @@ export interface Category {
 	name: string
 	description?: string
 	type: CategoryType
-	team: string
+	teamId: string
 }

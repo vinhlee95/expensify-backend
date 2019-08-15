@@ -4,6 +4,7 @@ import {normalizeEmail} from 'validator'
 
 import {User, UserRole, UserStatus} from '../../resources/user/user.interface'
 import {Team} from '../../resources/team/team.interface'
+import { Category } from '../../resources/category/category.interface';
 
 export const createMockId = () => {
 	const ObjectId = Types.ObjectId
@@ -29,4 +30,11 @@ export const createMockTeam = (creatorId: string): Team => ({
 	name: faker.internet.userName(),
 	description: faker.lorem.sentence(),
 	creator: creatorId,
+})
+
+export const createMockCategory = (type: any, teamId: string): Category => ({
+	name: faker.random.word(),
+	description: faker.lorem.sentence(),
+	type,
+	teamId,
 })

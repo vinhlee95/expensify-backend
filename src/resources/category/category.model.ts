@@ -7,7 +7,6 @@ const categorySchema = new Schema({
 	name: {
 		type: String,
 		required: true,
-		unique: true,
 	},
 	description: {
 		type: String,
@@ -16,9 +15,10 @@ const categorySchema = new Schema({
 		type: String,
 		required: true,
 	},
-	team: {
+	teamId: {
 		type: mongoose.Types.ObjectId,
 		ref: 'team',
+		required: true,
 	},
 })
 
