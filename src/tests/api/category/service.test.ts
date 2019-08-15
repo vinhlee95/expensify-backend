@@ -1,10 +1,14 @@
-import { UserDocument } from "../../../resources/user/user.model";
-import { TeamDocument } from "../../../resources/team/team.model";
-import { addUser, addTeam, addCategory } from "../../utils/db";
-import { createMockUser, createMockTeam, createMockCategory } from "../../utils/mock";
-import { UserRole, UserStatus } from "../../../resources/user/user.interface";
-import { CategoryType } from "../../../resources/category/category.interface";
-import { createOne, getMany } from "../../../resources/category/category.service";
+import {UserDocument} from '../../../resources/user/user.model'
+import {TeamDocument} from '../../../resources/team/team.model'
+import {addUser, addTeam, addCategory} from '../../utils/db'
+import {
+	createMockUser,
+	createMockTeam,
+	createMockCategory,
+} from '../../utils/mock'
+import {UserRole, UserStatus} from '../../../resources/user/user.interface'
+import {CategoryType} from '../../../resources/category/category.interface'
+import {createOne, getMany} from '../../../resources/category/category.service'
 
 describe('[Category service]', () => {
 	let user: UserDocument
@@ -28,7 +32,7 @@ describe('[Category service]', () => {
 				expect(createdCategory.description).toEqual(mockCategory.description)
 				expect(createdCategory.type).toEqual(mockCategory.type)
 				expect(createdCategory.teamId.toString()).toEqual(mockCategory.teamId)
-			} catch(e) {
+			} catch (e) {
 				expect(e).toBeUndefined()
 			}
 		})
@@ -37,7 +41,11 @@ describe('[Category service]', () => {
 	describe('getMany', () => {
 		it('should return all categories', async () => {
 			try {
-				const [expenseCategory, anotherExpenseCategory, incomeCategory] = await Promise.all([
+				const [
+					expenseCategory,
+					anotherExpenseCategory,
+					incomeCategory,
+				] = await Promise.all([
 					addCategory(createMockCategory(CategoryType.Expense, team.id)),
 					addCategory(createMockCategory(CategoryType.Expense, team.id)),
 					addCategory(createMockCategory(CategoryType.Income, team.id)),
@@ -53,7 +61,7 @@ describe('[Category service]', () => {
 				// Expect
 				expect(expenseCategories.length).toEqual(addedExpenseCategories.length)
 				expect(incomeCategories.length).toEqual(adddedIncomeCategories.length)
-			} catch(e) {
+			} catch (e) {
 				expect(e).toBeUndefined()
 			}
 		})

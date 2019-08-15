@@ -4,7 +4,7 @@ import {normalizeEmail} from 'validator'
 
 import {User, UserRole, UserStatus} from '../../resources/user/user.interface'
 import {Team} from '../../resources/team/team.interface'
-import { Category } from '../../resources/category/category.interface';
+import {Category} from '../../resources/category/category.interface'
 
 export const createMockId = () => {
 	const ObjectId = Types.ObjectId

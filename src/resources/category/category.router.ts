@@ -1,6 +1,9 @@
 import {Router} from 'express'
 import {protect, Permission} from '../../middlewares/permission'
-import {validateGetCategories, validateCreateCategory} from './category.validator'
+import {
+	validateGetCategories,
+	validateCreateCategory,
+} from './category.validator'
 import * as categoryController from './category.controller'
 
 const router = Router()
