@@ -20,7 +20,7 @@ export const getMany = async (
 		.lean()
 		.exec()
 
-	return categories
+	return Promise.resolve(categories)
 }
 
 /**
@@ -35,7 +35,7 @@ export const createOne = async (
 ): Promise<CategoryDocument> => {
 	// Check if user is in the provided team id
 
-	if (!user.teams.includes(data.teamId)) {
+	if (!user.teams.includes(data.team)) {
 		return Promise.reject(
 			apiError.badRequest(
 				'This user does not belong to the team with that id',
@@ -47,7 +47,7 @@ export const createOne = async (
 	// Check if team already had that category
 	const existingCategory = await await CategoryModel.findOne({
 		name: data.name,
-		teamId: data.teamId,
+		team: data.team,
 	})
 		.lean()
 		.exec()

@@ -24,30 +24,31 @@ describe('[Category service]', () => {
 		user = await UserModel.findById(user.id)
 
 		teamCategories = await Promise.all([
-			addCategory(createMockCategory(CategoryType.Expense, team.id)),
-			addCategory(createMockCategory(CategoryType.Income, team.id)),
-			addCategory(createMockCategory(CategoryType.Income, team.id)),
+			addCategory(createMockCategory(team.id, CategoryType.Expense)),
+			addCategory(createMockCategory(team.id, CategoryType.Income)),
+			addCategory(createMockCategory(team.id, CategoryType.Income)),
 		])
 
 		await Promise.all([
-			addCategory(createMockCategory(CategoryType.Expense, team2.id)),
-			addCategory(createMockCategory(CategoryType.Income, team2.id)),
+			addCategory(createMockCategory(team2.id, CategoryType.Expense)),
+			addCategory(createMockCategory(team2.id, CategoryType.Income)),
 		])
 	})
 
 	describe('createOne', () => {
 		it('should return new category', async () => {
 			try {
-				const mockCategory = createMockCategory(CategoryType.Expense, team.id)
+				// Arrange
+				const mockCategory = createMockCategory(team.id, CategoryType.Expense)
 
-				// Action
+				// Act
 				const createdCategory = await createOne(mockCategory, user)
 
 				// Expect
 				expect(createdCategory.name).toEqual(mockCategory.name)
 				expect(createdCategory.description).toEqual(mockCategory.description)
 				expect(createdCategory.type).toEqual(mockCategory.type)
-				expect(createdCategory.teamId.toString()).toEqual(mockCategory.teamId)
+				expect(createdCategory.team.toString()).toEqual(mockCategory.team)
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
@@ -58,15 +59,15 @@ describe('[Category service]', () => {
 		it('should return all expense categories', async () => {
 			try {
 				// Arrange
-				const team1ExpenseCategories = teamCategories.filter(
+				const teamExpenseCategories = teamCategories.filter(
 					category => category.type === CategoryType.Expense,
 				)
 
-				// Action
+				// Act
 				const expenseCategories = await getMany(CategoryType.Expense, team.id)
 
 				// Expect
-				expect(team1ExpenseCategories.length).toEqual(expenseCategories.length)
+				expect(teamExpenseCategories.length).toEqual(expenseCategories.length)
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
@@ -75,15 +76,15 @@ describe('[Category service]', () => {
 		it('should return all income categories', async () => {
 			try {
 				// Arrange
-				const team1IncomeCategories = teamCategories.filter(
+				const teamIncomeCategories = teamCategories.filter(
 					category => category.type === CategoryType.Income,
 				)
 
-				// Action
+				// Act
 				const incomeCategories = await getMany(CategoryType.Income, team.id)
 
 				// Expect
-				expect(team1IncomeCategories.length).toEqual(incomeCategories.length)
+				expect(teamIncomeCategories.length).toEqual(incomeCategories.length)
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
