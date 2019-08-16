@@ -1,5 +1,5 @@
 import {Error} from 'mongoose'
-import faker from 'faker'
+import _ from 'lodash'
 import {UserDocument} from '../../../resources/user/user.model'
 import {addUser, addTeam} from '../../utils/db'
 import {
@@ -22,40 +22,48 @@ describe('[Category model]', () => {
 	})
 
 	it('should create new category when data is valid', async () => {
-		const mockCategory = createMockCategory(CategoryType.Expense, team.id)
+		// Arrange
+		const mockCategory = createMockCategory(team.id, CategoryType.Expense)
+
+		// Act
 		const createdCategory = await CategoryModel.create(mockCategory)
 
 		// Expect
 		expect(createdCategory.name).toEqual(mockCategory.name)
 		expect(createdCategory.description).toEqual(mockCategory.description)
 		expect(createdCategory.type).toEqual(mockCategory.type)
-		expect(createdCategory.teamId.toString()).toEqual(mockCategory.teamId)
+		expect(createdCategory.team.toString()).toEqual(mockCategory.team)
 	})
 
 	it('should throw error when there is no team name', async () => {
-		const mockCategory = createMockCategory(CategoryType.Expense, team.id)
-		mockCategory.name = ''
+		// Arrange
+		const mockCategory = _.omit(createMockCategory(team.id), 'name')
+
+		// Act
 		const createdCategory = CategoryModel.create(mockCategory)
+
 		// Expect
 		await expect(createdCategory).rejects.toThrow(Error)
 	})
 
 	it('should throw error when there is no type', async () => {
-		const mockCategory = {
-			name: faker.random.word(),
-			teamId: team.id,
-		}
+		// Arrange
+		const mockCategory = _.omit(createMockCategory(team.id), 'type')
+
+		// Act
 		const createdCategory = CategoryModel.create(mockCategory)
+
 		// Expect
 		await expect(createdCategory).rejects.toThrow(Error)
 	})
 
-	it('should throw error when there is no teamId', async () => {
-		const mockCategory = {
-			name: faker.random.word(),
-			type: CategoryType.Expense,
-		}
+	it('should throw error when there is no team', async () => {
+		// Arrange
+		const mockCategory = _.omit(createMockCategory(team.id), 'team')
+
+		// Act
 		const createdCategory = CategoryModel.create(mockCategory)
+
 		// Expect
 		await expect(createdCategory).rejects.toThrow(Error)
 	})

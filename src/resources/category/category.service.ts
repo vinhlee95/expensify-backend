@@ -9,7 +9,7 @@ import {User} from '../user/user.interface'
  * @param type
  * @param teamId
  */
-export const getMany = async (
+export const getCategoriesByTeam = async (
 	type: string,
 	teamId: string,
 ): Promise<CategoryDocument[]> => {
@@ -20,7 +20,7 @@ export const getMany = async (
 		.lean()
 		.exec()
 
-	return categories
+	return Promise.resolve(categories)
 }
 
 /**
@@ -33,9 +33,9 @@ export const createOne = async (
 	data: Category,
 	user: User,
 ): Promise<CategoryDocument> => {
-	console.log(data, user)
 	// Check if user is in the provided team id
-	if (!isMemberofTeam(user.teams, data.teamId)) {
+
+	if (!user.teams.includes(data.team)) {
 		return Promise.reject(
 			apiError.badRequest(
 				'This user does not belong to the team with that id',
@@ -45,7 +45,13 @@ export const createOne = async (
 	}
 
 	// Check if team already had that category
-	const existingCategory = await getByName(data.name, data.teamId)
+	const existingCategory = await await CategoryModel.findOne({
+		name: data.name,
+		team: data.team,
+	})
+		.lean()
+		.exec()
+
 	if (existingCategory) {
 		return Promise.reject(
 			apiError.badRequest(
@@ -56,22 +62,6 @@ export const createOne = async (
 	}
 
 	const newCategory = await CategoryModel.create(data)
-	return newCategory
+
+	return Promise.resolve(newCategory)
 }
-
-const getByName = async (
-	name: string,
-	teamId: string,
-): Promise<CategoryDocument> => {
-	const category = await CategoryModel.findOne({name, teamId})
-		.lean()
-		.exec()
-	if (!category) {
-		return Promise.resolve(null)
-	}
-
-	return Promise.resolve(category)
-}
-
-const isMemberofTeam = (teamIds: [string], teamId: string) =>
-	teamIds.some(id => id == teamId)

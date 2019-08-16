@@ -15,7 +15,7 @@ const categorySchema = new Schema({
 		type: String,
 		required: true,
 	},
-	teamId: {
+	team: {
 		type: mongoose.Types.ObjectId,
 		ref: 'team',
 		required: true,
