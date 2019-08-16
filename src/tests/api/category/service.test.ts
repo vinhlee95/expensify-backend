@@ -8,8 +8,12 @@ import {
 } from '../../utils/mock'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {CategoryType} from '../../../resources/category/category.interface'
-import {createOne, getCategoriesByTeam} from '../../../resources/category/category.service'
+import {
+	createOne,
+	getCategoriesByTeam,
+} from '../../../resources/category/category.service'
 import {CategoryDocument} from '../../../resources/category/category.model'
+import {ApiError} from '../../../utils/apiError'
 
 describe('[Category service]', () => {
 	let user: UserDocument
@@ -53,6 +57,21 @@ describe('[Category service]', () => {
 				expect(e).toBeUndefined()
 			}
 		})
+
+		it('should return error when create existed category', async () => {
+			// Arrange
+			const existedCategory = teamCategories[0]
+			const mockCategory = {
+				...createMockCategory(user.id),
+				name: existedCategory.name,
+			}
+
+			// Act
+			const createdCategory = createOne(mockCategory, user)
+
+			// Expect
+			await expect(createdCategory).rejects.toThrow(ApiError)
+		})
 	})
 
 	describe('getCategoriesByTeam', () => {
@@ -64,7 +83,10 @@ describe('[Category service]', () => {
 				)
 
 				// Act
-				const expenseCategories = await getCategoriesByTeam(CategoryType.Expense, team.id)
+				const expenseCategories = await getCategoriesByTeam(
+					CategoryType.Expense,
+					team.id,
+				)
 
 				// Expect
 				expect(teamExpenseCategories.length).toEqual(expenseCategories.length)
@@ -81,7 +103,10 @@ describe('[Category service]', () => {
 				)
 
 				// Act
-				const incomeCategories = await getCategoriesByTeam(CategoryType.Income, team.id)
+				const incomeCategories = await getCategoriesByTeam(
+					CategoryType.Income,
+					team.id,
+				)
 
 				// Expect
 				expect(teamIncomeCategories.length).toEqual(incomeCategories.length)
