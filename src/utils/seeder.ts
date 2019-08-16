@@ -1,6 +1,10 @@
 import {User, UserRole, UserStatus} from '../resources/user/user.interface'
+import _ from 'lodash'
 import UserModel from '../resources/user/user.model'
 import createLogger from '../utils/logger'
+import {createMockTeam} from '../tests/utils/mock'
+import TeamModel from '../resources/team/team.model'
+import {addTeam, addUser} from '../tests/utils/db'
 
 const logger = createLogger(module)
 
@@ -28,12 +32,18 @@ const mockUser2: User = {
 
 const mockUsers = [mockUser1, mockUser2]
 
-const cleanDB = () => {
-	return UserModel.deleteMany({})
+const cleanDB = async () => {
+	return Promise.all([UserModel.deleteMany({}), TeamModel.deleteMany({})])
 }
 
 const createUsers = () => {
-	return mockUsers.map(mockUser => UserModel.create(mockUser))
+	return mockUsers.map(mockUser => addUser(mockUser))
+}
+
+const createTeams = (creatorId: string) => {
+	const mockTeams = _.times(6, () => createMockTeam(creatorId))
+
+	return mockTeams.map(mockTeam => addTeam(mockTeam))
 }
 
 export const seed = async () => {
@@ -42,7 +52,9 @@ export const seed = async () => {
 
 		logger.debug(`Database cleaned`)
 
-		await Promise.all(createUsers())
+		const users = await Promise.all(createUsers())
+
+		await Promise.all(users.map(user => createTeams(user.id)).flat())
 
 		logger.debug(`Database seeded`)
 	} catch (e) {
