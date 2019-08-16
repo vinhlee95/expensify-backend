@@ -8,7 +8,7 @@ import {
 } from '../../utils/mock'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {CategoryType} from '../../../resources/category/category.interface'
-import {createOne, getMany} from '../../../resources/category/category.service'
+import {createOne, getCategoriesByTeam} from '../../../resources/category/category.service'
 import {CategoryDocument} from '../../../resources/category/category.model'
 
 describe('[Category service]', () => {
@@ -55,7 +55,7 @@ describe('[Category service]', () => {
 		})
 	})
 
-	describe('getMany', () => {
+	describe('getCategoriesByTeam', () => {
 		it('should return all expense categories', async () => {
 			try {
 				// Arrange
@@ -64,7 +64,7 @@ describe('[Category service]', () => {
 				)
 
 				// Act
-				const expenseCategories = await getMany(CategoryType.Expense, team.id)
+				const expenseCategories = await getCategoriesByTeam(CategoryType.Expense, team.id)
 
 				// Expect
 				expect(teamExpenseCategories.length).toEqual(expenseCategories.length)
@@ -81,7 +81,7 @@ describe('[Category service]', () => {
 				)
 
 				// Act
-				const incomeCategories = await getMany(CategoryType.Income, team.id)
+				const incomeCategories = await getCategoriesByTeam(CategoryType.Income, team.id)
 
 				// Expect
 				expect(teamIncomeCategories.length).toEqual(incomeCategories.length)

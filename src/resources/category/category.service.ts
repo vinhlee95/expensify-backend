@@ -9,7 +9,7 @@ import {User} from '../user/user.interface'
  * @param type
  * @param teamId
  */
-export const getMany = async (
+export const getCategoriesByTeam = async (
 	type: string,
 	teamId: string,
 ): Promise<CategoryDocument[]> => {
