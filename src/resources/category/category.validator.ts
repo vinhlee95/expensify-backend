@@ -18,7 +18,7 @@ export const validateCreateCategory = () => {
 			.optional()
 			.isString(),
 		body('type', 'Invalid category type').isIn(enumToValues(CategoryType)),
-		body('teamId', 'team id must be a string').isString(),
+		body('team', 'team id must be a string').isString(),
 		handleValidationError,
 	]
 }
