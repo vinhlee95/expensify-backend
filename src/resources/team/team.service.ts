@@ -1,9 +1,11 @@
 import TeamModel, {TeamDocument} from './team.model'
-import {Team} from './team.interface'
+import {TeamInput} from './team.interface'
 import UserModel from '../user/user.model'
 
 // Utils
 import createLogger from '../../utils/logger'
+import {slugify} from '../../utils/util'
+
 const logger = createLogger(module)
 
 /**
@@ -12,10 +14,13 @@ const logger = createLogger(module)
  * @param teamData
  * @param userId
  */
-export const createOne = async (teamData: Team): Promise<TeamDocument> => {
+export const createOne = async (teamData: TeamInput): Promise<TeamDocument> => {
 	logger.debug(`Create new team: %o`, teamData)
 
-	const newTeam = await TeamModel.create(teamData)
+	const newTeam = await TeamModel.create({
+		...teamData,
+		slug: slugify(teamData.name),
+	})
 
 	// Save team id to user object
 	const user = await UserModel.findById(teamData.creator)

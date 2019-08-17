@@ -1,11 +1,12 @@
 import faker from 'faker'
 import {Error} from 'mongoose'
-import {Team} from '../../../resources/team/team.interface'
+import {TeamInput} from '../../../resources/team/team.interface'
 import {createMockTeam, createMockUser} from '../../utils/mock'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {UserDocument} from '../../../resources/user/user.model'
 import {addUser} from '../../utils/db'
 import TeamModel from '../../../resources/team/team.model'
+import {slugify} from '../../../utils/util'
 
 describe('[Team Model]', () => {
 	it('should create new team when team data is valid', async () => {
@@ -13,8 +14,11 @@ describe('[Team Model]', () => {
 		const user: UserDocument = await addUser(
 			createMockUser(UserRole.User, UserStatus.Active),
 		)
-		const mockTeam: Team = createMockTeam(user.id)
-		const createdTeam = await TeamModel.create(mockTeam)
+		const mockTeam: TeamInput = createMockTeam(user.id)
+		const createdTeam = await TeamModel.create({
+			...mockTeam,
+			slug: slugify(mockTeam.name),
+		})
 
 		// Expect
 		expect(createdTeam.name).toEqual(mockTeam.name)

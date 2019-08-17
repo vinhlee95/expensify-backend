@@ -1,8 +1,7 @@
 import httpStatus from 'http-status'
 import faker from 'faker'
 
-import {getRoleWithPermisison, signInUser, apiRequest} from '../../utils/common'
-import {Permission} from '../../../middlewares/permission'
+import {signInUser, apiRequest} from '../../utils/common'
 import {addUser} from '../../utils/db'
 import {createMockUser, createMockTeam} from '../../utils/mock'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
@@ -10,8 +9,6 @@ import {UserDocument} from '../../../resources/user/user.model'
 import {ErrorCode} from '../../../utils/apiError'
 
 describe('[TEAMS API]', () => {
-	const roleWithWriteTeam = getRoleWithPermisison(Permission.WriteTeam)
-
 	let user1: UserDocument
 	let token: string
 
@@ -21,7 +18,7 @@ describe('[TEAMS API]', () => {
 	})
 
 	describe('POST /api/teams', () => {
-		it(`[${roleWithWriteTeam}]. should return 201 with new created team`, async () => {
+		it(`User. should return 201 with new created team`, async () => {
 			// Arrange
 			const teamData = createMockTeam(user1.id)
 
@@ -36,7 +33,7 @@ describe('[TEAMS API]', () => {
 			expect(result.body.data.name).toEqual(teamData.name)
 		})
 
-		it(`[${roleWithWriteTeam}]. should return 400 when team name is neither provided nor a string`, async () => {
+		it(`User. should return 400 when team name is neither provided nor a string`, async () => {
 			// Arrange
 			const noNameData = {}
 			const nonStringNameData = {name: faker.random.number}
@@ -62,8 +59,6 @@ describe('[TEAMS API]', () => {
 
 	describe('Authentication and authorization', () => {
 		it('should return 401 when there is no token', async () => {
-			// Arrange
-
 			// Action
 			const results = await Promise.all([apiRequest.post('/api/teams')])
 
