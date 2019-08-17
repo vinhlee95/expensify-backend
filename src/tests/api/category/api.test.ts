@@ -32,7 +32,7 @@ describe('[CATEGORIES API]', () => {
 		it(`[${roleWithWriteCategory}]. should return 400 with wrong or no category type`, async () => {
 			let randomTypeCategory = {
 				...createMockCategory(team.id),
-				category: faker.random.word(),
+				type: faker.random.word(),
 			}
 			const noTypeCategory = _.omit(createMockCategory(team.id), 'type')
 
@@ -73,6 +73,7 @@ describe('[CATEGORIES API]', () => {
 
 		it(`[${roleWithWriteCategory}]. should return 200 with new created category when data is valid`, async () => {
 			const mockCategory = createMockCategory(team.id, CategoryType.Expense)
+
 			// Action
 			const result = await apiRequest
 				.post('/api/categories')
