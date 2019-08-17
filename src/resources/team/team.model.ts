@@ -1,5 +1,4 @@
 import mongoose, {Document, Schema} from 'mongoose'
-
 import {Team} from './team.interface'
 
 export interface TeamDocument extends Document, Team {}
@@ -16,6 +15,10 @@ const teamSchema = new Schema(
 		creator: {
 			type: Schema.Types.ObjectId,
 			ref: 'user',
+			required: true,
+		},
+		slug: {
+			type: String,
 			required: true,
 		},
 	},
