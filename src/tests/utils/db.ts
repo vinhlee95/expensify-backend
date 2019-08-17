@@ -7,6 +7,7 @@ import {Category} from '../../resources/category/category.interface'
 import CategoryModel, {
 	CategoryDocument,
 } from '../../resources/category/category.model'
+import {slugify} from '../../utils/util'
 
 export const addUser = (user: User): Promise<UserDocument> => {
 	const mockUser = user || createMockUser(UserRole.User, UserStatus.Active)
@@ -20,7 +21,10 @@ export const addUser = (user: User): Promise<UserDocument> => {
 export const addTeam = async (team: TeamInput): Promise<TeamDocument> => {
 	const mockTeam = team
 
-	const newTeam = await TeamModel.create(mockTeam)
+	const newTeam = await TeamModel.create({
+		...mockTeam,
+		slug: slugify(mockTeam.name),
+	})
 	const user = await UserModel.findById(team.creator)
 	user.teams.push(newTeam.id)
 	await user.save()
