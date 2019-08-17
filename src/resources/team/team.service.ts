@@ -64,8 +64,6 @@ export const createCategory = async (
 	data: Category,
 	user: User,
 ): Promise<CategoryDocument> => {
-	console.log(user.teams)
-	console.log(data.team)
 	// Check if user is in the provided team id
 	if (!user.teams.includes(data.team)) {
 		return Promise.reject(

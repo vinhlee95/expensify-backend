@@ -9,6 +9,7 @@ import {
 	createCategory,
 	getCategories,
 } from '../../../resources/team/team.service'
+import {getUserById} from '../../../resources/user/user.service'
 import {UserDocument} from '../../../resources/user/user.model'
 import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryDocument} from '../../../resources/category/category.model'
@@ -59,6 +60,7 @@ describe('[Team service]', () => {
 		it('should return new category', async () => {
 			try {
 				// Arrange
+				user = await getUserById(user.id)
 				const mockCategory = createMockCategory(team.id, CategoryType.Expense)
 
 				// Act
