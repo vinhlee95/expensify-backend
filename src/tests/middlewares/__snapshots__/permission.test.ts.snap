@@ -7,11 +7,15 @@ Object {
     "user:write",
     "team:write",
     "team:read",
+    "category:read",
+    "category:write",
   ],
   "user": Array [
     "user:read",
     "team:write",
     "team:read",
+    "category:read",
+    "category:write",
   ],
 }
 `;
