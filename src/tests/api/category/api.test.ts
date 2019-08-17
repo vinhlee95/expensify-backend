@@ -30,7 +30,7 @@ describe('[CATEGORIES API]', () => {
 
 	describe('POST /api/categories', () => {
 		it(`[${roleWithWriteCategory}]. should return 400 with wrong or no category type`, async () => {
-			let randomTypeCategory = {
+			const randomTypeCategory = {
 				...createMockCategory(team.id),
 				type: faker.random.word(),
 			}
