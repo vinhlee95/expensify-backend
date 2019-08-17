@@ -41,6 +41,11 @@ export const validateId = () => {
 			.custom(value => {
 				return hasObjectIdType(value)
 			}),
+		query('teamId', 'must be a hash string')
+			.optional()
+			.custom(value => {
+				return hasObjectIdType(value)
+			}),
 	]
 }
 

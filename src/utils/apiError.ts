@@ -11,6 +11,10 @@ export enum ErrorCode {
 	notHasPermission = 107,
 	googleAccountHasBeenLinked = 108,
 	googleAccountHasBeenTaken = 109,
+	// Category: 2xx
+	categoryNameNotUnique = 201,
+	// Team: 3xx
+	notATeamMember = 301,
 }
 
 /**
