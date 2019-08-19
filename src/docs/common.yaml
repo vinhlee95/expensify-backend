@@ -135,14 +135,8 @@ components:
     type: # Can be referenced as '#/components/parameters/type'
       in: query
       name: type
-      description: type
-      schema:
-        type: string
-
-    teamId: # Can be referenced as '#/components/parameters/teamId'
-      in: query
-      name: teamId
-      description: id of the team
+      description: Model type
+      required: true
       schema:
         type: string
 

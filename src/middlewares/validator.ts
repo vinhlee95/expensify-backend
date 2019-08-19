@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
 import {RequestHandler} from 'express'
-import {query, ErrorFormatter, validationResult} from 'express-validator/check'
+import {
+	query,
+	ErrorFormatter,
+	validationResult,
+	param,
+} from 'express-validator/check'
 import apiError from '../utils/apiError'
 
 export enum Sort {
@@ -41,7 +46,7 @@ export const validateId = () => {
 			.custom(value => {
 				return hasObjectIdType(value)
 			}),
-		query('teamId', 'must be a hash string')
+		param('id', 'must be a hash string')
 			.optional()
 			.custom(value => {
 				return hasObjectIdType(value)

@@ -25,6 +25,7 @@ export const addTeam = async (team: TeamInput): Promise<TeamDocument> => {
 		...mockTeam,
 		slug: slugify(mockTeam.name),
 	})
+
 	const user = await UserModel.findById(team.creator)
 	user.teams.push(newTeam.id)
 	await user.save()
