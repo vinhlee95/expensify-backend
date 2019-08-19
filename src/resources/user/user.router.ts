@@ -6,6 +6,7 @@ import {
 	validateUpdateMe,
 	validateUpdateUser,
 } from './user.validator'
+import {validateGetTeamBySlug} from '../team/team.validator'
 import {checkToken} from '../../middlewares/auth'
 
 /**
@@ -154,5 +155,25 @@ router
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
 	.get(readTeam, userController.getMyTeams)
+
+router
+	.route('/me/teams/:slug')
+	/**
+	 * @swagger
+	 *
+	 * /api/users/me/teams/{slug}:
+	 *   get:
+	 *     tags:
+	 *       - User
+	 *     summary: Get user's team by slug
+	 *     parameters:
+	 *       - $ref: '#/components/parameters/slug'
+	 *     responses:
+	 *       '201':
+	 *         $ref: '#/components/responses/TeamResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.get(readTeam, validateGetTeamBySlug(), userController.getTeamBySlug)
 
 export default router

@@ -1,4 +1,4 @@
-import {body} from 'express-validator/check'
+import {body, param} from 'express-validator/check'
 import {handleValidationError} from '../../middlewares/validator'
 
 export const validateCreateTeam = () => {
@@ -7,6 +7,13 @@ export const validateCreateTeam = () => {
 		body('description', 'Description must be a string')
 			.optional()
 			.isString(),
+		handleValidationError,
+	]
+}
+
+export const validateGetTeamBySlug = () => {
+	return [
+		param('slug', 'Slug must be a string').isString(),
 		handleValidationError,
 	]
 }

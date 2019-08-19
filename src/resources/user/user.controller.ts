@@ -126,3 +126,21 @@ export const getMyTeams: RequestHandler = async (req, res, next) => {
 		next(error)
 	}
 }
+
+/**
+ * Get user team by slug
+ *
+ * @param req
+ * @param res
+ */
+export const getTeamBySlug: RequestHandler = async (req, res, next) => {
+	try {
+		const {slug} = req.params
+		const {user} = req
+
+		const team = await services.getTeamBySlug(slug, user)
+		return res.json(successResponse(team))
+	} catch (error) {
+		next(error)
+	}
+}

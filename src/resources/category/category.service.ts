@@ -37,7 +37,7 @@ export const createOne = async (
 
 	if (!user.teams.includes(data.team)) {
 		return Promise.reject(
-			apiError.badRequest(
+			apiError.forbidden(
 				'This user does not belong to the team with that id',
 				ErrorCode.notATeamMember,
 			),
