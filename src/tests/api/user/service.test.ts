@@ -1,10 +1,12 @@
-import {UserDocument} from '../../../resources/user/user.model'
+import faker from 'faker'
+import UserModel, {UserDocument} from '../../../resources/user/user.model'
 import {addUser, addTeam} from '../../utils/db'
 import {createMockId, createMockUser, createMockTeam} from '../../utils/mock'
-import {getUserById} from '../../../resources/user/user.service'
+import {getUserById, getTeamBySlug} from '../../../resources/user/user.service'
 import {ApiError} from '../../../utils/apiError'
 import {Team} from '../../../resources/team/team.interface'
 import {getMyTeams} from '../../../resources/user/user.service'
+import TeamModel from '../../../resources/team/team.model'
 
 describe('[User Service]', () => {
 	let user: UserDocument
@@ -21,6 +23,41 @@ describe('[User Service]', () => {
 		])
 		userTeams = [team1, team2]
 		done()
+	})
+
+	describe('getTeamBySlug', () => {
+		it('should return correct team with slug', async () => {
+			try {
+				// Arrange
+				const savedUser = await UserModel.findById(user.id)
+				const savedTeam = await TeamModel.findById(savedUser.teams[0])
+
+				// Action
+				const foundTeam = await getTeamBySlug(savedTeam.slug, savedUser)
+
+				// Expect
+				expect(foundTeam.name).toEqual(savedTeam.name)
+				expect(foundTeam.description).toEqual(savedTeam.description)
+				expect(foundTeam.slug).toEqual(savedTeam.slug)
+				expect(foundTeam.id).toEqual(savedTeam.id)
+				expect(foundTeam.creator).toEqual(savedTeam.creator)
+			} catch (e) {
+				expect(e).toBeUndefined()
+			}
+		})
+
+		it('should return error when slug not found', async () => {
+			try {
+				// Arrange
+				const mockSlug = faker.random.word()
+				// Action
+				const foundTeam = await getTeamBySlug(mockSlug, user)
+				// Expect
+				expect(foundTeam).toBeUndefined()
+			} catch (e) {
+				expect(e).toBeInstanceOf(ApiError)
+			}
+		})
 	})
 
 	describe('getUserById', () => {
