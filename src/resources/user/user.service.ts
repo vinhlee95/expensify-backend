@@ -1,10 +1,12 @@
 import UserModel, {UserDocument} from './user.model'
 import {User} from './user.interface'
 import createLogger from '../../utils/logger'
-import apiError from '../../utils/apiError'
+import apiError, {ErrorCode} from '../../utils/apiError'
 import * as _ from 'lodash'
 import {Sort} from '../../middlewares/validator'
-import {TeamDocument} from '../team/team.model'
+import TeamModel, {TeamDocument} from '../team/team.model'
+import {TeamInput} from '../team/team.interface'
+import {slugify} from '../../utils/util'
 
 const logger = createLogger(module)
 
@@ -103,6 +105,8 @@ export const updateOne = async (
 }
 
 /**
+ * Delete an user
+ *
  * @param id
  */
 export const deleteOne = async (id: string): Promise<UserDocument> => {
@@ -117,6 +121,11 @@ export const deleteOne = async (id: string): Promise<UserDocument> => {
 	return Promise.resolve(removedUser)
 }
 
+/**
+ * Get user's own teams
+ *
+ * @param userId
+ */
 export const getMyTeams = async (userId: string): Promise<[TeamDocument]> => {
 	logger.debug(`Get teams by user id: %o`, userId)
 
@@ -126,4 +135,57 @@ export const getMyTeams = async (userId: string): Promise<[TeamDocument]> => {
 		.exec()
 
 	return Promise.resolve(user.teams)
+}
+
+/**
+ * Get user's team by slug
+ *
+ * @param slug
+ * @param user
+ */
+export const getTeamBySlug = async (
+	slug: string,
+	user: User,
+): Promise<TeamDocument> => {
+	logger.debug(`Get teams by slug: %o`, slug)
+
+	const team = await TeamModel.findOne({slug}).exec()
+	if (!team) {
+		return Promise.reject(apiError.notFound('Cannot find team with that slug'))
+	}
+
+	if (!user.teams.includes(team.id)) {
+		return Promise.reject(
+			apiError.forbidden(
+				'User does not belong to this team',
+				ErrorCode.notATeamMember,
+			),
+		)
+	}
+
+	return Promise.resolve(team)
+}
+
+/**
+ * Create new team
+ *
+ * @param teamData
+ * @param userId
+ */
+export const createTeam = async (
+	teamData: TeamInput,
+): Promise<TeamDocument> => {
+	logger.debug(`Create new team: %o`, teamData)
+
+	const newTeam = await TeamModel.create({
+		...teamData,
+		slug: slugify(teamData.name),
+	})
+
+	// Save team id to user object
+	const user = await UserModel.findById(teamData.creator)
+	user.teams.push(newTeam.id)
+	await user.save()
+
+	return Promise.resolve(newTeam)
 }
