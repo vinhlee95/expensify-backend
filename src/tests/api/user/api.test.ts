@@ -11,12 +11,12 @@ import {
 	getRoleWithPermisison,
 	signInUser,
 } from '../../utils/common'
-import {UserDocument} from '../../../resources/user/user.model'
+import UserModel, {UserDocument} from '../../../resources/user/user.model'
 import {UserRole, UserStatus} from '../../../resources/user/user.interface'
 import {ErrorCode} from '../../../utils/apiError'
 import {Permission} from '../../../middlewares/permission'
 import {Sort} from '../../../middlewares/validator'
-import {TeamDocument} from '../../../resources/team/team.model'
+import TeamModel, {TeamDocument} from '../../../resources/team/team.model'
 
 describe('[USERS API]', () => {
 	const sortFields = ['firstName', 'lastName', 'email', 'role']
@@ -48,6 +48,38 @@ describe('[USERS API]', () => {
 		])
 
 		dummyUserTeams = [team1, team2]
+	})
+
+	describe('GET /api/users/me/teams/:slug', () => {
+		it(`[${roleWithReadTeam}]. should return 200 the team that has provided slug`, async () => {
+			const token = signInUser(dummyUser)
+			const savedDummyUser = await UserModel.findById(dummyUser.id)
+			const savedTeamId = savedDummyUser.teams[0]
+			const savedTeam = await TeamModel.findById(savedTeamId)
+
+			// Action
+			const result = await apiRequest
+				.get(`/api/users/me/teams/${savedTeam.slug}`)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+
+		it(`[${roleWithReadTeam}]. should return 403 if user does not belong to the team`, async () => {
+			const token = signInUser(dummyUser)
+			const savedUser = await UserModel.findById(user.id)
+			const savedTeamId = savedUser.teams[0]
+			const savedTeam = await TeamModel.findById(savedTeamId)
+
+			// Action
+			const result = await apiRequest
+				.get(`/api/users/me/teams/${savedTeam.slug}`)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.FORBIDDEN)
+		})
 	})
 
 	describe('GET /api/users/teams', () => {
