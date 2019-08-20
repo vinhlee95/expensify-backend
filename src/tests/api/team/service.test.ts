@@ -136,9 +136,7 @@ describe('[Team service]', () => {
 		it('should return all categories', async () => {
 			try {
 				// Act
-				const incomeCategories = await getCategories(
-					team.id
-				)
+				const incomeCategories = await getCategories(team.id)
 
 				// Expect
 				expect(teamCategories.length).toEqual(incomeCategories.length)
