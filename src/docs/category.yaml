@@ -47,8 +47,6 @@ components:
                 type: string
               type:
                 type: string
-              teamId:
-                type: string
             required:
               - name
               - type
