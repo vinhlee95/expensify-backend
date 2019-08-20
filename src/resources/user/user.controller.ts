@@ -144,3 +144,20 @@ export const getTeamBySlug: RequestHandler = async (req, res, next) => {
 		next(error)
 	}
 }
+
+/**
+ * Create a team
+ *
+ * @param req
+ * @param res
+ */
+export const createTeam: RequestHandler = async (req, res, next) => {
+	try {
+		const userId = req.user.id
+		const newTeam = {...req.body, creator: userId}
+		const team = await services.createTeam(newTeam)
+		return res.json(successResponse(team, true))
+	} catch (error) {
+		next(error)
+	}
+}

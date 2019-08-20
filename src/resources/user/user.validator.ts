@@ -1,4 +1,4 @@
-import {body, query} from 'express-validator/check'
+import {body, query, param} from 'express-validator/check'
 import {handleValidationError} from '../../middlewares/validator'
 import {UserRole} from './user.interface'
 import {enumToValues} from '../../utils/util'
@@ -61,6 +61,23 @@ export const validateGetUsers = () => {
 				'createdAt',
 				'updatedAt',
 			]),
+		handleValidationError,
+	]
+}
+
+export const validateGetTeamBySlug = () => {
+	return [
+		param('slug', 'Slug must be a string').isString(),
+		handleValidationError,
+	]
+}
+
+export const validateCreateTeam = () => {
+	return [
+		body('name', 'Name must be a string').isString(),
+		body('description', 'Description must be a string')
+			.optional()
+			.isString(),
 		handleValidationError,
 	]
 }

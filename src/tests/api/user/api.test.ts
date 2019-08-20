@@ -2,7 +2,12 @@ import httpStatus from 'http-status'
 import _ from 'lodash'
 import faker from 'faker'
 import {addUser, addTeam} from '../../utils/db'
-import {createMockId, createMockUser, createMockTeam} from '../../utils/mock'
+import {
+	createMockId,
+	createMockUser,
+	createMockTeam,
+	createMockSlug,
+} from '../../utils/mock'
 import {
 	apiRequest,
 	filterArrayBySearchText,
@@ -48,6 +53,48 @@ describe('[USERS API]', () => {
 		])
 
 		dummyUserTeams = [team1, team2]
+	})
+
+	describe('POST /api/users/me/teams', () => {
+		it(`User. should return 201 with new created team`, async () => {
+			// Arrange
+			const token = signInUser(dummyUser)
+			const teamData = createMockTeam(dummyUser.id)
+
+			// Action
+			const result = await apiRequest
+				.post('/api/users/me/teams')
+				.set('Authorization', token)
+				.send(teamData)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.name).toEqual(teamData.name)
+		})
+
+		it(`User. should return 400 when team name is neither provided nor a string`, async () => {
+			// Arrange
+			const token = signInUser(dummyUser)
+			const noNameData = {}
+			const nonStringNameData = {name: faker.random.number}
+
+			// Action
+			const results = await Promise.all([
+				apiRequest
+					.post('/api/users/me/teams')
+					.set('Authorization', token)
+					.send(noNameData),
+				apiRequest
+					.post('/api/users/me/teams')
+					.set('Authorization', token)
+					.send(nonStringNameData),
+			])
+
+			// Expect
+			results.forEach(res => {
+				expect(res.status).toEqual(httpStatus.BAD_REQUEST)
+			})
+		})
 	})
 
 	describe('GET /api/users/me/teams/:slug', () => {
@@ -427,6 +474,7 @@ describe('[USERS API]', () => {
 		it('should return 401 when there is no token', async () => {
 			// Arrange
 			const mockId = createMockId()
+			const slug = createMockSlug()
 
 			// Action
 			const results = await Promise.all([
@@ -436,6 +484,8 @@ describe('[USERS API]', () => {
 				apiRequest.get(`/api/users/${mockId}`),
 				apiRequest.put(`/api/users/${mockId}`),
 				apiRequest.delete(`/api/users/${mockId}`),
+				apiRequest.post('/api/users/me/teams'),
+				apiRequest.get(`/api/users/me/teams/${slug}`),
 			])
 
 			// Expect
@@ -453,6 +503,7 @@ describe('[USERS API]', () => {
 					createMockUser(undefined, userStatus),
 				)
 				const noAccessRightToken = signInUser(noAccessRightUser)
+				const teamData = createMockTeam(noAccessRightUser.id)
 
 				// Action
 				const results = await Promise.all([
@@ -469,6 +520,10 @@ describe('[USERS API]', () => {
 					apiRequest
 						.delete(`/api/users/${mockId}`)
 						.set('Authorization', noAccessRightToken),
+					apiRequest
+						.post('/api/users/me/teams')
+						.set('Authorization', noAccessRightToken)
+						.send(teamData),
 				])
 
 				// Expect

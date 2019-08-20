@@ -8,11 +8,17 @@ import {
 	Category,
 	CategoryType,
 } from '../../resources/category/category.interface'
+import {slugify} from '../../utils/util'
 
 export const createMockId = () => {
 	const ObjectId = Types.ObjectId
 	const id = new ObjectId()
 	return id.toHexString()
+}
+
+export const createMockSlug = () => {
+	const teamName = faker.random.word()
+	return slugify(teamName)
 }
 
 export const createMockUser = (

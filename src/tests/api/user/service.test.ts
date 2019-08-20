@@ -2,7 +2,11 @@ import faker from 'faker'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
 import {addUser, addTeam} from '../../utils/db'
 import {createMockId, createMockUser, createMockTeam} from '../../utils/mock'
-import {getUserById, getTeamBySlug} from '../../../resources/user/user.service'
+import {
+	getUserById,
+	getTeamBySlug,
+	createTeam,
+} from '../../../resources/user/user.service'
 import {ApiError} from '../../../utils/apiError'
 import {Team} from '../../../resources/team/team.interface'
 import {getMyTeams} from '../../../resources/user/user.service'
@@ -23,6 +27,24 @@ describe('[User Service]', () => {
 		])
 		userTeams = [team1, team2]
 		done()
+	})
+
+	describe('createTeam', () => {
+		it('should return correct team and add save team id to user', async () => {
+			try {
+				// Arrange
+				const mockTeam = createMockTeam(user.id)
+
+				// Action
+				const createdTeam = await createTeam(mockTeam)
+
+				// Expect
+				expect(createdTeam.name).toEqual(mockTeam.name)
+				expect(createdTeam.creator.toString()).toEqual(user.id)
+			} catch (e) {
+				expect(e).toBeUndefined()
+			}
+		})
 	})
 
 	describe('getTeamBySlug', () => {
