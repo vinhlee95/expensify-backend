@@ -6,7 +6,7 @@ import UserModel from '../user/user.model'
 import createLogger from '../../utils/logger'
 import {slugify} from '../../utils/util'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
-import {Category} from '../category/category.interface'
+import {Category, CategoryType} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode} from '../../utils/apiError'
 
@@ -37,17 +37,28 @@ export const createOne = async (teamData: TeamInput): Promise<TeamDocument> => {
 /**
  * Get all categories
  *
- * @param type
+ * @param TYPE
  * @param teamId
  */
 export const getCategories = async (
-	type: string,
 	id: string,
+	type?: CategoryType,
 ): Promise<CategoryDocument[]> => {
-	const categories = await CategoryModel.find({
-		type,
-		team: id,
-	})
+	interface Query {
+		team: string
+		type?: CategoryType
+	}
+
+	console.log('ID: ', id)
+	console.log('type: ', type)
+
+	let query: Query = {team: id}
+
+	if (type) {
+		query.type = type
+	}
+
+	const categories = await CategoryModel.find(query)
 		.lean()
 		.exec()
 

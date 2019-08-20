@@ -136,7 +136,6 @@ components:
       in: query
       name: type
       description: Model type
-      required: true
       schema:
         type: string
 

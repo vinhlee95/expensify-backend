@@ -15,7 +15,9 @@ export const validateCreateTeam = () => {
 
 export const validateGetCategories = () => {
 	return [
-		query('type', 'Invalid category type').isIn(enumToValues(CategoryType)),
+		query('type', 'Invalid category type')
+			.optional()
+			.isIn(enumToValues(CategoryType)),
 		handleValidationError,
 	]
 }

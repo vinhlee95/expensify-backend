@@ -3,7 +3,7 @@ import faker from 'faker'
 import _ from 'lodash'
 
 import {signInUser, apiRequest, getRoleWithPermisison} from '../../utils/common'
-import {addUser, addTeam} from '../../utils/db'
+import {addUser, addTeam, addCategory} from '../../utils/db'
 import {
 	createMockUser,
 	createMockTeam,
@@ -15,6 +15,7 @@ import {ErrorCode} from '../../../utils/apiError'
 import {Permission} from '../../../middlewares/permission'
 import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryType} from '../../../resources/category/category.interface'
+import {CategoryDocument} from '../../../resources/category/category.model'
 
 describe('[TEAMS API]', () => {
 	const roleWithReadCategory = getRoleWithPermisison(Permission.ReadCategory)
@@ -22,11 +23,25 @@ describe('[TEAMS API]', () => {
 
 	let user1: UserDocument
 	let team: TeamDocument
+	let incomeCategories: CategoryDocument[]
+	let expenseCategories: CategoryDocument[]
 	let token: string
 
 	beforeEach(async () => {
 		user1 = await addUser(createMockUser(UserRole.User))
 		team = await addTeam(createMockTeam(user1.id))
+
+		expenseCategories = await Promise.all([
+			addCategory(createMockCategory(team.id, CategoryType.Expense)),
+			addCategory(createMockCategory(team.id, CategoryType.Expense)),
+		])
+
+		incomeCategories = await Promise.all([
+			addCategory(createMockCategory(team.id, CategoryType.Income)),
+			addCategory(createMockCategory(team.id, CategoryType.Income)),
+			addCategory(createMockCategory(team.id, CategoryType.Income)),
+		])
+
 		token = signInUser(user1)
 	})
 
@@ -37,14 +52,14 @@ describe('[TEAMS API]', () => {
 				.get(`/api/teams/${team.id}/categories`)
 				.set('Authorization', token)
 				.query({
-					type: faker.random.word,
+					type: faker.random.word(),
 				})
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.BAD_REQUEST)
 		})
 
-		it(`[${roleWithReadCategory}]. should return 200 with a list of categories`, async () => {
+		it(`[${roleWithReadCategory}]. should return 200 with a list of income categories`, async () => {
 			// Action
 			const result = await apiRequest
 				.get(`/api/teams/${team.id}/categories`)
@@ -55,6 +70,35 @@ describe('[TEAMS API]', () => {
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(incomeCategories.length)
+		})
+
+		it(`[${roleWithReadCategory}]. should return 200 with a list of expense categories`, async () => {
+			// Action
+			const result = await apiRequest
+				.get(`/api/teams/${team.id}/categories`)
+				.set('Authorization', token)
+				.query({
+					type: CategoryType.Expense,
+				})
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(expenseCategories.length)
+		})
+
+		it(`[${roleWithReadCategory}]. should return 200 with a list of all categories`, async () => {
+			// Arrange
+			const categories = [...expenseCategories, ...incomeCategories]
+
+			// Action
+			const result = await apiRequest
+				.get(`/api/teams/${team.id}/categories`)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(categories.length)
 		})
 	})
 
