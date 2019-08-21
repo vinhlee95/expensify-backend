@@ -100,9 +100,7 @@ describe('[USERS API]', () => {
 	it('User. should return 400 when creating 2 teams with similar name', async () => {
 		// Arrange
 		const token = signInUser(dummyUser)
-		const savedDummyUser = await UserModel.findById(dummyUser.id)
-		const savedTeamId = savedDummyUser.teams[0]
-		const savedTeam = await TeamModel.findById(savedTeamId)
+		const savedTeam = await TeamModel.findOne({creator: dummyUser.id})
 
 		// Action
 		const result = await apiRequest
@@ -117,9 +115,7 @@ describe('[USERS API]', () => {
 	describe('GET /api/users/me/teams/:slug', () => {
 		it(`[${roleWithReadTeam}]. should return 200 the team that has provided slug`, async () => {
 			const token = signInUser(dummyUser)
-			const savedDummyUser = await UserModel.findById(dummyUser.id)
-			const savedTeamId = savedDummyUser.teams[0]
-			const savedTeam = await TeamModel.findById(savedTeamId)
+			const savedTeam = await TeamModel.findOne({creator: dummyUser.id})
 
 			// Action
 			const result = await apiRequest
