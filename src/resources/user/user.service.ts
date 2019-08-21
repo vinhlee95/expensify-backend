@@ -177,6 +177,18 @@ export const createTeam = async (
 ): Promise<TeamDocument> => {
 	logger.debug(`Create new team: %o`, teamData)
 
+	const createdTeams = await TeamModel.find({creator: teamData.creator})
+		.select('name')
+		.exec()
+	if (createdTeams.some(team => team.name === teamData.name)) {
+		return Promise.reject(
+			apiError.badRequest(
+				'There is already a team has similar name created by this user',
+				ErrorCode.duplicatedTeamName,
+			),
+		)
+	}
+
 	const newTeam = await TeamModel.create({
 		...teamData,
 		slug: slugify(teamData.name),

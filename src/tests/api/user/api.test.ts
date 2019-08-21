@@ -56,7 +56,7 @@ describe('[USERS API]', () => {
 	})
 
 	describe('POST /api/users/me/teams', () => {
-		it(`User. should return 201 with new created team`, async () => {
+		it('User. should return 201 with new created team', async () => {
 			// Arrange
 			const token = signInUser(dummyUser)
 			const teamData = createMockTeam(dummyUser.id)
@@ -72,7 +72,7 @@ describe('[USERS API]', () => {
 			expect(result.body.data.name).toEqual(teamData.name)
 		})
 
-		it(`User. should return 400 when team name is neither provided nor a string`, async () => {
+		it('User. should return 400 when team name is neither provided nor a string', async () => {
 			// Arrange
 			const token = signInUser(dummyUser)
 			const noNameData = {}
@@ -97,12 +97,25 @@ describe('[USERS API]', () => {
 		})
 	})
 
+	it('User. should return 400 when creating 2 teams with similar name', async () => {
+		// Arrange
+		const token = signInUser(dummyUser)
+		const savedTeam = await TeamModel.findOne({creator: dummyUser.id})
+
+		// Action
+		const result = await apiRequest
+			.post(`/api/users/me/teams`)
+			.set('Authorization', token)
+			.send({name: savedTeam.name})
+
+		// Expect
+		expect(result.status).toEqual(httpStatus.BAD_REQUEST)
+	})
+
 	describe('GET /api/users/me/teams/:slug', () => {
 		it(`[${roleWithReadTeam}]. should return 200 the team that has provided slug`, async () => {
 			const token = signInUser(dummyUser)
-			const savedDummyUser = await UserModel.findById(dummyUser.id)
-			const savedTeamId = savedDummyUser.teams[0]
-			const savedTeam = await TeamModel.findById(savedTeamId)
+			const savedTeam = await TeamModel.findOne({creator: dummyUser.id})
 
 			// Action
 			const result = await apiRequest
