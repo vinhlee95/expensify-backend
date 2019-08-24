@@ -15,6 +15,7 @@ export enum ErrorCode {
 	categoryNameNotUnique = 201,
 	// Team: 3xx
 	notATeamMember = 301,
+	duplicatedTeamName = 302,
 }
 
 /**

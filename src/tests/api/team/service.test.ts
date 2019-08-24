@@ -5,7 +5,6 @@ import {
 	createMockCategory,
 } from '../../utils/mock'
 import {
-	createOne,
 	createCategory,
 	getCategories,
 } from '../../../resources/team/team.service'
@@ -36,24 +35,6 @@ describe('[Team service]', () => {
 			addCategory(createMockCategory(team2.id, CategoryType.Expense)),
 			addCategory(createMockCategory(team2.id, CategoryType.Income)),
 		])
-	})
-
-	describe('createOne', () => {
-		it('should return correct team and add save team id to user', async () => {
-			try {
-				// Arrange
-				const mockTeam = createMockTeam(user.id)
-
-				// Action
-				const createdTeam = await createOne(mockTeam)
-
-				// Expect
-				expect(createdTeam.name).toEqual(mockTeam.name)
-				expect(createdTeam.creator.toString()).toEqual(user.id)
-			} catch (e) {
-				expect(e).toBeUndefined()
-			}
-		})
 	})
 
 	describe('createCategory', () => {

@@ -139,6 +139,14 @@ components:
       schema:
         type: string
 
+    slug: # Can be referenced as '#/components/parameters/slug'
+      in: query
+      name: slug
+      description: slug of the model
+      required: true
+      schema:
+        type: string
+
 #-------------------------------
 # Reusable responses
 #-------------------------------

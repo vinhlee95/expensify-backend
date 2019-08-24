@@ -1,38 +1,11 @@
-import TeamModel, {TeamDocument} from './team.model'
-import {TeamInput} from './team.interface'
-import UserModel from '../user/user.model'
-
 // Utils
 import createLogger from '../../utils/logger'
-import {slugify} from '../../utils/util'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
 import {Category, CategoryType} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode} from '../../utils/apiError'
 
 const logger = createLogger(module)
-
-/**
- * Create new team
- *
- * @param teamData
- * @param userId
- */
-export const createOne = async (teamData: TeamInput): Promise<TeamDocument> => {
-	logger.debug(`Create new team: %o`, teamData)
-
-	const newTeam = await TeamModel.create({
-		...teamData,
-		slug: slugify(teamData.name),
-	})
-
-	// Save team id to user object
-	const user = await UserModel.findById(teamData.creator)
-	user.teams.push(newTeam.id)
-	await user.save()
-
-	return Promise.resolve(newTeam)
-}
 
 /**
  * Get all categories
@@ -48,9 +21,6 @@ export const getCategories = async (
 		team: string
 		type?: CategoryType
 	}
-
-	console.log('ID: ', id)
-	console.log('type: ', type)
 
 	let query: Query = {team: id}
 
@@ -75,6 +45,7 @@ export const createCategory = async (
 	data: Category,
 	user: User,
 ): Promise<CategoryDocument> => {
+	logger.debug(`Create new category: %o`, data)
 	// Check if user is in the provided team id
 	if (!user.teams.includes(data.team)) {
 		return Promise.reject(
