@@ -4,10 +4,6 @@ import ExpenseItem from './expenseItem.interface'
 export interface ExpenseItemDocument extends Document, ExpenseItem {}
 
 const expenseItemSchema = new Schema({
-	date: {
-		type: Date,
-		required: true,
-	},
 	name: {
 		type: String,
 		required: true,
@@ -17,10 +13,17 @@ const expenseItemSchema = new Schema({
 	},
 	quantity: {
 		type: Number,
+		min: 1,
+		default: 1,
 		required: true,
 	},
 	price: {
 		type: Number,
+		min: 0,
+		required: true,
+	},
+	date: {
+		type: Date,
 		required: true,
 	},
 	category: {
