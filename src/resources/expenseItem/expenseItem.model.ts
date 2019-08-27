@@ -24,17 +24,21 @@ const expenseItemSchema = new Schema({
 	},
 	date: {
 		type: Date,
+		default: Date.now,
 		required: true,
 	},
 	category: {
+		required: true,
 		type: Schema.Types.ObjectId,
 		ref: 'category',
 	},
 	team: {
+		required: true,
 		type: Schema.Types.ObjectId,
 		ref: 'team',
 	},
 	creator: {
+		required: true,
 		type: Schema.Types.ObjectId,
 		ref: 'user',
 	},
