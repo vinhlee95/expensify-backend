@@ -12,7 +12,7 @@ export const getCategories: RequestHandler = async (req, res, next) => {
 	const {id} = req.params
 	const {type} = req.query
 	try {
-		const categories = await services.getCategories(type, id)
+		const categories = await services.getCategories(id, type)
 		return res.json(successResponse(categories))
 	} catch (error) {
 		next(error)

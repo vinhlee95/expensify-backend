@@ -1,7 +1,7 @@
 // Utils
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
-import {Category} from '../category/category.interface'
+import {Category, CategoryType} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode} from '../../utils/apiError'
 
@@ -10,18 +10,25 @@ const logger = createLogger(module)
 /**
  * Get all categories
  *
- * @param type
+ * @param TYPE
  * @param teamId
  */
 export const getCategories = async (
-	type: string,
 	id: string,
+	type?: CategoryType,
 ): Promise<CategoryDocument[]> => {
-	logger.debug(`Get categories by type: %o`, type)
-	const categories = await CategoryModel.find({
-		type,
-		team: id,
-	})
+	interface Query {
+		team: string
+		type?: CategoryType
+	}
+
+	let query: Query = {team: id}
+
+	if (type) {
+		query.type = type
+	}
+
+	const categories = await CategoryModel.find(query)
 		.lean()
 		.exec()
 

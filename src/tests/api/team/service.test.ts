@@ -83,8 +83,8 @@ describe('[Team service]', () => {
 
 				// Act
 				const expenseCategories = await getCategories(
-					CategoryType.Expense,
 					team.id,
+					CategoryType.Expense,
 				)
 
 				// Expect
@@ -103,12 +103,24 @@ describe('[Team service]', () => {
 
 				// Act
 				const incomeCategories = await getCategories(
-					CategoryType.Income,
 					team.id,
+					CategoryType.Income,
 				)
 
 				// Expect
 				expect(teamIncomeCategories.length).toEqual(incomeCategories.length)
+			} catch (e) {
+				expect(e).toBeUndefined()
+			}
+		})
+
+		it('should return all categories', async () => {
+			try {
+				// Act
+				const incomeCategories = await getCategories(team.id)
+
+				// Expect
+				expect(teamCategories.length).toEqual(incomeCategories.length)
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
