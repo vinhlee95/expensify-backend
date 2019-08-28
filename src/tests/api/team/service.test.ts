@@ -1,4 +1,4 @@
-import {addCategory, addTeam, addUser} from '../../utils/db'
+import {addCategory, addExpenseItem, addTeam, addUser} from '../../utils/db'
 import {
 	createMockCategory,
 	createMockExpenseItem,
@@ -9,6 +9,7 @@ import {
 	createCategory,
 	createExpenseItem,
 	getCategories,
+	getExpenseItems,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
@@ -16,12 +17,15 @@ import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryDocument} from '../../../resources/category/category.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {ApiError} from '../../../utils/apiError'
+import ExpenseItem from '../../../resources/expenseItem/expenseItem.interface'
+import _ from 'lodash'
 
 describe('[Team service]', () => {
 	let user: UserDocument
 	let user2: UserDocument
 	let team: TeamDocument
 	let team2: TeamDocument
+	let teamExpenseItems: ExpenseItem[]
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
@@ -42,6 +46,16 @@ describe('[Team service]', () => {
 			addCategory(createMockCategory(team2.id, CategoryType.Expense)),
 			addCategory(createMockCategory(team2.id, CategoryType.Income)),
 		])
+
+		const expenseCategory = teamCategories[1]
+
+		teamExpenseItems = await Promise.all(
+			_.times(6, () =>
+				addExpenseItem(
+					createMockExpenseItem(team.id, user.id, expenseCategory.id),
+				),
+			),
+		)
 	})
 
 	describe('createCategory', () => {
@@ -163,7 +177,6 @@ describe('[Team service]', () => {
 			const expenseItem = createExpenseItem(user, mockExpenseItem)
 
 			// Expect
-
 			await expect(expenseItem).rejects.toThrow(ApiError)
 		})
 
@@ -182,8 +195,28 @@ describe('[Team service]', () => {
 			const expenseItem = createExpenseItem(user, mockExpenseItem)
 
 			// Expect
-
 			await expect(expenseItem).rejects.toThrow(ApiError)
+		})
+	})
+
+	describe('getExpenseItems', () => {
+		it('should get expense items', async () => {
+			// Act
+			const expenseItems = await getExpenseItems(team.id)
+
+			// Expect
+			expect(expenseItems.length).toEqual(teamExpenseItems.length)
+		})
+
+		it('should get expense items with correct pagination', async () => {
+			// Arrange
+			const limit = 4
+
+			// Act
+			const expenseItems = await getExpenseItems(team.id, {limit})
+
+			// Expect
+			expect(expenseItems.length).toEqual(limit)
 		})
 	})
 })
