@@ -10,15 +10,29 @@ import ExpenseItem from '../expenseItem/expenseItem.interface'
 
 const logger = createLogger(module)
 
+/**
+ * Get all categories
+ *
+ * @param TYPE
+ * @param teamId
+ */
+
 export const getCategories = async (
-	type: string,
 	id: string,
+	type?: CategoryType,
 ): Promise<CategoryDocument[]> => {
-	logger.debug(`Get categories by type: %o`, type)
-	const categories = await CategoryModel.find({
-		type,
-		team: id,
-	})
+	interface Query {
+		team: string
+		type?: CategoryType
+	}
+
+	let query: Query = {team: id}
+
+	if (type) {
+		query.type = type
+	}
+
+	const categories = await CategoryModel.find(query)
 		.lean()
 		.exec()
 
@@ -103,6 +117,8 @@ export const getExpenseItems = async (
 	id: string,
 	{offset = 0, limit = 20} = {},
 ): Promise<ExpenseItemDocument[]> => {
+	logger.debug(`Get expense items for team id: ${id}`)
+
 	const expenseItems = await ExpenseItemModel.find({
 		team: id,
 	})

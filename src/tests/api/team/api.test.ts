@@ -30,7 +30,8 @@ describe('[TEAMS API]', () => {
 
 	let user1: UserDocument
 	let team1: TeamDocument
-	let categories: CategoryDocument[]
+	let expenseCategories: CategoryDocument[]
+	let incomeCategories: CategoryDocument[]
 	let teamExpenseItems: ExpenseItem[]
 	let token: string
 
@@ -38,19 +39,21 @@ describe('[TEAMS API]', () => {
 		user1 = await addUser(createMockUser(UserRole.User))
 		team1 = await addTeam(createMockTeam(user1.id))
 
-		categories = await Promise.all([
+		expenseCategories = await Promise.all([
 			addCategory(createMockCategory(team1.id, CategoryType.Expense)),
-			addCategory(createMockCategory(team1.id, CategoryType.Income)),
+			addCategory(createMockCategory(team1.id, CategoryType.Expense)),
 		])
 
-		const expenseCategory = categories.find(
-			category => category.type === CategoryType.Expense,
-		)
+		incomeCategories = await Promise.all([
+			addCategory(createMockCategory(team1.id, CategoryType.Income)),
+			addCategory(createMockCategory(team1.id, CategoryType.Income)),
+			addCategory(createMockCategory(team1.id, CategoryType.Income)),
+		])
 
 		teamExpenseItems = await Promise.all(
 			_.times(6, () =>
 				addExpenseItem(
-					createMockExpenseItem(team1.id, user1.id, expenseCategory.id),
+					createMockExpenseItem(team1.id, user1.id, expenseCategories[0].id),
 				),
 			),
 		)
@@ -65,14 +68,14 @@ describe('[TEAMS API]', () => {
 				.get(`/api/teams/${team1.id}/categories`)
 				.set('Authorization', token)
 				.query({
-					type: faker.random.word,
+					type: faker.random.word(),
 				})
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.BAD_REQUEST)
 		})
 
-		it(`[${roleWithReadCategory}]. should return 200 with a list of categories`, async () => {
+		it(`[${roleWithReadCategory}]. should return 200 with a list of income categories`, async () => {
 			// Action
 			const result = await apiRequest
 				.get(`/api/teams/${team1.id}/categories`)
@@ -83,6 +86,35 @@ describe('[TEAMS API]', () => {
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(incomeCategories.length)
+		})
+
+		it(`[${roleWithReadCategory}]. should return 200 with a list of expense categories`, async () => {
+			// Action
+			const result = await apiRequest
+				.get(`/api/teams/${team1.id}/categories`)
+				.set('Authorization', token)
+				.query({
+					type: CategoryType.Expense,
+				})
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(expenseCategories.length)
+		})
+
+		it(`[${roleWithReadCategory}]. should return 200 with a list of all categories`, async () => {
+			// Arrange
+			const categories = [...expenseCategories, ...incomeCategories]
+
+			// Action
+			const result = await apiRequest
+				.get(`/api/teams/${team1.id}/categories`)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(categories.length)
 		})
 	})
 
@@ -146,9 +178,7 @@ describe('[TEAMS API]', () => {
 	describe('POST /api/teams/:id/expenseItems', () => {
 		it(`[${roleWithWriteExpenseItem}]. should return 200 with new created expenseItem when data is valid`, async () => {
 			// Arrange
-			const expenseCategory = categories.find(
-				category => category.type === CategoryType.Expense,
-			)
+			const expenseCategory = expenseCategories[0]
 
 			const mockExpensItem = createMockExpenseItem(
 				team1.id,
@@ -168,9 +198,7 @@ describe('[TEAMS API]', () => {
 
 		it(`[${roleWithWriteExpenseItem}]. should return 200 with new created expenseItem with income category`, async () => {
 			// Arrange
-			const expenseCategory = categories.find(
-				category => category.type === CategoryType.Income,
-			)
+			const expenseCategory = incomeCategories[0]
 
 			const mockExpensItem = createMockExpenseItem(
 				team1.id,

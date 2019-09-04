@@ -2,9 +2,10 @@ import {User, UserRole, UserStatus} from '../resources/user/user.interface'
 import _ from 'lodash'
 import UserModel from '../resources/user/user.model'
 import createLogger from '../utils/logger'
-import {createMockTeam} from '../tests/utils/mock'
+import {createMockCategory, createMockTeam} from '../tests/utils/mock'
 import TeamModel from '../resources/team/team.model'
-import {addTeam, addUser} from '../tests/utils/db'
+import {addCategory, addTeam, addUser} from '../tests/utils/db'
+import {CategoryType} from '../resources/category/category.interface'
 
 const logger = createLogger(module)
 
@@ -46,6 +47,20 @@ const createTeams = (creatorId: string) => {
 	return mockTeams.map(mockTeam => addTeam(mockTeam))
 }
 
+const createCategory = (teamId: string) => {
+	const mockExpenseCategory = _.times(4, () =>
+		createMockCategory(teamId, CategoryType.Expense),
+	)
+	const mockIncomeCategory = _.times(4, () =>
+		createMockCategory(teamId, CategoryType.Income),
+	)
+	const mockCategories = [...mockExpenseCategory, ...mockIncomeCategory]
+
+	console.log('mock categories: ', mockCategories)
+
+	return mockCategories.map(mockCategory => addCategory(mockCategory))
+}
+
 export const seed = async () => {
 	try {
 		await cleanDB()
@@ -54,7 +69,11 @@ export const seed = async () => {
 
 		const users = await Promise.all(createUsers())
 
-		await Promise.all(users.map(user => createTeams(user.id)).flat())
+		const teams = await Promise.all(
+			users.map(user => createTeams(user.id)).flat(),
+		)
+
+		await Promise.all(teams.map(team => createCategory(team.id)).flat())
 
 		logger.debug(`Database seeded`)
 	} catch (e) {
