@@ -62,9 +62,11 @@ export const createMockExpenseItem = (
 	date: faker.date.recent(),
 	quantity: faker.random.number({
 		min: 1,
+		max: 5,
 	}),
 	price: faker.random.number({
 		min: 1,
+		max: 500,
 	}),
 	category: categoryId,
 	team: teamId,
