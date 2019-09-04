@@ -1,18 +1,15 @@
-// Utils
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
-import {Category} from '../category/category.interface'
+import ExpenseItemModel, {
+	ExpenseItemDocument,
+} from '../expenseItem/expenseItem.model'
+import {Category, CategoryType} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode} from '../../utils/apiError'
+import ExpenseItem from '../expenseItem/expenseItem.interface'
 
 const logger = createLogger(module)
 
-/**
- * Get all categories
- *
- * @param type
- * @param teamId
- */
 export const getCategories = async (
 	type: string,
 	id: string,
@@ -28,17 +25,12 @@ export const getCategories = async (
 	return Promise.resolve(categories)
 }
 
-/**
- * Create new category
- *
- * @param categoryData
- * @param teamId
- */
 export const createCategory = async (
 	data: Category,
 	user: User,
 ): Promise<CategoryDocument> => {
 	logger.debug(`Create new category: %o`, data)
+
 	// Check if user is in the provided team id
 	if (!user.teams.includes(data.team)) {
 		return Promise.reject(
@@ -69,4 +61,55 @@ export const createCategory = async (
 	const newCategory = await CategoryModel.create(data)
 
 	return Promise.resolve(newCategory)
+}
+
+export const createExpenseItem = async (
+	user: User,
+	data: ExpenseItem,
+): Promise<ExpenseItemDocument> => {
+	logger.debug(`Create new expense item: %o`, data)
+
+	// Check if user is in the provided team id
+	if (!user.teams.includes(data.team)) {
+		return Promise.reject(
+			apiError.badRequest(
+				'This user does not belong to the team with that id',
+				ErrorCode.notATeamMember,
+			),
+		)
+	}
+
+	// Check valid category
+	const category = await CategoryModel.findById(data.category)
+		.lean()
+		.exec()
+
+	if (!category) {
+		return Promise.reject(
+			apiError.badRequest('Cannot find category with this id'),
+		)
+	}
+
+	if (category.type !== CategoryType.Expense) {
+		return Promise.reject(apiError.badRequest('Category type must be expense'))
+	}
+
+	const newExpenseItem = await ExpenseItemModel.create(data)
+
+	return Promise.resolve(newExpenseItem)
+}
+
+export const getExpenseItems = async (
+	id: string,
+	{offset = 0, limit = 20} = {},
+): Promise<ExpenseItemDocument[]> => {
+	const expenseItems = await ExpenseItemModel.find({
+		team: id,
+	})
+		.skip(offset)
+		.limit(limit)
+		.lean()
+		.exec()
+
+	return Promise.resolve(expenseItems)
 }
