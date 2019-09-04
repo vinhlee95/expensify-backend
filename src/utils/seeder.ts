@@ -2,10 +2,16 @@ import {User, UserRole, UserStatus} from '../resources/user/user.interface'
 import _ from 'lodash'
 import UserModel from '../resources/user/user.model'
 import createLogger from '../utils/logger'
-import {createMockCategory, createMockTeam} from '../tests/utils/mock'
+import {
+	createMockCategory,
+	createMockExpenseItem,
+	createMockTeam,
+} from '../tests/utils/mock'
 import TeamModel from '../resources/team/team.model'
-import {addCategory, addTeam, addUser} from '../tests/utils/db'
+import ExpenseItemModel from '../resources/expenseItem/expenseItem.model'
+import {addCategory, addExpenseItem, addTeam, addUser} from '../tests/utils/db'
 import {CategoryType} from '../resources/category/category.interface'
+import CategoryModel from '../resources/category/category.model'
 
 const logger = createLogger(module)
 
@@ -34,7 +40,12 @@ const mockUser2: User = {
 const mockUsers = [mockUser1, mockUser2]
 
 const cleanDB = async () => {
-	return Promise.all([UserModel.deleteMany({}), TeamModel.deleteMany({})])
+	return Promise.all([
+		UserModel.deleteMany({}),
+		TeamModel.deleteMany({}),
+		CategoryModel.deleteMany({}),
+		ExpenseItemModel.deleteMany({}),
+	])
 }
 
 const createUsers = () => {
@@ -42,23 +53,35 @@ const createUsers = () => {
 }
 
 const createTeams = (creatorId: string) => {
-	const mockTeams = _.times(6, () => createMockTeam(creatorId))
+	const mockTeams = _.times(2, () => createMockTeam(creatorId))
 
 	return mockTeams.map(mockTeam => addTeam(mockTeam))
 }
 
-const createCategory = (teamId: string) => {
-	const mockExpenseCategory = _.times(4, () =>
+const createCategories = (teamId: string) => {
+	const mockExpenseCategories = _.times(4, () =>
 		createMockCategory(teamId, CategoryType.Expense),
 	)
-	const mockIncomeCategory = _.times(4, () =>
+	const mockIncomeCategories = _.times(2, () =>
 		createMockCategory(teamId, CategoryType.Income),
 	)
-	const mockCategories = [...mockExpenseCategory, ...mockIncomeCategory]
-
-	console.log('mock categories: ', mockCategories)
+	const mockCategories = [...mockExpenseCategories, ...mockIncomeCategories]
 
 	return mockCategories.map(mockCategory => addCategory(mockCategory))
+}
+
+const createExpenseItems = (
+	teamId: string,
+	userId: string,
+	categoryId: string,
+) => {
+	const mockExpenseItems = _.times(10, () =>
+		createMockExpenseItem(teamId, userId, categoryId),
+	)
+
+	return mockExpenseItems.map(mockExpenseItem =>
+		addExpenseItem(mockExpenseItem),
+	)
 }
 
 export const seed = async () => {
@@ -73,7 +96,19 @@ export const seed = async () => {
 			users.map(user => createTeams(user.id)).flat(),
 		)
 
-		await Promise.all(teams.map(team => createCategory(team.id)).flat())
+		const categories = await Promise.all(
+			teams.map(team => createCategories(team.id)).flat(),
+		)
+
+		teams.map(async team => {
+			await Promise.all(
+				categories
+					.map(category =>
+						createExpenseItems(team.id, users[0].id, category.id),
+					)
+					.flat(),
+			)
+		})
 
 		logger.debug(`Database seeded`)
 	} catch (e) {
