@@ -5,7 +5,7 @@ import {
 	createMockCategory,
 } from '../../utils/mock'
 import {
-	createCategory,
+	createCategory, deleteCategory,
 	getCategories,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
@@ -17,11 +17,13 @@ import {ApiError} from '../../../utils/apiError'
 
 describe('[Team service]', () => {
 	let user: UserDocument
+	let user2: UserDocument
 	let team: TeamDocument
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
 		user = await addUser(createMockUser())
+		user2 = await addUser(createMockUser())
 		team = await addTeam(createMockTeam(user.id))
 		const team2 = await addTeam(createMockTeam(user.id))
 
@@ -124,6 +126,30 @@ describe('[Team service]', () => {
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
+		})
+	})
+
+	describe('getCategories', () => {
+		it('should delete category', async () => {
+			// Arrange
+			const category = teamCategories[0]
+
+			// Act
+			const deletedCategory = await deleteCategory(team, category, user)
+
+			// Expect
+			expect(deletedCategory.id.toString()).toEqual(category.id)
+		})
+
+		it('should throw error when deleting category if user is not creator', async () => {
+			// Arrange
+			const category = teamCategories[0]
+
+			// Act
+			const deletedCategory = deleteCategory(team, category, user2)
+
+			// Expect
+			await expect(deletedCategory).rejects.toThrow(ApiError)
 		})
 	})
 })

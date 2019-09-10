@@ -2,6 +2,7 @@ import {RequestHandler} from 'express'
 import {successResponse} from '../../utils/apiResponse'
 import * as services from './team.service'
 
+
 /**
  * Get categories
  *
@@ -34,6 +35,17 @@ export const createCategory: RequestHandler = async (req, res, next) => {
 		}
 		const newCategory = await services.createCategory(categoryData, req.user)
 		return res.json(successResponse(newCategory, true))
+	} catch (error) {
+		next(error)
+	}
+}
+
+export const deleteCategory: RequestHandler = async (req, res, next) => {
+	try {
+		const {team, category, user} = req
+
+		const deletedCategory = await services.deleteCategory(team, category, user)
+		return res.json(successResponse(deletedCategory, true))
 	} catch (error) {
 		next(error)
 	}

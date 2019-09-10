@@ -4,6 +4,8 @@ import CategoryModel, {CategoryDocument} from '../category/category.model'
 import {Category, CategoryType} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode} from '../../utils/apiError'
+import {TeamDocument} from './team.model'
+import {UserDocument} from '../user/user.model'
 
 const logger = createLogger(module)
 
@@ -76,4 +78,24 @@ export const createCategory = async (
 	const newCategory = await CategoryModel.create(data)
 
 	return Promise.resolve(newCategory)
+}
+
+export const deleteCategory = async (
+	team: TeamDocument,
+	category: CategoryDocument,
+	user: UserDocument,
+): Promise<CategoryDocument> => {
+	logger.debug(`Delete category with id: ${category.id}`)
+
+	// Check if user is creator
+	if (!team.creator.equals(user.id)) {
+		return Promise.reject(
+			apiError.forbidden(
+				'This user is not team creator',
+				ErrorCode.notACreator,
+			),
+		)
+	}
+
+	return category.remove()
 }
