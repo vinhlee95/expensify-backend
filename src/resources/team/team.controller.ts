@@ -32,6 +32,7 @@ export const createExpenseItem: RequestHandler = async (req, res, next) => {
 		const {id} = req.params
 		const expenseItem = {
 			...req.body,
+			creator: req.user,
 			team: id,
 		}
 		const newExpenseItem = await services.createExpenseItem(
