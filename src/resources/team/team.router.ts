@@ -81,7 +81,6 @@ router
 	 */
 	.post(writeCategory, validateCreateCategory(), teamController.createCategory)
 
-
 /**
  * @swagger
  *

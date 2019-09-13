@@ -2,7 +2,6 @@ import {RequestHandler} from 'express'
 import {successResponse} from '../../utils/apiResponse'
 import * as services from './team.service'
 
-
 /**
  * Get categories
  *

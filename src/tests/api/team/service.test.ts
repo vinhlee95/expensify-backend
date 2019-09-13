@@ -5,7 +5,8 @@ import {
 	createMockCategory,
 } from '../../utils/mock'
 import {
-	createCategory, deleteCategory,
+	createCategory,
+	deleteCategory,
 	getCategories,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
