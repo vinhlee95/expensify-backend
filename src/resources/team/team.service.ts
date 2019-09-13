@@ -124,6 +124,7 @@ export const getExpenseItems = async (
 	})
 		.skip(offset)
 		.limit(limit)
+		.populate('category')
 		.lean()
 		.exec()
 
