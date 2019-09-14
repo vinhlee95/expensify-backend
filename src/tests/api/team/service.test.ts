@@ -2,12 +2,13 @@ import {addUser, addTeam, addCategory} from '../../utils/db'
 import {
 	createMockTeam,
 	createMockUser,
-	createMockCategory,
+	createMockCategory, createMockId,
 } from '../../utils/mock'
 import {
 	createCategory,
 	deleteCategory,
-	getCategories,
+	getCategories, parseCategoryIdParam,
+	parseTeamIdParam,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import {UserDocument} from '../../../resources/user/user.model'
@@ -38,6 +39,51 @@ describe('[Team service]', () => {
 			addCategory(createMockCategory(team2.id, CategoryType.Expense)),
 			addCategory(createMockCategory(team2.id, CategoryType.Income)),
 		])
+	})
+
+	describe('parseTeamIdParam', () => {
+		it('should return team when id is valid', async () => {
+			// Act
+			const foundTeam = await parseTeamIdParam(team.id)
+
+			// Expect
+			expect(foundTeam.id).toEqual(team.id)
+		})
+
+		it('should throw error when id is invalid', async () => {
+			// Arrange
+			const randomId = createMockId()
+
+			// Act
+			const foundTeam = parseTeamIdParam(randomId)
+
+			// Expect
+			await expect(foundTeam).rejects.toThrow(ApiError)
+		})
+	})
+
+	describe('parseCategoryIdParam', () => {
+		it('should return category when id is valid', async () => {
+			// Arange
+			const category = teamCategories[0]
+
+			// Act
+			const foundCategory = await parseCategoryIdParam(category.id)
+
+			// Expect
+			expect(foundCategory.id).toEqual(category.id)
+		})
+
+		it('should throw error when id is invalid', async () => {
+			// Arrange
+			const randomId = createMockId()
+
+			// Act
+			const foundCategory = parseCategoryIdParam(randomId)
+
+			// Expect
+			await expect(foundCategory).rejects.toThrow(ApiError)
+		})
 	})
 
 	describe('createCategory', () => {

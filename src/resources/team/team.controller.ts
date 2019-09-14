@@ -1,6 +1,31 @@
-import {RequestHandler} from 'express'
+import {RequestHandler, RequestParamHandler} from 'express'
 import {successResponse} from '../../utils/apiResponse'
 import * as services from './team.service'
+
+export const parseTeamIdParam: RequestParamHandler = (req, res, next, id) => {
+	services
+		.parseTeamIdParam(id)
+		.then(team => {
+			req.team = team
+			return next()
+		})
+		.catch(next)
+}
+
+export const parseCategoryIdParam: RequestParamHandler = (
+	req,
+	res,
+	next,
+	id,
+) => {
+	services
+		.parseCategoryIdParam(id)
+		.then(category => {
+			req.category = category
+			return next()
+		})
+		.catch(next)
+}
 
 /**
  * Get categories

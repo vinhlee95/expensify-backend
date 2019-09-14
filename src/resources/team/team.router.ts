@@ -3,38 +3,15 @@ import {Permission, protect} from '../../middlewares/permission'
 
 import {validateGetCategories, validateCreateCategory} from './team.validator'
 import * as teamController from './team.controller'
-import CategoryModel from '../category/category.model'
-import {notFound} from '../../utils/apiError'
-import TeamModel from './team.model'
 
 const router = Router()
 
 const readCategory = protect([Permission.ReadCategory])
 const writeCategory = protect([Permission.WriteCategory])
 
-router.param('categoryId', (req, res, next, categoryId) => {
-	CategoryModel.findById(categoryId).then(category => {
-		if (!category) {
-			return next(notFound('Cannot find category with that id'))
-		}
+router.param('categoryId', teamController.parseCategoryIdParam)
 
-		req.category = category
-
-		return next()
-	})
-})
-
-router.param('id', (req, res, next, id) => {
-	TeamModel.findById(id).then(team => {
-		if (!team) {
-			return next(notFound('Cannot find team with that id'))
-		}
-
-		req.team = team
-
-		return next()
-	})
-})
+router.param('id', teamController.parseTeamIdParam)
 
 /**
  * @swagger
