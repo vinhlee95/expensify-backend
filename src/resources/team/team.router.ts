@@ -1,7 +1,12 @@
 import {Router} from 'express'
 import {Permission, protect} from '../../middlewares/permission'
 
-import {validateGetCategories, validateCreateCategory} from './team.validator'
+import {
+	validateGetCategories,
+	validateCreateCategory,
+	validateUpdateCategory,
+	checkTeamCreator,
+} from './team.validator'
 import * as teamController from './team.controller'
 
 const router = Router()
@@ -82,6 +87,28 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.delete(writeCategory, teamController.deleteCategory)
+	.delete(writeCategory, checkTeamCreator, teamController.deleteCategory)
+	/**
+	 * @swagger
+	 *
+	 * /api/teams/{id}/categories/{categoryId}:
+	 *   put:
+	 *     tags:
+	 *       - Team
+	 *     summary: Update a category
+	 *     requestBody:
+	 *       $ref: '#/components/requestBodies/CategoryUpdate'
+	 *     responses:
+	 *       '200':
+	 *         $ref: '#/components/responses/CategoryResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.put(
+		writeCategory,
+		checkTeamCreator,
+		validateUpdateCategory(),
+		teamController.updateCategory,
+	)
 
 export default router

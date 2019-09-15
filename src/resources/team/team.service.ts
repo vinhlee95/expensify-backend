@@ -1,12 +1,16 @@
 // Utils
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
-import {Category, CategoryType} from '../category/category.interface'
+import {
+	Category,
+	CategoryInput,
+	CategoryType,
+} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode, notFound} from '../../utils/apiError'
 import {TeamDocument} from './team.model'
-import {UserDocument} from '../user/user.model'
 import TeamModel from './team.model'
+import * as _ from 'lodash'
 
 const logger = createLogger(module)
 
@@ -104,21 +108,20 @@ export const createCategory = async (
 }
 
 export const deleteCategory = async (
-	team: TeamDocument,
 	category: CategoryDocument,
-	user: UserDocument,
 ): Promise<CategoryDocument> => {
 	logger.debug(`Delete category with id: ${category.id}`)
 
-	// Check if user is creator
-	if (!team.creator.equals(user.id)) {
-		return Promise.reject(
-			apiError.forbidden(
-				'This user is not team creator',
-				ErrorCode.notACreator,
-			),
-		)
-	}
-
 	return category.remove()
+}
+
+export const updateCategory = async (
+	category: CategoryDocument,
+	categoryUpdate: CategoryInput,
+): Promise<CategoryDocument> => {
+	logger.debug(`Update category with id: ${category.id}`)
+
+	_.merge(category, categoryUpdate)
+
+	return category.save()
 }

@@ -1,6 +1,7 @@
 import {RequestHandler, RequestParamHandler} from 'express'
 import {successResponse} from '../../utils/apiResponse'
 import * as services from './team.service'
+import {CategoryInput} from '../category/category.interface'
 
 export const parseTeamIdParam: RequestParamHandler = (req, res, next, id) => {
 	services
@@ -27,12 +28,6 @@ export const parseCategoryIdParam: RequestParamHandler = (
 		.catch(next)
 }
 
-/**
- * Get categories
- *
- * @param req
- * @param res
- */
 export const getCategories: RequestHandler = async (req, res, next) => {
 	const {id} = req.params
 	const {type} = req.query
@@ -44,12 +39,6 @@ export const getCategories: RequestHandler = async (req, res, next) => {
 	}
 }
 
-/**
- * Create a category
- *
- * @param req
- * @param res
- */
 export const createCategory: RequestHandler = async (req, res, next) => {
 	try {
 		const {id} = req.params
@@ -66,11 +55,24 @@ export const createCategory: RequestHandler = async (req, res, next) => {
 
 export const deleteCategory: RequestHandler = async (req, res, next) => {
 	try {
-		const {team, category, user} = req
+		const {category} = req
 
-		const deletedCategory = await services.deleteCategory(team, category, user)
+		const deletedCategory = await services.deleteCategory(category)
 		return res.json(successResponse(deletedCategory, true))
 	} catch (error) {
 		next(error)
 	}
+}
+
+export const updateCategory: RequestHandler = (req, res, next) => {
+	const {body, category} = req
+	const {name, description, type} = body
+	const categoryUpdate: CategoryInput = {name, description, type}
+
+	services
+		.updateCategory(category, categoryUpdate)
+		.then(updatedCategory => {
+			return res.json(successResponse(updatedCategory, true))
+		})
+		.catch(next)
 }

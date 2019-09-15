@@ -9,3 +9,9 @@ export interface Category {
 	type: CategoryType
 	team: string
 }
+
+export interface CategoryInput {
+	name: string
+	description?: string
+	type: CategoryType
+}
