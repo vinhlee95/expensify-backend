@@ -190,4 +190,37 @@ describe('[TEAMS API]', () => {
 			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
 		})
 	})
+
+	describe('PUT /api/teams/:id/categories/:categoryId', () => {
+		it(`[${roleWithWriteCategory}]. should update category`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+
+			const categoryUpdate = createMockCategory(team.id)
+
+			// Action
+			const result = await apiRequest
+				.put(`/api/teams/${team.id}/categories/${category.id}`)
+				.send(categoryUpdate)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+
+		it(`[${roleWithWriteCategory}]. should throw forbidden error when user is not team creator`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+			const token2 = signInUser(user2)
+
+			// Action
+			const result = await apiRequest
+				.put(`/api/teams/${team.id}/categories/${category.id}`)
+				.set('Authorization', token2)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.FORBIDDEN)
+			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
+		})
+	})
 })

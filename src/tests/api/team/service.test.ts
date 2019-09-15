@@ -11,6 +11,7 @@ import {
 	getCategories,
 	parseCategoryIdParam,
 	parseTeamIdParam,
+	updateCategory,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import {UserDocument} from '../../../resources/user/user.model'
@@ -21,13 +22,11 @@ import {ApiError} from '../../../utils/apiError'
 
 describe('[Team service]', () => {
 	let user: UserDocument
-	let user2: UserDocument
 	let team: TeamDocument
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
 		user = await addUser(createMockUser())
-		user2 = await addUser(createMockUser())
 		team = await addTeam(createMockTeam(user.id))
 		const team2 = await addTeam(createMockTeam(user.id))
 
@@ -178,27 +177,32 @@ describe('[Team service]', () => {
 		})
 	})
 
-	describe('getCategories', () => {
+	describe('deleteCategory', () => {
 		it('should delete category', async () => {
 			// Arrange
 			const category = teamCategories[0]
 
 			// Act
-			const deletedCategory = await deleteCategory(team, category, user)
+			const deletedCategory = await deleteCategory(category)
 
 			// Expect
 			expect(deletedCategory.id.toString()).toEqual(category.id)
 		})
+	})
 
-		it('should throw error when deleting category if user is not creator', async () => {
+	describe('updateCategory', () => {
+		it('should update category', async () => {
 			// Arrange
 			const category = teamCategories[0]
+			const categoryUpdate = createMockCategory(team.id)
 
 			// Act
-			const deletedCategory = deleteCategory(team, category, user2)
+			const updatedCategory = await updateCategory(category, categoryUpdate)
 
 			// Expect
-			await expect(deletedCategory).rejects.toThrow(ApiError)
+			expect(updatedCategory.id.toString()).toEqual(category.id)
+			expect(updatedCategory.name).toEqual(categoryUpdate.name)
+			expect(updatedCategory.type).toEqual(categoryUpdate.type)
 		})
 	})
 })
