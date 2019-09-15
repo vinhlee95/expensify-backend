@@ -2,12 +2,14 @@ import {addUser, addTeam, addCategory} from '../../utils/db'
 import {
 	createMockTeam,
 	createMockUser,
-	createMockCategory, createMockId,
+	createMockCategory,
+	createMockId,
 } from '../../utils/mock'
 import {
 	createCategory,
 	deleteCategory,
-	getCategories, parseCategoryIdParam,
+	getCategories,
+	parseCategoryIdParam,
 	parseTeamIdParam,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
