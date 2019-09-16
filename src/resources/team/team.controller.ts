@@ -53,15 +53,13 @@ export const createCategory: RequestHandler = async (req, res, next) => {
 	}
 }
 
-export const deleteCategory: RequestHandler = async (req, res, next) => {
-	try {
-		const {category} = req
+export const deleteCategory: RequestHandler = (req, res, next) => {
+	const {category} = req
 
-		const deletedCategory = await services.deleteCategory(category)
-		return res.json(successResponse(deletedCategory, true))
-	} catch (error) {
-		next(error)
-	}
+	services
+		.deleteCategory(category)
+		.then(deletedCategory => res.json(successResponse(deletedCategory, false)))
+		.catch(next)
 }
 
 export const updateCategory: RequestHandler = (req, res, next) => {
@@ -72,7 +70,7 @@ export const updateCategory: RequestHandler = (req, res, next) => {
 	services
 		.updateCategory(category, categoryUpdate)
 		.then(updatedCategory => {
-			return res.json(successResponse(updatedCategory, true))
+			return res.json(successResponse(updatedCategory, false))
 		})
 		.catch(next)
 }
