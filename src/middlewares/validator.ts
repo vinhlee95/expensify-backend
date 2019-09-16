@@ -51,6 +51,11 @@ export const validateId = () => {
 			.custom(value => {
 				return hasObjectIdType(value)
 			}),
+		param('categoryId', 'must be a hash string')
+			.optional()
+			.custom(value => {
+				return hasObjectIdType(value)
+			}),
 	]
 }
 

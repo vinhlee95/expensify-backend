@@ -1,11 +1,40 @@
 // Utils
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
-import {Category, CategoryType} from '../category/category.interface'
+import {
+	Category,
+	CategoryInput,
+	CategoryType,
+} from '../category/category.interface'
 import {User} from '../user/user.interface'
-import apiError, {ErrorCode} from '../../utils/apiError'
+import apiError, {ErrorCode, notFound} from '../../utils/apiError'
+import {TeamDocument} from './team.model'
+import TeamModel from './team.model'
+import * as _ from 'lodash'
 
 const logger = createLogger(module)
+
+export const parseTeamIdParam = async (id: string): Promise<TeamDocument> => {
+	const team = await TeamModel.findById(id).exec()
+
+	if (!team) {
+		throw notFound('Cannot find team with that id')
+	}
+
+	return team
+}
+
+export const parseCategoryIdParam = async (
+	id: string,
+): Promise<CategoryDocument> => {
+	const category = await CategoryModel.findById(id).exec()
+
+	if (!category) {
+		throw notFound('Cannot find category with that id')
+	}
+
+	return category
+}
 
 /**
  * Get all categories
@@ -76,4 +105,23 @@ export const createCategory = async (
 	const newCategory = await CategoryModel.create(data)
 
 	return Promise.resolve(newCategory)
+}
+
+export const deleteCategory = async (
+	category: CategoryDocument,
+): Promise<CategoryDocument> => {
+	logger.debug(`Delete category with id: ${category.id}`)
+
+	return category.remove()
+}
+
+export const updateCategory = async (
+	category: CategoryDocument,
+	categoryUpdate: CategoryInput,
+): Promise<CategoryDocument> => {
+	logger.debug(`Update category with id: ${category.id}`)
+
+	_.merge(category, categoryUpdate)
+
+	return category.save()
 }

@@ -15,12 +15,14 @@ import {Permission} from '../../../middlewares/permission'
 import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {CategoryDocument} from '../../../resources/category/category.model'
+import {ErrorCode} from '../../../utils/apiError'
 
 describe('[TEAMS API]', () => {
 	const roleWithReadCategory = getRoleWithPermisison(Permission.ReadCategory)
 	const roleWithWriteCategory = getRoleWithPermisison(Permission.WriteCategory)
 
 	let user1: UserDocument
+	let user2: UserDocument
 	let team: TeamDocument
 	let incomeCategories: CategoryDocument[]
 	let expenseCategories: CategoryDocument[]
@@ -28,6 +30,7 @@ describe('[TEAMS API]', () => {
 
 	beforeEach(async () => {
 		user1 = await addUser(createMockUser(UserRole.User))
+		user2 = await addUser(createMockUser(UserRole.User))
 		team = await addTeam(createMockTeam(user1.id))
 
 		expenseCategories = await Promise.all([
@@ -155,6 +158,69 @@ describe('[TEAMS API]', () => {
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
+		})
+	})
+
+	describe('DELETE /api/teams/:id/categories/:categoryId', () => {
+		it(`[${roleWithWriteCategory}]. should delete category`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+
+			// Action
+			const result = await apiRequest
+				.del(`/api/teams/${team.id}/categories/${category.id}`)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+
+		it(`[${roleWithWriteCategory}]. should throw forbidden error when user is not team creator`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+			const token2 = signInUser(user2)
+
+			// Action
+			const result = await apiRequest
+				.del(`/api/teams/${team.id}/categories/${category.id}`)
+				.set('Authorization', token2)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.FORBIDDEN)
+			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
+		})
+	})
+
+	describe('PUT /api/teams/:id/categories/:categoryId', () => {
+		it(`[${roleWithWriteCategory}]. should update category`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+
+			const categoryUpdate = createMockCategory(team.id)
+
+			// Action
+			const result = await apiRequest
+				.put(`/api/teams/${team.id}/categories/${category.id}`)
+				.send(categoryUpdate)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+
+		it(`[${roleWithWriteCategory}]. should throw forbidden error when user is not team creator`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+			const token2 = signInUser(user2)
+
+			// Action
+			const result = await apiRequest
+				.put(`/api/teams/${team.id}/categories/${category.id}`)
+				.set('Authorization', token2)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.FORBIDDEN)
+			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
 		})
 	})
 })

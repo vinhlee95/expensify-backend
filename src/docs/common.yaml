@@ -78,6 +78,14 @@ components:
       schema:
         type: string
 
+    categoryId: # Can be referenced as '#/components/parameters/categoryId'
+      in: path
+      name: categoryId
+      description: Category id
+      required: true
+      schema:
+        type: string
+
     field: # Can be referenced as '#/components/parameters/field'
       in: query
       name: field
