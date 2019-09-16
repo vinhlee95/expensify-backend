@@ -33,7 +33,9 @@ export const validateUpdateCategory = () => {
 		body('description', 'Description must be a string')
 			.optional()
 			.isString(),
-		body('type', 'Invalid category type').optional().isIn(enumToValues(CategoryType)),
+		body('type', 'Invalid category type')
+			.optional()
+			.isIn(enumToValues(CategoryType)),
 		handleValidationError,
 	]
 }
