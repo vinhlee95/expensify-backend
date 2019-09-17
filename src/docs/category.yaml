@@ -77,7 +77,7 @@ components:
               - data
 
     CategoryResponse:  # Can be referenced as '#/components/responses/CategoryResponse'
-      description: A JSON object containing categories
+      description: A JSON object containing category
       content:
         application/json:
           schema:

@@ -65,16 +65,16 @@ router
 	/**
 	 * @swagger
 	 *
-	 * /api/teams/{id}/expenseItems:
+	 * /api/teams/{id}/items:
 	 *   get:
 	 *     tags:
 	 *       - Team
-	 *     summary: Get all expense items for a team
+	 *     summary: Get all items for a team
 	 *     parameters:
 	 *     - $ref: '#/components/parameters/type'
 	 *     responses:
 	 *       '200':
-	 *         $ref: '#/components/responses/CategoriesResponse'
+	 *         $ref: '#/components/responses/ItemsResponse'
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
@@ -86,12 +86,12 @@ router
 	 *   post:
 	 *     tags:
 	 *       - Team
-	 *     summary: Create a new expense item
+	 *     summary: Create a new item
 	 *     requestBody:
-	 *       $ref: '#/components/requestBodies/CategoryCreate'
+	 *       $ref: '#/components/requestBodies/ItemCreate'
 	 *     responses:
 	 *       '200':
-	 *         $ref: '#/components/responses/CategoryResponse'
+	 *         $ref: '#/components/responses/ItemResponse'
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
