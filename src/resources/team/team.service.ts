@@ -1,8 +1,6 @@
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
-import ItemModel, {
-	ItemDocument,
-} from '../item/item.model'
+import ItemModel, {ItemDocument} from '../item/item.model'
 import {Category, CategoryType} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode} from '../../utils/apiError'

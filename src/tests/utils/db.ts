@@ -9,9 +9,7 @@ import CategoryModel, {
 } from '../../resources/category/category.model'
 import {slugify} from '../../utils/util'
 import Item from '../../resources/item/item.interface'
-import ExpenseItemModel, {
-	ItemDocument,
-} from '../../resources/item/item.model'
+import ExpenseItemModel, {ItemDocument} from '../../resources/item/item.model'
 
 export const addUser = (user: User): Promise<UserDocument> => {
 	const mockUser = user || createMockUser(UserRole.User, UserStatus.Active)
