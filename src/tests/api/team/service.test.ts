@@ -1,14 +1,19 @@
 import {addCategory, addExpenseItem, addTeam, addUser} from '../../utils/db'
 import {
-	createMockCategory,
 	createMockItem,
 	createMockTeam,
 	createMockUser,
+	createMockCategory,
+	createMockId,
 } from '../../utils/mock'
 import {
 	createCategory,
-	createItem,
+	deleteCategory,
 	getCategories,
+	parseCategoryIdParam,
+	parseTeamIdParam,
+	updateCategory,
+	createItem,
 	getItem,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
@@ -54,6 +59,51 @@ describe('[Team service]', () => {
 				addExpenseItem(createMockItem(team.id, user.id, expenseCategory.id)),
 			),
 		)
+	})
+
+	describe('parseTeamIdParam', () => {
+		it('should return team when id is valid', async () => {
+			// Act
+			const foundTeam = await parseTeamIdParam(team.id)
+
+			// Expect
+			expect(foundTeam.id).toEqual(team.id)
+		})
+
+		it('should throw error when id is invalid', async () => {
+			// Arrange
+			const randomId = createMockId()
+
+			// Act
+			const foundTeam = parseTeamIdParam(randomId)
+
+			// Expect
+			await expect(foundTeam).rejects.toThrow(ApiError)
+		})
+	})
+
+	describe('parseCategoryIdParam', () => {
+		it('should return category when id is valid', async () => {
+			// Arange
+			const category = teamCategories[0]
+
+			// Act
+			const foundCategory = await parseCategoryIdParam(category.id)
+
+			// Expect
+			expect(foundCategory.id).toEqual(category.id)
+		})
+
+		it('should throw error when id is invalid', async () => {
+			// Arrange
+			const randomId = createMockId()
+
+			// Act
+			const foundCategory = parseCategoryIdParam(randomId)
+
+			// Expect
+			await expect(foundCategory).rejects.toThrow(ApiError)
+		})
 	})
 
 	describe('createCategory', () => {
@@ -143,6 +193,35 @@ describe('[Team service]', () => {
 			} catch (e) {
 				expect(e).toBeUndefined()
 			}
+		})
+	})
+
+	describe('deleteCategory', () => {
+		it('should delete category', async () => {
+			// Arrange
+			const category = teamCategories[0]
+
+			// Act
+			const deletedCategory = await deleteCategory(category)
+
+			// Expect
+			expect(deletedCategory.id.toString()).toEqual(category.id)
+		})
+	})
+
+	describe('updateCategory', () => {
+		it('should update category', async () => {
+			// Arrange
+			const category = teamCategories[0]
+			const categoryUpdate = createMockCategory(team.id)
+
+			// Act
+			const updatedCategory = await updateCategory(category, categoryUpdate)
+
+			// Expect
+			expect(updatedCategory.id.toString()).toEqual(category.id)
+			expect(updatedCategory.name).toEqual(categoryUpdate.name)
+			expect(updatedCategory.type).toEqual(categoryUpdate.type)
 		})
 	})
 

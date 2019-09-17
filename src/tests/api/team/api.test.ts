@@ -17,6 +17,7 @@ import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {CategoryDocument} from '../../../resources/category/category.model'
 import Item from '../../../resources/item/item.interface'
+import {ErrorCode} from '../../../utils/apiError'
 
 describe('[TEAMS API]', () => {
 	const roleWithReadCategory = getRoleWithPermisison(Permission.ReadCategory)
@@ -26,6 +27,8 @@ describe('[TEAMS API]', () => {
 
 	let user1: UserDocument
 	let team1: TeamDocument
+	let user2: UserDocument
+	let team: TeamDocument
 	let expenseCategories: CategoryDocument[]
 	let incomeCategories: CategoryDocument[]
 	let teamItems: Item[]
@@ -34,6 +37,8 @@ describe('[TEAMS API]', () => {
 	beforeEach(async () => {
 		user1 = await addUser(createMockUser(UserRole.User))
 		team1 = await addTeam(createMockTeam(user1.id))
+		user2 = await addUser(createMockUser(UserRole.User))
+		team = await addTeam(createMockTeam(user1.id))
 
 		expenseCategories = await Promise.all([
 			addCategory(createMockCategory(team1.id, CategoryType.Expense)),
@@ -171,34 +176,36 @@ describe('[TEAMS API]', () => {
 		})
 	})
 
-	describe('POST /api/teams/:id/items', () => {
-		it(`[${roleWithWriteItem}]. should return 200 with new created item when data is valid`, async () => {
+	describe('DELETE /api/teams/:id/categories/:categoryId', () => {
+		it(`[${roleWithWriteCategory}]. should delete category`, async () => {
 			// Arrange
-			const category = expenseCategories[0]
-
-			const mockItem = createMockItem(team1.id, user1.id, category.id)
+			const category = incomeCategories[0]
 
 			// Action
 			const result = await apiRequest
-				.post(`/api/teams/${team1.id}/items`)
+				.del(`/api/teams/${team.id}/categories/${category.id}`)
 				.set('Authorization', token)
-				.send(mockItem)
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
 		})
 	})
 
-	describe('GET /api/teams/:id/items', () => {
-		it(`[${roleWithReadItem}]. should return 200 with items`, async () => {
+	describe('PUT /api/teams/:id/categories/:categoryId', () => {
+		it(`[${roleWithWriteCategory}]. should update category`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+
+			const categoryUpdate = createMockCategory(team.id)
+
 			// Action
 			const result = await apiRequest
-				.get(`/api/teams/${team1.id}/items`)
+				.put(`/api/teams/${team.id}/categories/${category.id}`)
+				.send(categoryUpdate)
 				.set('Authorization', token)
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
-			expect(result.body.data.length).toEqual(teamItems.length)
 		})
 
 		it(`[${roleWithReadItem}]. should return 200 with paginated items`, async () => {
@@ -213,6 +220,63 @@ describe('[TEAMS API]', () => {
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
 			expect(result.body.data.length).toEqual(limit)
+		})
+
+		it(`[${roleWithWriteCategory}]. should throw forbidden error when user is not team creator`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+			const token2 = signInUser(user2)
+
+			// Action
+			const result = await apiRequest
+				.put(`/api/teams/${team.id}/categories/${category.id}`)
+				.set('Authorization', token2)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.FORBIDDEN)
+			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
+		})
+	})
+
+	describe('POST /api/teams/:id/items', () => {
+		it(`[${roleWithWriteItem}]. should return 200 with new created item when data is valid`, async () => {
+			// Arrange
+			const category = expenseCategories[0]
+
+			const mockItem = createMockItem(team1.id, user1.id, category.id)
+
+			// Action
+			const result = await apiRequest
+				.post(`/api/teams/${team1.id}/items`)
+				.set('Authorization', token)
+				.send(mockItem)
+
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+	})
+
+	describe('GET /api/teams/:id/items', () => {
+		it(`[${roleWithReadItem}]. should return 200 with items`, async () => {
+			// Action
+			const result = await apiRequest.get(`/api/teams/${team1.id}/items`).set('Authorization', token)
+
+			expect(result.status).toEqual(httpStatus.OK)
+			expect(result.body.data.length).toEqual(teamItems.length)
+		})
+
+		it(`[${roleWithWriteCategory}]. should throw forbidden error when user is not team creator`, async () => {
+			// Arrange
+			const category = incomeCategories[0]
+			const token2 = signInUser(user2)
+
+			// Action
+			const result = await apiRequest
+				.del(`/api/teams/${team.id}/categories/${category.id}`)
+				.set('Authorization', token2)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.FORBIDDEN)
+			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
 		})
 	})
 })

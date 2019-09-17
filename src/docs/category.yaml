@@ -52,6 +52,24 @@ components:
               - type
               - teamId
 
+    #-------------------------------
+    # CategoryUpdate
+
+    CategoryUpdate: # Can be referenced as '#/components/requestBodies/CategoryUpdate'
+      description: Category to update
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              type:
+                type: string
+
 #-------------------------------
 # Reusable responses
 #-------------------------------
