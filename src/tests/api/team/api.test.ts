@@ -6,7 +6,7 @@ import {apiRequest, getRoleWithPermisison, signInUser} from '../../utils/common'
 import {addCategory, addExpenseItem, addTeam, addUser} from '../../utils/db'
 import {
 	createMockCategory,
-	createMockExpenseItem,
+	createMockItem,
 	createMockTeam,
 	createMockUser,
 } from '../../utils/mock'
@@ -16,23 +16,19 @@ import {Permission} from '../../../middlewares/permission'
 import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {CategoryDocument} from '../../../resources/category/category.model'
-import ExpenseItem from '../../../resources/expenseItem/expenseItem.interface'
+import Item from '../../../resources/item/item.interface'
 
 describe('[TEAMS API]', () => {
 	const roleWithReadCategory = getRoleWithPermisison(Permission.ReadCategory)
 	const roleWithWriteCategory = getRoleWithPermisison(Permission.WriteCategory)
-	const roleWithReadExpenseItem = getRoleWithPermisison(
-		Permission.ReadExpenseItem,
-	)
-	const roleWithWriteExpenseItem = getRoleWithPermisison(
-		Permission.WriteExpenseItem,
-	)
+	const roleWithReadItem = getRoleWithPermisison(Permission.ReadItem)
+	const roleWithWriteItem = getRoleWithPermisison(Permission.WriteItem)
 
 	let user1: UserDocument
 	let team1: TeamDocument
 	let expenseCategories: CategoryDocument[]
 	let incomeCategories: CategoryDocument[]
-	let teamExpenseItems: ExpenseItem[]
+	let teamItems: Item[]
 	let token: string
 
 	beforeEach(async () => {
@@ -50,10 +46,10 @@ describe('[TEAMS API]', () => {
 			addCategory(createMockCategory(team1.id, CategoryType.Income)),
 		])
 
-		teamExpenseItems = await Promise.all(
+		teamItems = await Promise.all(
 			_.times(6, () =>
 				addExpenseItem(
-					createMockExpenseItem(team1.id, user1.id, expenseCategories[0].id),
+					createMockItem(team1.id, user1.id, expenseCategories[0].id),
 				),
 			),
 		)
@@ -175,67 +171,43 @@ describe('[TEAMS API]', () => {
 		})
 	})
 
-	describe('POST /api/teams/:id/expenseItems', () => {
-		it(`[${roleWithWriteExpenseItem}]. should return 200 with new created expenseItem when data is valid`, async () => {
+	describe('POST /api/teams/:id/items', () => {
+		it(`[${roleWithWriteItem}]. should return 200 with new created item when data is valid`, async () => {
 			// Arrange
-			const expenseCategory = expenseCategories[0]
+			const category = expenseCategories[0]
 
-			const mockExpensItem = createMockExpenseItem(
-				team1.id,
-				user1.id,
-				expenseCategory.id,
-			)
+			const mockItem = createMockItem(team1.id, user1.id, category.id)
 
 			// Action
 			const result = await apiRequest
-				.post(`/api/teams/${team1.id}/expenseItems`)
+				.post(`/api/teams/${team1.id}/items`)
 				.set('Authorization', token)
-				.send(mockExpensItem)
+				.send(mockItem)
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
-		})
-
-		it(`[${roleWithWriteExpenseItem}]. should return 200 with new created expenseItem with income category`, async () => {
-			// Arrange
-			const expenseCategory = incomeCategories[0]
-
-			const mockExpensItem = createMockExpenseItem(
-				team1.id,
-				user1.id,
-				expenseCategory.id,
-			)
-
-			// Action
-			const result = await apiRequest
-				.post(`/api/teams/${team1.id}/expenseItems`)
-				.set('Authorization', token)
-				.send(mockExpensItem)
-
-			// Expect
-			expect(result.status).toEqual(httpStatus.BAD_REQUEST)
 		})
 	})
 
-	describe('GET /api/teams/:id/expenseItems', () => {
-		it(`[${roleWithReadExpenseItem}]. should return 200 with expense items`, async () => {
+	describe('GET /api/teams/:id/items', () => {
+		it(`[${roleWithReadItem}]. should return 200 with items`, async () => {
 			// Action
 			const result = await apiRequest
-				.get(`/api/teams/${team1.id}/expenseItems`)
+				.get(`/api/teams/${team1.id}/items`)
 				.set('Authorization', token)
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.OK)
-			expect(result.body.data.length).toEqual(teamExpenseItems.length)
+			expect(result.body.data.length).toEqual(teamItems.length)
 		})
 
-		it(`[${roleWithReadExpenseItem}]. should return 200 with paginated expense items`, async () => {
+		it(`[${roleWithReadItem}]. should return 200 with paginated items`, async () => {
 			// Arrange
 			const limit = 4
 
 			// Action
 			const result = await apiRequest
-				.get(`/api/teams/${team1.id}/expenseItems?limit=${limit}`)
+				.get(`/api/teams/${team1.id}/items?limit=${limit}`)
 				.set('Authorization', token)
 
 			// Expect

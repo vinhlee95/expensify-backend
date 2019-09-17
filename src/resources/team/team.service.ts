@@ -1,12 +1,12 @@
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
-import ExpenseItemModel, {
-	ExpenseItemDocument,
-} from '../expenseItem/expenseItem.model'
+import ItemModel, {
+	ItemDocument,
+} from '../item/item.model'
 import {Category, CategoryType} from '../category/category.interface'
 import {User} from '../user/user.interface'
 import apiError, {ErrorCode} from '../../utils/apiError'
-import ExpenseItem from '../expenseItem/expenseItem.interface'
+import Item from '../item/item.interface'
 
 const logger = createLogger(module)
 
@@ -77,11 +77,11 @@ export const createCategory = async (
 	return Promise.resolve(newCategory)
 }
 
-export const createExpenseItem = async (
+export const createItem = async (
 	user: User,
-	data: ExpenseItem,
-): Promise<ExpenseItemDocument> => {
-	logger.debug(`Create new expense item: %o`, data)
+	data: Item,
+): Promise<ItemDocument> => {
+	logger.debug(`Create new item: %o`, data)
 
 	// Check if user is in the provided team id
 	if (!user.teams.includes(data.team)) {
@@ -104,22 +104,18 @@ export const createExpenseItem = async (
 		)
 	}
 
-	if (category.type !== CategoryType.Expense) {
-		return Promise.reject(apiError.badRequest('Category type must be expense'))
-	}
+	const newItem = await ItemModel.create(data)
 
-	const newExpenseItem = await ExpenseItemModel.create(data)
-
-	return Promise.resolve(newExpenseItem)
+	return Promise.resolve(newItem)
 }
 
-export const getExpenseItems = async (
+export const getItem = async (
 	id: string,
 	{offset = 0, limit = 20} = {},
-): Promise<ExpenseItemDocument[]> => {
-	logger.debug(`Get expense items for team id: ${id}`)
+): Promise<ItemDocument[]> => {
+	logger.debug(`Get items for team id: ${id}`)
 
-	const expenseItems = await ExpenseItemModel.find({
+	const expenseItems = await ItemModel.find({
 		team: id,
 	})
 		.skip(offset)

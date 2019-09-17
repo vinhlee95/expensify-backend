@@ -9,7 +9,7 @@ import {
 	CategoryType,
 } from '../../resources/category/category.interface'
 import {slugify} from '../../utils/util'
-import ExpenseItem from '../../resources/expenseItem/expenseItem.interface'
+import Item from '../../resources/item/item.interface'
 
 export const createMockId = () => {
 	const ObjectId = Types.ObjectId
@@ -52,11 +52,11 @@ export const createMockCategory = (
 	team: teamId,
 })
 
-export const createMockExpenseItem = (
+export const createMockItem = (
 	teamId: string,
 	creatorId: string,
 	categoryId: string,
-): ExpenseItem => ({
+): Item => ({
 	name: faker.random.word(),
 	note: faker.lorem.sentence(),
 	date: faker.date.recent(),

@@ -23,7 +23,7 @@ export const validateCreateCategory = () => {
 	]
 }
 
-export const validateCreateExpenseItem = () => {
+export const validateCreateItem = () => {
 	return [
 		body('name', 'Name must be a string').isString(),
 		body('note', 'Description must be a string')

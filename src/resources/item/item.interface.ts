@@ -1,4 +1,4 @@
-export default interface ExpenseItem {
+export default interface Item {
 	date: Date
 	name: string
 	note?: string

@@ -8,8 +8,8 @@ Object {
     "team:read",
     "category:read",
     "category:write",
-    "expenseItem:read",
-    "expenseItem:write",
+    "item:read",
+    "item:write",
     "user:write",
   ],
   "user": Array [
@@ -18,8 +18,8 @@ Object {
     "team:read",
     "category:read",
     "category:write",
-    "expenseItem:read",
-    "expenseItem:write",
+    "item:read",
+    "item:write",
   ],
 }
 `;

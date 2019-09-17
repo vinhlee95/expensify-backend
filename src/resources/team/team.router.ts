@@ -4,7 +4,7 @@ import {Permission, protect} from '../../middlewares/permission'
 import {
 	validateGetCategories,
 	validateCreateCategory,
-	validateCreateExpenseItem,
+	validateCreateItem,
 } from './team.validator'
 import * as teamController from './team.controller'
 
@@ -12,8 +12,8 @@ const router = Router()
 
 const readCategory = protect([Permission.ReadCategory])
 const writeCategory = protect([Permission.WriteCategory])
-const readExpenseItem = protect([Permission.ReadExpenseItem])
-const writeExpenseItem = protect([Permission.WriteExpenseItem])
+const readItem = protect([Permission.ReadItem])
+const writeItem = protect([Permission.WriteItem])
 
 /**
  * @swagger
@@ -61,7 +61,7 @@ router
 	.post(writeCategory, validateCreateCategory(), teamController.createCategory)
 
 router
-	.route('/:id/expenseItems')
+	.route('/:id/items')
 	/**
 	 * @swagger
 	 *
@@ -78,11 +78,11 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.get(readExpenseItem, teamController.getExpenseItems)
+	.get(readItem, teamController.getItem)
 	/**
 	 * @swagger
 	 *
-	 * /api/teams/{id}/expenseItems:
+	 * /api/teams/{id}/items:
 	 *   post:
 	 *     tags:
 	 *       - Team
@@ -95,10 +95,6 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.post(
-		writeExpenseItem,
-		validateCreateExpenseItem(),
-		teamController.createExpenseItem,
-	)
+	.post(writeItem, validateCreateItem(), teamController.createItem)
 
 export default router

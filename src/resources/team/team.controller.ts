@@ -27,30 +27,27 @@ export const createCategory: RequestHandler = async (req, res, next) => {
 	}
 }
 
-export const createExpenseItem: RequestHandler = async (req, res, next) => {
+export const createItem: RequestHandler = async (req, res, next) => {
 	try {
 		const {id} = req.params
-		const expenseItem = {
+		const item = {
 			...req.body,
 			creator: req.user,
 			team: id,
 		}
-		const newExpenseItem = await services.createExpenseItem(
-			req.user,
-			expenseItem,
-		)
-		return res.json(successResponse(newExpenseItem, true))
+		const newItem = await services.createItem(req.user, item)
+		return res.json(successResponse(newItem, true))
 	} catch (error) {
 		next(error)
 	}
 }
 
-export const getExpenseItems: RequestHandler = async (req, res, next) => {
+export const getItem: RequestHandler = async (req, res, next) => {
 	const {id} = req.params
 	const {offset, limit} = req.query
 
 	try {
-		const expenseItems = await services.getExpenseItems(id, {
+		const expenseItems = await services.getItem(id, {
 			offset,
 			limit,
 		})

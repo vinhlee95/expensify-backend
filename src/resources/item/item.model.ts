@@ -1,9 +1,9 @@
 import mongoose, {Document, Schema} from 'mongoose'
-import ExpenseItem from './expenseItem.interface'
+import Item from './item.interface'
 
-export interface ExpenseItemDocument extends Document, ExpenseItem {}
+export interface ItemDocument extends Document, Item {}
 
-const expenseItemSchema = new Schema({
+const itemSchema = new Schema({
 	name: {
 		type: String,
 		required: true,
@@ -44,9 +44,6 @@ const expenseItemSchema = new Schema({
 	},
 })
 
-const expenseItemModel = mongoose.model<ExpenseItemDocument>(
-	'expenseItem',
-	expenseItemSchema,
-)
+const itemModel = mongoose.model<ItemDocument>('item', itemSchema)
 
-export default expenseItemModel
+export default itemModel

@@ -14,8 +14,8 @@ export enum Permission {
 	ReadTeam = 'team:read',
 	ReadCategory = 'category:read',
 	WriteCategory = 'category:write',
-	ReadExpenseItem = 'expenseItem:read',
-	WriteExpenseItem = 'expenseItem:write',
+	ReadItem = 'item:read',
+	WriteItem = 'item:write',
 }
 
 type PermissionRole = {[key in UserRole]: Permission[]}
@@ -26,8 +26,8 @@ const commonPermissions = [
 	Permission.ReadTeam,
 	Permission.ReadCategory,
 	Permission.WriteCategory,
-	Permission.ReadExpenseItem,
-	Permission.WriteExpenseItem,
+	Permission.ReadItem,
+	Permission.WriteItem,
 ]
 
 export const permissionRole: PermissionRole = {

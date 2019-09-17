@@ -4,11 +4,11 @@ import UserModel from '../resources/user/user.model'
 import createLogger from '../utils/logger'
 import {
 	createMockCategory,
-	createMockExpenseItem,
+	createMockItem,
 	createMockTeam,
 } from '../tests/utils/mock'
 import TeamModel from '../resources/team/team.model'
-import ExpenseItemModel from '../resources/expenseItem/expenseItem.model'
+import ExpenseItemModel from '../resources/item/item.model'
 import {addCategory, addExpenseItem, addTeam, addUser} from '../tests/utils/db'
 import {CategoryType} from '../resources/category/category.interface'
 import CategoryModel from '../resources/category/category.model'
@@ -76,7 +76,7 @@ const createExpenseItems = (
 	categoryId: string,
 ) => {
 	const mockExpenseItems = _.times(10, () =>
-		createMockExpenseItem(teamId, userId, categoryId),
+		createMockItem(teamId, userId, categoryId),
 	)
 
 	return mockExpenseItems.map(mockExpenseItem =>

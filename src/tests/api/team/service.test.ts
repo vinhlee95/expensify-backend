@@ -1,15 +1,15 @@
 import {addCategory, addExpenseItem, addTeam, addUser} from '../../utils/db'
 import {
 	createMockCategory,
-	createMockExpenseItem,
+	createMockItem,
 	createMockTeam,
 	createMockUser,
 } from '../../utils/mock'
 import {
 	createCategory,
-	createExpenseItem,
+	createItem,
 	getCategories,
-	getExpenseItems,
+	getItem,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
@@ -17,7 +17,7 @@ import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryDocument} from '../../../resources/category/category.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {ApiError} from '../../../utils/apiError'
-import ExpenseItem from '../../../resources/expenseItem/expenseItem.interface'
+import Item from '../../../resources/item/item.interface'
 import _ from 'lodash'
 
 describe('[Team service]', () => {
@@ -25,7 +25,7 @@ describe('[Team service]', () => {
 	let user2: UserDocument
 	let team: TeamDocument
 	let team2: TeamDocument
-	let teamExpenseItems: ExpenseItem[]
+	let teamItems: Item[]
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
@@ -49,11 +49,9 @@ describe('[Team service]', () => {
 
 		const expenseCategory = teamCategories[1]
 
-		teamExpenseItems = await Promise.all(
+		teamItems = await Promise.all(
 			_.times(6, () =>
-				addExpenseItem(
-					createMockExpenseItem(team.id, user.id, expenseCategory.id),
-				),
+				addExpenseItem(createMockItem(team.id, user.id, expenseCategory.id)),
 			),
 		)
 	})
@@ -148,87 +146,59 @@ describe('[Team service]', () => {
 		})
 	})
 
-	describe('createExpenseItem', () => {
-		it('should create expense item when data is valid', async () => {
+	describe('createItem', () => {
+		it('should create item when data is valid', async () => {
 			// Arrange
-			const expenseCategory = teamCategories.find(
-				category => category.type === CategoryType.Expense,
-			)
-			const mockExpenseItem = createMockExpenseItem(
-				team.id,
-				user.id,
-				expenseCategory.id,
-			)
+			const category = teamCategories[0]
+
+			const mockItem = createMockItem(team.id, user.id, category.id)
 
 			// Act
-			const expenseItem = await createExpenseItem(user, mockExpenseItem)
+			const createdItem = await createItem(user, mockItem)
 
 			// Expect
-			expect(expenseItem.creator.toString()).toEqual(mockExpenseItem.creator)
-			expect(expenseItem.category.toString()).toEqual(mockExpenseItem.category)
-			expect(expenseItem.team.toString()).toEqual(mockExpenseItem.team)
-			expect(expenseItem.name).toEqual(mockExpenseItem.name)
-			expect(expenseItem.note).toEqual(mockExpenseItem.note)
-			expect(expenseItem.date).toEqual(mockExpenseItem.date)
-			expect(expenseItem.quantity).toEqual(mockExpenseItem.quantity)
-			expect(expenseItem.price).toEqual(mockExpenseItem.price)
+			expect(createdItem.creator.toString()).toEqual(mockItem.creator)
+			expect(createdItem.category.toString()).toEqual(mockItem.category)
+			expect(createdItem.team.toString()).toEqual(mockItem.team)
+			expect(createdItem.name).toEqual(mockItem.name)
+			expect(createdItem.note).toEqual(mockItem.note)
+			expect(createdItem.date).toEqual(mockItem.date)
+			expect(createdItem.quantity).toEqual(mockItem.quantity)
+			expect(createdItem.price).toEqual(mockItem.price)
 		})
 
-		it('should throw error when create expense item with income category', async () => {
+		it('should throw error when create item with wrong team', async () => {
 			// Arrange
-			const expenseCategory = teamCategories.find(
-				category => category.type === CategoryType.Income,
-			)
-			const mockExpenseItem = createMockExpenseItem(
-				team.id,
-				user.id,
-				expenseCategory.id,
-			)
+			const category = teamCategories[0]
+
+			const mockItem = createMockItem(team2.id, user.id, category.id)
 
 			// Act
-			const expenseItem = createExpenseItem(user, mockExpenseItem)
+			const item = createItem(user, mockItem)
 
 			// Expect
-			await expect(expenseItem).rejects.toThrow(ApiError)
-		})
-
-		it('should throw error when create expense item with wrong team', async () => {
-			// Arrange
-			const expenseCategory = teamCategories.find(
-				category => category.type === CategoryType.Expense,
-			)
-			const mockExpenseItem = createMockExpenseItem(
-				team2.id,
-				user.id,
-				expenseCategory.id,
-			)
-
-			// Act
-			const expenseItem = createExpenseItem(user, mockExpenseItem)
-
-			// Expect
-			await expect(expenseItem).rejects.toThrow(ApiError)
+			await expect(item).rejects.toThrow(ApiError)
 		})
 	})
 
-	describe('getExpenseItems', () => {
-		it('should get expense items', async () => {
+	describe('getItem', () => {
+		it('should get items', async () => {
 			// Act
-			const expenseItems = await getExpenseItems(team.id)
+			const items = await getItem(team.id)
 
 			// Expect
-			expect(expenseItems.length).toEqual(teamExpenseItems.length)
+			expect(items.length).toEqual(teamItems.length)
 		})
 
-		it('should get expense items with correct pagination', async () => {
+		it('should get items with correct pagination', async () => {
 			// Arrange
 			const limit = 4
 
 			// Act
-			const expenseItems = await getExpenseItems(team.id, {limit})
+			const items = await getItem(team.id, {limit})
 
 			// Expect
-			expect(expenseItems.length).toEqual(limit)
+			expect(items.length).toEqual(limit)
 		})
 	})
 })
