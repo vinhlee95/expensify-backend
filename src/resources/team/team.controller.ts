@@ -75,32 +75,29 @@ export const updateCategory: RequestHandler = (req, res, next) => {
 		.catch(next)
 }
 
-export const createItem: RequestHandler = async (req, res, next) => {
-	try {
-		const {id} = req.params
-		const item = {
-			...req.body,
-			creator: req.user,
-			team: id,
-		}
-		const newItem = await services.createItem(req.user, item)
-		return res.json(successResponse(newItem, true))
-	} catch (error) {
-		next(error)
+export const createItem: RequestHandler = (req, res, next) => {
+	const {id} = req.params
+	const item = {
+		...req.body,
+		creator: req.user,
+		team: id,
 	}
+
+	services
+		.createItem(req.user, item)
+		.then(newItem => res.json(successResponse(newItem, true)))
+		.catch(next)
 }
 
-export const getItem: RequestHandler = async (req, res, next) => {
+export const getItem: RequestHandler = (req, res, next) => {
 	const {id} = req.params
 	const {offset, limit} = req.query
 
-	try {
-		const items = await services.getItem(id, {
+	services
+		.getItem(id, {
 			offset,
 			limit,
 		})
-		return res.json(successResponse(items))
-	} catch (error) {
-		next(error)
-	}
+		.then(items => res.json(successResponse(items)))
+		.catch(next)
 }

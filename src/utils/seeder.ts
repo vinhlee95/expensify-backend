@@ -79,9 +79,7 @@ const createExpenseItems = (
 		createMockItem(teamId, userId, categoryId),
 	)
 
-	return mockExpenseItems.map(mockExpenseItem =>
-		addItem(mockExpenseItem),
-	)
+	return mockExpenseItems.map(mockExpenseItem => addItem(mockExpenseItem))
 }
 
 export const seed = async () => {

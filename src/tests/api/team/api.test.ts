@@ -53,9 +53,7 @@ describe('[TEAMS API]', () => {
 
 		teamItems = await Promise.all(
 			_.times(6, () =>
-				addItem(
-					createMockItem(team1.id, user1.id, expenseCategories[0].id),
-				),
+				addItem(createMockItem(team1.id, user1.id, expenseCategories[0].id)),
 			),
 		)
 

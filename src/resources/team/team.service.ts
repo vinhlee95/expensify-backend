@@ -131,11 +131,9 @@ export const createItem = async (
 
 	// Check if user is in the provided team id
 	if (!user.teams.includes(data.team)) {
-		return Promise.reject(
-			apiError.badRequest(
-				'This user does not belong to the team with that id',
-				ErrorCode.notATeamMember,
-			),
+		throw apiError.badRequest(
+			'This user does not belong to the team with that id',
+			ErrorCode.notATeamMember,
 		)
 	}
 
@@ -145,14 +143,12 @@ export const createItem = async (
 		.exec()
 
 	if (!category) {
-		return Promise.reject(
-			apiError.badRequest('Cannot find category with this id'),
-		)
+		throw apiError.badRequest('Cannot find category with this id')
 	}
 
 	const newItem = await ItemModel.create(data)
 
-	return Promise.resolve(newItem)
+	return newItem
 }
 
 export const getItem = async (
@@ -161,7 +157,7 @@ export const getItem = async (
 ): Promise<ItemDocument[]> => {
 	logger.debug(`Get items for team id: ${id}`)
 
-	const expenseItems = await ItemModel.find({
+	const items = await ItemModel.find({
 		team: id,
 	})
 		.skip(offset)
@@ -170,5 +166,5 @@ export const getItem = async (
 		.lean()
 		.exec()
 
-	return Promise.resolve(expenseItems)
+	return items
 }
