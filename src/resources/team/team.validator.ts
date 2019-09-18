@@ -25,6 +25,21 @@ export const validateCreateCategory = () => {
 	]
 }
 
+export const validateCreateItem = () => {
+	return [
+		body('name', 'Name must be a string').isString(),
+		body('note', 'Description must be a string')
+			.optional()
+			.isString(),
+		body(
+			'quantity',
+			'Quantity must be a positive number larger than 1',
+		).isFloat({min: 1}),
+		body('price', 'Price must be a positive number').isFloat({min: 0}),
+		handleValidationError,
+	]
+}
+
 export const validateUpdateCategory = () => {
 	return [
 		body('name', 'Name must be a string')

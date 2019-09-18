@@ -1,5 +1,6 @@
-import {addUser, addTeam, addCategory} from '../../utils/db'
+import {addCategory, addItem, addTeam, addUser} from '../../utils/db'
 import {
+	createMockItem,
 	createMockTeam,
 	createMockUser,
 	createMockCategory,
@@ -12,23 +13,33 @@ import {
 	parseCategoryIdParam,
 	parseTeamIdParam,
 	updateCategory,
+	createItem,
+	getItems,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
-import {UserDocument} from '../../../resources/user/user.model'
+import UserModel, {UserDocument} from '../../../resources/user/user.model'
 import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryDocument} from '../../../resources/category/category.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {ApiError} from '../../../utils/apiError'
+import Item from '../../../resources/item/item.interface'
+import _ from 'lodash'
 
 describe('[Team service]', () => {
 	let user: UserDocument
+	let user2: UserDocument
 	let team: TeamDocument
+	let team2: TeamDocument
+	let teamItems: Item[]
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
 		user = await addUser(createMockUser())
+		user2 = await addUser(createMockUser())
 		team = await addTeam(createMockTeam(user.id))
-		const team2 = await addTeam(createMockTeam(user.id))
+		team2 = await addTeam(createMockTeam(user2.id))
+
+		user = await UserModel.findById(user.id)
 
 		teamCategories = await Promise.all([
 			addCategory(createMockCategory(team.id, CategoryType.Expense)),
@@ -40,6 +51,14 @@ describe('[Team service]', () => {
 			addCategory(createMockCategory(team2.id, CategoryType.Expense)),
 			addCategory(createMockCategory(team2.id, CategoryType.Income)),
 		])
+
+		const expenseCategory = teamCategories[1]
+
+		teamItems = await Promise.all(
+			_.times(6, () =>
+				addItem(createMockItem(team.id, user.id, expenseCategory.id)),
+			),
+		)
 	})
 
 	describe('parseTeamIdParam', () => {
@@ -203,6 +222,62 @@ describe('[Team service]', () => {
 			expect(updatedCategory.id.toString()).toEqual(category.id)
 			expect(updatedCategory.name).toEqual(categoryUpdate.name)
 			expect(updatedCategory.type).toEqual(categoryUpdate.type)
+		})
+	})
+
+	describe('createItem', () => {
+		it('should create item when data is valid', async () => {
+			// Arrange
+			const category = teamCategories[0]
+
+			const mockItem = createMockItem(team.id, user.id, category.id)
+
+			// Act
+			const createdItem = await createItem(user, mockItem)
+
+			// Expect
+			expect(createdItem.creator.toString()).toEqual(mockItem.creator)
+			expect(createdItem.category.toString()).toEqual(mockItem.category)
+			expect(createdItem.team.toString()).toEqual(mockItem.team)
+			expect(createdItem.name).toEqual(mockItem.name)
+			expect(createdItem.note).toEqual(mockItem.note)
+			expect(createdItem.date).toEqual(mockItem.date)
+			expect(createdItem.quantity).toEqual(mockItem.quantity)
+			expect(createdItem.price).toEqual(mockItem.price)
+		})
+
+		it('should throw error when create item with wrong team', async () => {
+			// Arrange
+			const category = teamCategories[0]
+
+			const mockItem = createMockItem(team2.id, user.id, category.id)
+
+			// Act
+			const item = createItem(user, mockItem)
+
+			// Expect
+			await expect(item).rejects.toThrow(ApiError)
+		})
+	})
+
+	describe('getItems', () => {
+		it('should get items', async () => {
+			// Act
+			const items = await getItems(team.id)
+
+			// Expect
+			expect(items.length).toEqual(teamItems.length)
+		})
+
+		it('should get items with correct pagination', async () => {
+			// Arrange
+			const limit = 4
+
+			// Act
+			const items = await getItems(team.id, {limit})
+
+			// Expect
+			expect(items.length).toEqual(limit)
 		})
 	})
 })

@@ -1,6 +1,7 @@
-// Utils
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
+import ItemModel, {ItemDocument} from '../item/item.model'
+import Item from '../item/item.interface'
 import {
 	Category,
 	CategoryInput,
@@ -42,6 +43,7 @@ export const parseCategoryIdParam = async (
  * @param TYPE
  * @param teamId
  */
+
 export const getCategories = async (
 	id: string,
 	type?: CategoryType,
@@ -64,17 +66,12 @@ export const getCategories = async (
 	return Promise.resolve(categories)
 }
 
-/**
- * Create new category
- *
- * @param categoryData
- * @param teamId
- */
 export const createCategory = async (
 	data: Category,
 	user: User,
 ): Promise<CategoryDocument> => {
 	logger.debug(`Create new category: %o`, data)
+
 	// Check if user is in the provided team id
 	if (!user.teams.includes(data.team)) {
 		return Promise.reject(
@@ -124,4 +121,49 @@ export const updateCategory = async (
 	_.merge(category, categoryUpdate)
 
 	return category.save()
+}
+
+export const createItem = async (
+	user: User,
+	data: Item,
+): Promise<ItemDocument> => {
+	logger.debug(`Create new item: %o`, data)
+
+	// Check if user is in the provided team id
+	if (!user.teams.includes(data.team)) {
+		throw apiError.badRequest(
+			'This user does not belong to the team with that id',
+			ErrorCode.notATeamMember,
+		)
+	}
+
+	// Check valid category
+	const category = await CategoryModel.findById(data.category)
+		.lean()
+		.exec()
+
+	if (!category) {
+		throw apiError.badRequest('Cannot find category with this id')
+	}
+
+	const newItem = await ItemModel.create(data)
+
+	return newItem
+}
+
+export const getItems = async (
+	id: string,
+	{offset = 0, limit = 20} = {},
+): Promise<ItemDocument[]> => {
+	logger.debug(`Get items for team id: ${id}`)
+
+	const items = await ItemModel.find({
+		team: id,
+	})
+		.skip(offset)
+		.limit(limit)
+		.populate('category')
+		.exec()
+
+	return items
 }

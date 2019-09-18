@@ -8,6 +8,8 @@ import CategoryModel, {
 	CategoryDocument,
 } from '../../resources/category/category.model'
 import {slugify} from '../../utils/util'
+import Item from '../../resources/item/item.interface'
+import ItemModel, {ItemDocument} from '../../resources/item/item.model'
 
 export const addUser = (user: User): Promise<UserDocument> => {
 	const mockUser = user || createMockUser(UserRole.User, UserStatus.Active)
@@ -36,6 +38,9 @@ export const addTeam = async (team: TeamInput): Promise<TeamDocument> => {
 export const addCategory = async (
 	category: Category,
 ): Promise<CategoryDocument> => {
-	const newCategory = await CategoryModel.create(category)
-	return newCategory
+	return CategoryModel.create(category)
+}
+
+export const addItem = async (item: Item): Promise<ItemDocument> => {
+	return ItemModel.create(item)
 }

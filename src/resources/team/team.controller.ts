@@ -74,3 +74,43 @@ export const updateCategory: RequestHandler = (req, res, next) => {
 		})
 		.catch(next)
 }
+
+export const createItem: RequestHandler = (req, res, next) => {
+	const {id} = req.params
+	const item = {
+		...req.body,
+		creator: req.user,
+		team: id,
+	}
+
+	const {date, name, note, quantity, price, category} = req.body
+
+	const itemCreate = {
+		date,
+		name,
+		note,
+		quantity,
+		price,
+		category,
+		creator: req.user,
+		team: id,
+	}
+
+	services
+		.createItem(req.user, itemCreate)
+		.then(newItem => res.json(successResponse(newItem, true)))
+		.catch(next)
+}
+
+export const getItems: RequestHandler = (req, res, next) => {
+	const {id} = req.params
+	const {offset, limit} = req.query
+
+	services
+		.getItems(id, {
+			offset,
+			limit,
+		})
+		.then(items => res.json(successResponse(items)))
+		.catch(next)
+}

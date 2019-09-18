@@ -4,6 +4,7 @@ import {Permission, protect} from '../../middlewares/permission'
 import {
 	validateGetCategories,
 	validateCreateCategory,
+	validateCreateItem,
 	validateUpdateCategory,
 	checkTeamCreator,
 } from './team.validator'
@@ -13,6 +14,8 @@ const router = Router()
 
 const readCategory = protect([Permission.ReadCategory])
 const writeCategory = protect([Permission.WriteCategory])
+const readItem = protect([Permission.ReadItem])
+const writeItem = protect([Permission.WriteItem])
 
 router.param('categoryId', teamController.parseCategoryIdParam)
 
@@ -62,6 +65,43 @@ router
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
 	.post(writeCategory, validateCreateCategory(), teamController.createCategory)
+
+router
+	.route('/:id/items')
+	/**
+	 * @swagger
+	 *
+	 * /api/teams/{id}/items:
+	 *   get:
+	 *     tags:
+	 *       - Team
+	 *     summary: Get all items for a team
+	 *     parameters:
+	 *     - $ref: '#/components/parameters/type'
+	 *     responses:
+	 *       '200':
+	 *         $ref: '#/components/responses/ItemsResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.get(readItem, teamController.getItems)
+	/**
+	 * @swagger
+	 *
+	 * /api/teams/{id}/items:
+	 *   post:
+	 *     tags:
+	 *       - Team
+	 *     summary: Create a new item
+	 *     requestBody:
+	 *       $ref: '#/components/requestBodies/ItemCreate'
+	 *     responses:
+	 *       '200':
+	 *         $ref: '#/components/responses/ItemResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.post(writeItem, validateCreateItem(), teamController.createItem)
 
 /**
  * @swagger

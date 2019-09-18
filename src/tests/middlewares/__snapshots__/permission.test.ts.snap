@@ -4,11 +4,13 @@ exports[`[Permission] permission role 1`] = `
 Object {
   "admin": Array [
     "user:read",
-    "user:write",
     "team:write",
     "team:read",
     "category:read",
     "category:write",
+    "item:read",
+    "item:write",
+    "user:write",
   ],
   "user": Array [
     "user:read",
@@ -16,6 +18,8 @@ Object {
     "team:read",
     "category:read",
     "category:write",
+    "item:read",
+    "item:write",
   ],
 }
 `;

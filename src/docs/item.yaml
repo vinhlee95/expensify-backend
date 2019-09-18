@@ -1,0 +1,103 @@
+components:
+  #-------------------------------
+  # Reusable schemas (data models)
+  #-------------------------------
+  schemas:
+
+    #-------------------------------
+    # Item
+
+    Item:  # Can be referenced as '#/components/schemas/Item'
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        note:
+          type: string
+        quantity:
+          type: number
+          min: 1
+        price:
+          type: number
+          min: 1
+        date:
+          type: number
+          format: date-time
+      required:
+      - name
+      - quantity
+      - price
+      - date
+
+  #-------------------------------
+  # Reusable bodies
+  #-------------------------------
+
+  requestBodies:
+    #-------------------------------
+    # ItemCreate
+
+    ItemCreate: # Can be referenced as '#/components/requestBodies/ItemCreate'
+      description: Item to create
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              note:
+                type: string
+              quantity:
+                type: number
+                min: 1
+              price:
+                type: number
+                min: 1
+            required:
+            - name
+            - quantity
+            - price
+            - date
+
+  #-------------------------------
+  # Reusable responses
+  #-------------------------------
+
+  responses:
+
+    #-------------------------------
+    # Item
+
+    ItemsResponse:  # Can be referenced as '#/components/responses/ItemsResponse'
+      description: A JSON array containing items
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Item'
+              required:
+              - data
+
+    ItemResponse:  # Can be referenced as '#/components/responses/ItemResponse'
+      description: A JSON object containing item
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: object
+                  properties:
+                    $ref: '#components/schemas/Item'
+              required:
+              - data
