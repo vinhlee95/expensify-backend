@@ -83,8 +83,21 @@ export const createItem: RequestHandler = (req, res, next) => {
 		team: id,
 	}
 
+	const {date, name, note, quantity, price, category} = req.body
+
+	const itemCreate = {
+		date,
+		name,
+		note,
+		quantity,
+		price,
+		category,
+		creator: req.user,
+		team: id,
+	}
+
 	services
-		.createItem(req.user, item)
+		.createItem(req.user, itemCreate)
 		.then(newItem => res.json(successResponse(newItem, true)))
 		.catch(next)
 }
