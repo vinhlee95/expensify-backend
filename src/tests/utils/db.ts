@@ -38,11 +38,9 @@ export const addTeam = async (team: TeamInput): Promise<TeamDocument> => {
 export const addCategory = async (
 	category: Category,
 ): Promise<CategoryDocument> => {
-	const newCategory = await CategoryModel.create(category)
-	return newCategory
+	return CategoryModel.create(category)
 }
 
 export const addItem = async (item: Item): Promise<ItemDocument> => {
-	const newItem = await ItemModel.create(item)
-	return newItem
+	return ItemModel.create(item)
 }

@@ -89,12 +89,12 @@ export const createItem: RequestHandler = (req, res, next) => {
 		.catch(next)
 }
 
-export const getItem: RequestHandler = (req, res, next) => {
+export const getItems: RequestHandler = (req, res, next) => {
 	const {id} = req.params
 	const {offset, limit} = req.query
 
 	services
-		.getItem(id, {
+		.getItems(id, {
 			offset,
 			limit,
 		})

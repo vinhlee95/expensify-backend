@@ -8,7 +8,7 @@ import {
 	createMockTeam,
 } from '../tests/utils/mock'
 import TeamModel from '../resources/team/team.model'
-import ExpenseItemModel from '../resources/item/item.model'
+import ItemModel from '../resources/item/item.model'
 import {addCategory, addItem, addTeam, addUser} from '../tests/utils/db'
 import {CategoryType} from '../resources/category/category.interface'
 import CategoryModel from '../resources/category/category.model'
@@ -44,7 +44,7 @@ const cleanDB = async () => {
 		UserModel.deleteMany({}),
 		TeamModel.deleteMany({}),
 		CategoryModel.deleteMany({}),
-		ExpenseItemModel.deleteMany({}),
+		ItemModel.deleteMany({}),
 	])
 }
 
@@ -70,16 +70,10 @@ const createCategories = (teamId: string) => {
 	return mockCategories.map(mockCategory => addCategory(mockCategory))
 }
 
-const createExpenseItems = (
-	teamId: string,
-	userId: string,
-	categoryId: string,
-) => {
-	const mockExpenseItems = _.times(10, () =>
-		createMockItem(teamId, userId, categoryId),
-	)
+const createItems = (teamId: string, userId: string, categoryId: string) => {
+	const items = _.times(10, () => createMockItem(teamId, userId, categoryId))
 
-	return mockExpenseItems.map(mockExpenseItem => addItem(mockExpenseItem))
+	return items.map(item => addItem(item))
 }
 
 export const seed = async () => {
@@ -101,9 +95,7 @@ export const seed = async () => {
 		teams.map(async team => {
 			await Promise.all(
 				categories
-					.map(category =>
-						createExpenseItems(team.id, users[0].id, category.id),
-					)
+					.map(category => createItems(team.id, users[0].id, category.id))
 					.flat(),
 			)
 		})

@@ -84,7 +84,7 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.get(readItem, teamController.getItem)
+	.get(readItem, teamController.getItems)
 	/**
 	 * @swagger
 	 *

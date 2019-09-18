@@ -14,7 +14,7 @@ import {
 	parseTeamIdParam,
 	updateCategory,
 	createItem,
-	getItem,
+	getItems,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
@@ -260,10 +260,10 @@ describe('[Team service]', () => {
 		})
 	})
 
-	describe('getItem', () => {
+	describe('getItems', () => {
 		it('should get items', async () => {
 			// Act
-			const items = await getItem(team.id)
+			const items = await getItems(team.id)
 
 			// Expect
 			expect(items.length).toEqual(teamItems.length)
@@ -274,7 +274,7 @@ describe('[Team service]', () => {
 			const limit = 4
 
 			// Act
-			const items = await getItem(team.id, {limit})
+			const items = await getItems(team.id, {limit})
 
 			// Expect
 			expect(items.length).toEqual(limit)
