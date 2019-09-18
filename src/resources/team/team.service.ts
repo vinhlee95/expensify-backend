@@ -151,7 +151,7 @@ export const createItem = async (
 	return newItem
 }
 
-export const getItem = async (
+export const getItems = async (
 	id: string,
 	{offset = 0, limit = 20} = {},
 ): Promise<ItemDocument[]> => {
@@ -163,7 +163,6 @@ export const getItem = async (
 		.skip(offset)
 		.limit(limit)
 		.populate('category')
-		.lean()
 		.exec()
 
 	return items
