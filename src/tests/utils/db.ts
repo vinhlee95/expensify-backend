@@ -9,7 +9,7 @@ import CategoryModel, {
 } from '../../resources/category/category.model'
 import {slugify} from '../../utils/util'
 import Item from '../../resources/item/item.interface'
-import ExpenseItemModel, {ItemDocument} from '../../resources/item/item.model'
+import ItemModel, {ItemDocument} from '../../resources/item/item.model'
 
 export const addUser = (user: User): Promise<UserDocument> => {
 	const mockUser = user || createMockUser(UserRole.User, UserStatus.Active)
@@ -42,9 +42,7 @@ export const addCategory = async (
 	return newCategory
 }
 
-export const addExpenseItem = async (
-	expenseItem: Item,
-): Promise<ItemDocument> => {
-	const newExpenseItem = await ExpenseItemModel.create(expenseItem)
-	return newExpenseItem
+export const addItem = async (item: Item): Promise<ItemDocument> => {
+	const newItem = await ItemModel.create(item)
+	return newItem
 }

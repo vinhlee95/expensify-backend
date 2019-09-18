@@ -95,11 +95,11 @@ export const getItem: RequestHandler = async (req, res, next) => {
 	const {offset, limit} = req.query
 
 	try {
-		const expenseItems = await services.getItem(id, {
+		const items = await services.getItem(id, {
 			offset,
 			limit,
 		})
-		return res.json(successResponse(expenseItems))
+		return res.json(successResponse(items))
 	} catch (error) {
 		next(error)
 	}

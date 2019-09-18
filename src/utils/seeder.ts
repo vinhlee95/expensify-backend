@@ -9,7 +9,7 @@ import {
 } from '../tests/utils/mock'
 import TeamModel from '../resources/team/team.model'
 import ExpenseItemModel from '../resources/item/item.model'
-import {addCategory, addExpenseItem, addTeam, addUser} from '../tests/utils/db'
+import {addCategory, addItem, addTeam, addUser} from '../tests/utils/db'
 import {CategoryType} from '../resources/category/category.interface'
 import CategoryModel from '../resources/category/category.model'
 
@@ -80,7 +80,7 @@ const createExpenseItems = (
 	)
 
 	return mockExpenseItems.map(mockExpenseItem =>
-		addExpenseItem(mockExpenseItem),
+		addItem(mockExpenseItem),
 	)
 }
 

@@ -3,7 +3,7 @@ import faker from 'faker'
 import _ from 'lodash'
 
 import {apiRequest, getRoleWithPermisison, signInUser} from '../../utils/common'
-import {addCategory, addExpenseItem, addTeam, addUser} from '../../utils/db'
+import {addCategory, addItem, addTeam, addUser} from '../../utils/db'
 import {
 	createMockCategory,
 	createMockItem,
@@ -53,7 +53,7 @@ describe('[TEAMS API]', () => {
 
 		teamItems = await Promise.all(
 			_.times(6, () =>
-				addExpenseItem(
+				addItem(
 					createMockItem(team1.id, user1.id, expenseCategories[0].id),
 				),
 			),
@@ -258,7 +258,9 @@ describe('[TEAMS API]', () => {
 	describe('GET /api/teams/:id/items', () => {
 		it(`[${roleWithReadItem}]. should return 200 with items`, async () => {
 			// Action
-			const result = await apiRequest.get(`/api/teams/${team1.id}/items`).set('Authorization', token)
+			const result = await apiRequest
+				.get(`/api/teams/${team1.id}/items`)
+				.set('Authorization', token)
 
 			expect(result.status).toEqual(httpStatus.OK)
 			expect(result.body.data.length).toEqual(teamItems.length)

@@ -1,4 +1,4 @@
-import {addCategory, addExpenseItem, addTeam, addUser} from '../../utils/db'
+import {addCategory, addItem, addTeam, addUser} from '../../utils/db'
 import {
 	createMockItem,
 	createMockTeam,
@@ -56,7 +56,7 @@ describe('[Team service]', () => {
 
 		teamItems = await Promise.all(
 			_.times(6, () =>
-				addExpenseItem(createMockItem(team.id, user.id, expenseCategory.id)),
+				addItem(createMockItem(team.id, user.id, expenseCategory.id)),
 			),
 		)
 	})
