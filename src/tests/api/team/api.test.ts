@@ -144,11 +144,8 @@ describe('[TEAMS API]', () => {
 			})
 		})
 
-		it(`[${roleWithWriteCategory}]. should return 400 when user does not belong to provided team`, async () => {
-			const noMemberUser = await addUser(
-				createMockUser(UserRole.User, UserStatus.Active),
-			)
-			const token = signInUser(noMemberUser)
+		it(`[${roleWithWriteCategory}]. should return 400 when user is not a team member`, async () => {
+			const token = signInUser(user2)
 			const mockCategory = createMockCategory(team1.id, CategoryType.Expense)
 
 			// Action
@@ -158,7 +155,8 @@ describe('[TEAMS API]', () => {
 				.send(mockCategory)
 
 			// Expect
-			expect(result.status).toEqual(httpStatus.BAD_REQUEST)
+			expect(result.status).toEqual(httpStatus.FORBIDDEN)
+			expect(result.body.errorCode).toEqual(ErrorCode.notATeamMember)
 		})
 
 		it(`[${roleWithWriteCategory}]. should return 200 with new created category when data is valid`, async () => {
@@ -221,7 +219,7 @@ describe('[TEAMS API]', () => {
 			expect(result.body.data.length).toEqual(limit)
 		})
 
-		it(`[${roleWithWriteCategory}]. should throw forbidden error when user is not team creator`, async () => {
+		it(`[${roleWithWriteCategory}]. should throw 403 error when user is not a team member`, async () => {
 			// Arrange
 			const category = incomeCategories[0]
 			const token2 = signInUser(user2)
@@ -233,7 +231,7 @@ describe('[TEAMS API]', () => {
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.FORBIDDEN)
-			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
+			expect(result.body.errorCode).toEqual(ErrorCode.notATeamMember)
 		})
 	})
 
@@ -265,7 +263,7 @@ describe('[TEAMS API]', () => {
 			expect(result.body.data.length).toEqual(teamItems.length)
 		})
 
-		it(`[${roleWithWriteCategory}]. should throw forbidden error when user is not team creator`, async () => {
+		it(`[${roleWithWriteCategory}]. should throw 403 error when user is not a team member`, async () => {
 			// Arrange
 			const category = incomeCategories[0]
 			const token2 = signInUser(user2)
@@ -277,7 +275,7 @@ describe('[TEAMS API]', () => {
 
 			// Expect
 			expect(result.status).toEqual(httpStatus.FORBIDDEN)
-			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
+			expect(result.body.errorCode).toEqual(ErrorCode.notATeamMember)
 		})
 	})
 

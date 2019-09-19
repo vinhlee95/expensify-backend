@@ -141,7 +141,7 @@ describe('[Team service]', () => {
 				const mockCategory = createMockCategory(team.id, CategoryType.Expense)
 
 				// Act
-				const createdCategory = await createCategory(mockCategory, user)
+				const createdCategory = await createCategory(mockCategory)
 
 				// Expect
 				expect(createdCategory.name).toEqual(mockCategory.name)
@@ -157,12 +157,12 @@ describe('[Team service]', () => {
 			// Arrange
 			const existedCategory = teamCategories[0]
 			const mockCategory = {
-				...createMockCategory(user.id),
+				...createMockCategory(team.id),
 				name: existedCategory.name,
 			}
 
 			// Act
-			const createdCategory = createCategory(mockCategory, user)
+			const createdCategory = createCategory(mockCategory)
 
 			// Expect
 			await expect(createdCategory).rejects.toThrow(ApiError)
@@ -260,7 +260,7 @@ describe('[Team service]', () => {
 			const mockItem = createMockItem(team.id, user.id, category.id)
 
 			// Act
-			const createdItem = await createItem(user, mockItem)
+			const createdItem = await createItem(mockItem)
 
 			// Expect
 			expect(createdItem.creator.toString()).toEqual(mockItem.creator)
@@ -271,19 +271,6 @@ describe('[Team service]', () => {
 			expect(createdItem.date).toEqual(mockItem.date)
 			expect(createdItem.quantity).toEqual(mockItem.quantity)
 			expect(createdItem.price).toEqual(mockItem.price)
-		})
-
-		it('should throw error when create item with wrong team', async () => {
-			// Arrange
-			const category = teamCategories[0]
-
-			const mockItem = createMockItem(team2.id, user.id, category.id)
-
-			// Act
-			const item = createItem(user, mockItem)
-
-			// Expect
-			await expect(item).rejects.toThrow(ApiError)
 		})
 	})
 
