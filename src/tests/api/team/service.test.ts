@@ -17,6 +17,7 @@ import {
 	getItems,
 	deleteItem,
 	updateItem,
+	parseItemIdParam,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
@@ -114,7 +115,7 @@ describe('[Team service]', () => {
 			const item = teamItems[0]
 
 			// Act
-			const foundItem = await parseTeamIdParam(item.id)
+			const foundItem = await parseItemIdParam(item.id)
 
 			// Expect
 			expect(foundItem.id).toEqual(item.id)
