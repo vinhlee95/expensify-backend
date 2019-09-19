@@ -6,6 +6,7 @@ import {apiRequest, getRoleWithPermisison, signInUser} from '../../utils/common'
 import {addCategory, addItem, addTeam, addUser} from '../../utils/db'
 import {
 	createMockCategory,
+	createMockId,
 	createMockItem,
 	createMockTeam,
 	createMockUser,
@@ -16,8 +17,8 @@ import {Permission} from '../../../middlewares/permission'
 import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {CategoryDocument} from '../../../resources/category/category.model'
-import Item from '../../../resources/item/item.interface'
 import {ErrorCode} from '../../../utils/apiError'
+import {ItemDocument} from '../../../resources/item/item.model'
 
 describe('[TEAMS API]', () => {
 	const roleWithReadCategory = getRoleWithPermisison(Permission.ReadCategory)
@@ -31,7 +32,7 @@ describe('[TEAMS API]', () => {
 	let team: TeamDocument
 	let expenseCategories: CategoryDocument[]
 	let incomeCategories: CategoryDocument[]
-	let teamItems: Item[]
+	let teamItems: ItemDocument[]
 	let token: string
 
 	beforeEach(async () => {
@@ -277,6 +278,70 @@ describe('[TEAMS API]', () => {
 			// Expect
 			expect(result.status).toEqual(httpStatus.FORBIDDEN)
 			expect(result.body.errorCode).toEqual(ErrorCode.notACreator)
+		})
+	})
+
+	describe('PUT /api/teams/:id/items/:itemId', () => {
+		it(`[${roleWithWriteItem}]. should return 200 with updated item`, async () => {
+			// Arrange
+			const item = teamItems[0]
+			const itemUpdate = createMockItem(
+				team1.id,
+				user1.id,
+				incomeCategories[0].id,
+			)
+
+			// Action
+			const result = await apiRequest
+				.put(`/api/teams/${team1.id}/items/${item.id}`)
+				.send(itemUpdate)
+				.set('Authorization', token)
+
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+
+		it(`[${roleWithWriteItem}]. should return 400 when item is not found`, async () => {
+			// Arrange
+			const randomId = createMockId()
+			const itemUpdate = createMockItem(
+				team1.id,
+				user1.id,
+				incomeCategories[0].id,
+			)
+
+			// Action
+			const result = await apiRequest
+				.put(`/api/teams/${team1.id}/items/${randomId}`)
+				.send(itemUpdate)
+				.set('Authorization', token)
+
+			expect(result.status).toEqual(httpStatus.NOT_FOUND)
+		})
+	})
+
+	describe('DELETE /api/teams/:id/items/:itemId', () => {
+		it(`[${roleWithWriteItem}]. should return 200 with updated item`, async () => {
+			// Arrange
+			const item = teamItems[0]
+
+			// Action
+			const result = await apiRequest
+				.del(`/api/teams/${team1.id}/items/${item.id}`)
+				.set('Authorization', token)
+
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+
+		it(`[${roleWithWriteItem}]. should return 400 when item not found`, async () => {
+			// Arrange
+			const randomId = createMockId()
+
+			// Action
+			const result = await apiRequest
+				.del(`/api/teams/${team1.id}/items/${randomId}`)
+				.set('Authorization', token)
+
+			expect(result.status).toEqual(httpStatus.NOT_FOUND)
 		})
 	})
 })
