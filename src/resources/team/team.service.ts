@@ -37,6 +37,16 @@ export const parseCategoryIdParam = async (
 	return category
 }
 
+export const parseItemIdParam = async (id: string): Promise<ItemDocument> => {
+	const item = await ItemModel.findById(id).exec()
+
+	if (!item) {
+		throw notFound('Cannot find item with that id')
+	}
+
+	return item
+}
+
 /**
  * Get all categories
  *
@@ -166,4 +176,21 @@ export const getItems = async (
 		.exec()
 
 	return items
+}
+
+export const deleteItem = async (item: ItemDocument): Promise<ItemDocument> => {
+	logger.debug(`Delete item with id: ${item.id}`)
+
+	return item.remove()
+}
+
+export const updateItem = async (
+	item: ItemDocument,
+	itemUpdate: Item,
+): Promise<ItemDocument> => {
+	logger.debug(`Update item with id: ${item.id}`)
+
+	_.merge(item, itemUpdate)
+
+	return item.save()
 }
