@@ -15,6 +15,8 @@ import {
 	updateCategory,
 	createItem,
 	getItems,
+	deleteItem,
+	updateItem,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
@@ -22,15 +24,15 @@ import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryDocument} from '../../../resources/category/category.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {ApiError} from '../../../utils/apiError'
-import Item from '../../../resources/item/item.interface'
 import _ from 'lodash'
+import {ItemDocument} from '../../../resources/item/item.model'
 
 describe('[Team service]', () => {
 	let user: UserDocument
 	let user2: UserDocument
 	let team: TeamDocument
 	let team2: TeamDocument
-	let teamItems: Item[]
+	let teamItems: ItemDocument[]
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
@@ -103,6 +105,30 @@ describe('[Team service]', () => {
 
 			// Expect
 			await expect(foundCategory).rejects.toThrow(ApiError)
+		})
+	})
+
+	describe('parseItemIdParam', () => {
+		it('should return item when id is valid', async () => {
+			// Arange
+			const item = teamItems[0]
+
+			// Act
+			const foundItem = await parseTeamIdParam(item.id)
+
+			// Expect
+			expect(foundItem.id).toEqual(item.id)
+		})
+
+		it('should throw error when id is invalid', async () => {
+			// Arrange
+			const randomId = createMockId()
+
+			// Act
+			const foundItem = parseTeamIdParam(randomId)
+
+			// Expect
+			await expect(foundItem).rejects.toThrow(ApiError)
 		})
 	})
 
@@ -278,6 +304,37 @@ describe('[Team service]', () => {
 
 			// Expect
 			expect(items.length).toEqual(limit)
+		})
+	})
+
+	describe('deleteItem', () => {
+		it('should delete item', async () => {
+			// Arrange
+			const item = teamItems[0]
+
+			// Act
+			const deletedItem = await deleteItem(item)
+
+			// Expect
+			expect(deletedItem.id).toEqual(item.id)
+		})
+	})
+
+	describe('updateItem', () => {
+		it('should update item', async () => {
+			// Arrange
+			const item = teamItems[0]
+			const itemUpdate = createMockItem(team.id, user.id, teamCategories[0].id)
+
+			// Act
+			const updatedItem = await updateItem(item, itemUpdate)
+
+			// Expect
+			expect(updatedItem.note).toEqual(itemUpdate.note)
+			expect(updatedItem.price).toEqual(itemUpdate.price)
+			expect(updatedItem.quantity).toEqual(itemUpdate.quantity)
+			expect(updatedItem.date).toEqual(itemUpdate.date)
+			expect(updatedItem.name).toEqual(itemUpdate.name)
 		})
 	})
 })
