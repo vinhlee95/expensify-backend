@@ -4,6 +4,7 @@ import {CategoryType} from '../category/category.interface'
 import {enumToValues} from '../../utils/util'
 import {RequestHandler} from 'express'
 import apiError, {ErrorCode} from '../../utils/apiError'
+import TeamModel from './team.model'
 
 export const validateGetCategories = () => {
 	return [
@@ -81,6 +82,22 @@ export const checkTeamCreator: RequestHandler = (req, res, next) => {
 			apiError.forbidden(
 				'This user is not team creator',
 				ErrorCode.notACreator,
+			),
+		)
+	}
+
+	return next()
+}
+
+export const checkBelongToTeam: RequestHandler = (req, res, next) => {
+	const {id} = req.params
+	const {user} = req
+
+	if (!user.teams.includes(id)) {
+		return next(
+			apiError.forbidden(
+				'This user does not belong to the team with that id',
+				ErrorCode.notATeamMember,
 			),
 		)
 	}

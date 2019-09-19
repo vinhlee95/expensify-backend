@@ -78,40 +78,27 @@ export const getCategories = async (
 
 export const createCategory = async (
 	data: Category,
-	user: User,
 ): Promise<CategoryDocument> => {
 	logger.debug(`Create new category: %o`, data)
 
-	// Check if user is in the provided team id
-	if (!user.teams.includes(data.team)) {
-		return Promise.reject(
-			apiError.badRequest(
-				'This user does not belong to the team with that id',
-				ErrorCode.notATeamMember,
-			),
-		)
-	}
-
 	// Check if team already had that category
-	const existingCategory = await await CategoryModel.findOne({
-		name: data.name,
+	const existingCategory = await CategoryModel.findOne({
 		team: data.team,
+		name: data.name,
 	})
 		.lean()
 		.exec()
 
 	if (existingCategory) {
-		return Promise.reject(
-			apiError.badRequest(
-				'There is already an existing category with that name',
-				ErrorCode.categoryNameNotUnique,
-			),
+		throw apiError.badRequest(
+			'There is already an existing category with that name',
+			ErrorCode.categoryNameNotUnique,
 		)
 	}
 
 	const newCategory = await CategoryModel.create(data)
 
-	return Promise.resolve(newCategory)
+	return newCategory
 }
 
 export const deleteCategory = async (
@@ -133,19 +120,8 @@ export const updateCategory = async (
 	return category.save()
 }
 
-export const createItem = async (
-	user: User,
-	data: Item,
-): Promise<ItemDocument> => {
+export const createItem = async (data: Item): Promise<ItemDocument> => {
 	logger.debug(`Create new item: %o`, data)
-
-	// Check if user is in the provided team id
-	if (!user.teams.includes(data.team)) {
-		throw apiError.badRequest(
-			'This user does not belong to the team with that id',
-			ErrorCode.notATeamMember,
-		)
-	}
 
 	// Check valid category
 	const category = await CategoryModel.findById(data.category)

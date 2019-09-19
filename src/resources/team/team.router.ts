@@ -1,4 +1,4 @@
-import {Router} from 'express'
+import {RequestHandler, Router} from 'express'
 import {Permission, protect} from '../../middlewares/permission'
 
 import {
@@ -8,15 +8,18 @@ import {
 	validateUpdateCategory,
 	checkTeamCreator,
 	validateUpdateItem,
+	checkBelongToTeam,
 } from './team.validator'
 import * as teamController from './team.controller'
-
 const router = Router()
 
-const readCategory = protect([Permission.ReadCategory])
-const writeCategory = protect([Permission.WriteCategory])
-const readItem = protect([Permission.ReadItem])
-const writeItem = protect([Permission.WriteItem])
+const readCategory = [...protect([Permission.ReadCategory]), checkBelongToTeam]
+const writeCategory = [
+	...protect([Permission.WriteCategory]),
+	checkBelongToTeam,
+]
+const readItem = [...protect([Permission.ReadItem]), checkBelongToTeam]
+const writeItem = [...protect([Permission.WriteItem]), checkBelongToTeam]
 
 router.param('categoryId', teamController.parseCategoryIdParam)
 router.param('itemId', teamController.parseItemIdParam)

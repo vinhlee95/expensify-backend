@@ -57,7 +57,7 @@ export const createCategory: RequestHandler = async (req, res, next) => {
 			...req.body,
 			team: id,
 		}
-		const newCategory = await services.createCategory(categoryData, req.user)
+		const newCategory = await services.createCategory(categoryData)
 		return res.json(successResponse(newCategory, true))
 	} catch (error) {
 		next(error)
@@ -88,12 +88,6 @@ export const updateCategory: RequestHandler = (req, res, next) => {
 
 export const createItem: RequestHandler = (req, res, next) => {
 	const {id} = req.params
-	const item = {
-		...req.body,
-		creator: req.user,
-		team: id,
-	}
-
 	const {date, name, note, quantity, price, category} = req.body
 
 	const itemCreate = {
@@ -108,7 +102,7 @@ export const createItem: RequestHandler = (req, res, next) => {
 	}
 
 	services
-		.createItem(req.user, itemCreate)
+		.createItem(itemCreate)
 		.then(newItem => res.json(successResponse(newItem, true)))
 		.catch(next)
 }
