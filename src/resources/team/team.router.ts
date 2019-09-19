@@ -104,10 +104,48 @@ router
 	 */
 	.post(writeItem, validateCreateItem(), teamController.createItem)
 
+/**
+ * @swagger
+ *
+ * /api/teams/{id}/items/{itemId}:
+ *   parameters:
+ *     - $ref: '#/components/parameters/id'
+ *     - $ref: '#/components/parameters/categoryId'
+ */
 router
 	.route('/:id/items/:itemId')
-	.put(writeItem, validateUpdateItem(), teamController.updateItem)
+	/**
+	 * @swagger
+	 *
+	 * /api/teams/{id}/items/{itemId}:
+	 *   delete:
+	 *     tags:
+	 *       - Team
+	 *     summary: Delete a item
+	 *     responses:
+	 *       '200':
+	 *         $ref: '#/components/responses/ItemResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
 	.delete(writeItem, teamController.deleteItem)
+	/**
+	 * @swagger
+	 *
+	 * /api/teams/{id}/items/{itemId}:
+	 *   put:
+	 *     tags:
+	 *       - Team
+	 *     summary: Update a item
+	 *     requestBody:
+	 *       $ref: '#/components/requestBodies/ItemUpdate'
+	 *     responses:
+	 *       '200':
+	 *         $ref: '#/components/responses/ItemResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.put(writeItem, validateUpdateItem(), teamController.updateItem)
 
 /**
  * @swagger

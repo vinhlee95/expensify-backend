@@ -86,6 +86,14 @@ components:
       schema:
         type: string
 
+    itemId: # Can be referenced as '#/components/parameters/itemId'
+      in: path
+      name: itemId
+      description: Item id
+      required: true
+      schema:
+        type: string
+
     field: # Can be referenced as '#/components/parameters/field'
       in: query
       name: field
