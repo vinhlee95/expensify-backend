@@ -1,6 +1,7 @@
 import {UserDocument} from '../../resources/user/user.model'
 import {CategoryDocument} from '../resources/category/category.model'
 import {TeamDocument} from '../resources/team/team.model'
+import {ItemDocument} from '../resources/item/item.model'
 
 declare global {
 	namespace jest {
@@ -15,6 +16,7 @@ declare global {
 		interface Request {
 			category?: CategoryDocument
 			team?: TeamDocument
+			item?: ItemDocument
 		}
 	}
 }

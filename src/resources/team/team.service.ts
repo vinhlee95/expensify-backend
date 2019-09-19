@@ -1,7 +1,7 @@
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
 import ItemModel, {ItemDocument} from '../item/item.model'
-import Item from '../item/item.interface'
+import Item, {ItemInput} from '../item/item.interface'
 import {
 	Category,
 	CategoryInput,
@@ -186,7 +186,7 @@ export const deleteItem = async (item: ItemDocument): Promise<ItemDocument> => {
 
 export const updateItem = async (
 	item: ItemDocument,
-	itemUpdate: Item,
+	itemUpdate: ItemInput,
 ): Promise<ItemDocument> => {
 	logger.debug(`Update item with id: ${item.id}`)
 

@@ -7,6 +7,7 @@ import {
 	validateCreateItem,
 	validateUpdateCategory,
 	checkTeamCreator,
+	validateUpdateItem,
 } from './team.validator'
 import * as teamController from './team.controller'
 
@@ -18,7 +19,7 @@ const readItem = protect([Permission.ReadItem])
 const writeItem = protect([Permission.WriteItem])
 
 router.param('categoryId', teamController.parseCategoryIdParam)
-
+router.param('itemId', teamController.parseItemIdParam)
 router.param('id', teamController.parseTeamIdParam)
 
 /**
@@ -102,6 +103,11 @@ router
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
 	.post(writeItem, validateCreateItem(), teamController.createItem)
+
+router
+	.route('/:id/items/:itemId')
+	.put(writeItem, validateUpdateItem(), teamController.updateItem)
+	.delete(writeItem, teamController.deleteItem)
 
 /**
  * @swagger

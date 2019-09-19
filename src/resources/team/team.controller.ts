@@ -2,6 +2,7 @@ import {RequestHandler, RequestParamHandler} from 'express'
 import {successResponse} from '../../utils/apiResponse'
 import * as services from './team.service'
 import {CategoryInput} from '../category/category.interface'
+import {ItemInput} from '../item/item.interface'
 
 export const parseTeamIdParam: RequestParamHandler = (req, res, next, id) => {
 	services
@@ -23,6 +24,16 @@ export const parseCategoryIdParam: RequestParamHandler = (
 		.parseCategoryIdParam(id)
 		.then(category => {
 			req.category = category
+			return next()
+		})
+		.catch(next)
+}
+
+export const parseItemIdParam: RequestParamHandler = (req, res, next, id) => {
+	services
+		.parseItemIdParam(id)
+		.then(item => {
+			req.item = item
 			return next()
 		})
 		.catch(next)
@@ -112,5 +123,28 @@ export const getItems: RequestHandler = (req, res, next) => {
 			limit,
 		})
 		.then(items => res.json(successResponse(items)))
+		.catch(next)
+}
+
+export const deleteItem: RequestHandler = (req, res, next) => {
+	services
+		.deleteItem(req.item)
+		.then(deletedItem => res.json(successResponse(deletedItem)))
+		.catch(next)
+}
+
+export const updateItem: RequestHandler = (req, res, next) => {
+	const {name, date, note, price, quantity} = req.body
+	const updateItem: ItemInput = {
+		name,
+		date,
+		note,
+		price,
+		quantity,
+	}
+
+	services
+		.updateItem(req.item, updateItem)
+		.then(updatedItem => res.json(successResponse(updatedItem)))
 		.catch(next)
 }
