@@ -7,11 +7,11 @@ import {
 	CategoryInput,
 	CategoryType,
 } from '../category/category.interface'
-import {User} from '../user/user.interface'
 import apiError, {ErrorCode, notFound} from '../../utils/apiError'
 import {TeamDocument} from './team.model'
 import TeamModel from './team.model'
 import * as _ from 'lodash'
+import {Sort} from '../../middlewares/validator'
 
 const logger = createLogger(module)
 
@@ -139,19 +139,30 @@ export const createItem = async (data: Item): Promise<ItemDocument> => {
 
 export const getItems = async (
 	id: string,
-	{offset = 0, limit = 20} = {},
+	{offset = 0, field = '', sort = Sort.asc, search = '', limit = 20} = {},
 ): Promise<ItemDocument[]> => {
 	logger.debug(`Get items for team id: ${id}`)
 
-	const items = await ItemModel.find({
+	const query = ItemModel.find({
 		team: id,
-	})
+	}).populate('category')
+
+	if (field) {
+		query.sort({[field]: sort})
+	}
+
+	query
 		.skip(offset)
 		.limit(limit)
-		.populate('category')
-		.exec()
+		.lean()
 
-	return items
+	if (search) {
+		const searchRegex = new RegExp(`^${search}`, 'i')
+
+		query.where({name: {$regex: searchRegex, $options: 'i'}})
+	}
+
+	return query.exec()
 }
 
 export const deleteItem = async (item: ItemDocument): Promise<ItemDocument> => {

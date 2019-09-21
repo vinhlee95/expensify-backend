@@ -27,6 +27,7 @@ import {CategoryType} from '../../../resources/category/category.interface'
 import {ApiError} from '../../../utils/apiError'
 import _ from 'lodash'
 import {ItemDocument} from '../../../resources/item/item.model'
+import {filterArrayBySearchText} from '../../utils/common'
 
 describe('[Team service]', () => {
 	let user: UserDocument
@@ -292,6 +293,27 @@ describe('[Team service]', () => {
 
 			// Expect
 			expect(items.length).toEqual(limit)
+		})
+
+		it('should return items with matched search text', async () => {
+			// Arrange
+			const item = teamItems[0]
+			const searchText = item.name.substring(1)
+
+			const expectedFoundItems = filterArrayBySearchText(
+				teamItems,
+				['name'],
+				searchText,
+			)
+
+			// Act
+			const foundItems = await getItems(team.id, {
+				field: 'name',
+				search: searchText,
+			})
+
+			// Expect
+			expect(foundItems.length).toEqual(expectedFoundItems.length)
 		})
 	})
 
