@@ -128,13 +128,14 @@ export const deleteItem: RequestHandler = (req, res, next) => {
 }
 
 export const updateItem: RequestHandler = (req, res, next) => {
-	const {name, date, note, price, quantity} = req.body
+	const {name, date, note, price, quantity, category} = req.body
 	const updateItem: ItemInput = {
 		name,
 		date,
 		note,
 		price,
 		quantity,
+		category,
 	}
 
 	services
