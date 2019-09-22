@@ -323,6 +323,7 @@ describe('[Team service]', () => {
 			expect(updatedItem.quantity).toEqual(itemUpdate.quantity)
 			expect(updatedItem.date).toEqual(itemUpdate.date)
 			expect(updatedItem.name).toEqual(itemUpdate.name)
+			expect(updatedItem.category.toString()).toEqual(itemUpdate.category)
 		})
 	})
 })
