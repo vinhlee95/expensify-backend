@@ -82,6 +82,11 @@ router
 	 *     summary: Get all items for a team
 	 *     parameters:
 	 *     - $ref: '#/components/parameters/type'
+	 *     - $ref: '#/components/parameters/field'
+	 *     - $ref: '#/components/parameters/sort'
+	 *     - $ref: '#/components/parameters/offset'
+	 *     - $ref: '#/components/parameters/limit'
+	 *     - $ref: '#/components/parameters/search'
 	 *     responses:
 	 *       '200':
 	 *         $ref: '#/components/responses/ItemsResponse'

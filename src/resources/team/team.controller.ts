@@ -97,7 +97,7 @@ export const createItem: RequestHandler = (req, res, next) => {
 		quantity,
 		price,
 		category,
-		creator: req.user,
+		creator: req.user.id,
 		team: id,
 	}
 
@@ -109,12 +109,15 @@ export const createItem: RequestHandler = (req, res, next) => {
 
 export const getItems: RequestHandler = (req, res, next) => {
 	const {id} = req.params
-	const {offset, limit} = req.query
+	const {offset, limit, search, field, sort} = req.query
 
 	services
 		.getItems(id, {
 			offset,
 			limit,
+			search,
+			field,
+			sort,
 		})
 		.then(items => res.json(successResponse(items)))
 		.catch(next)
