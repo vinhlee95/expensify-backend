@@ -97,7 +97,7 @@ export const createItem: RequestHandler = (req, res, next) => {
 		quantity,
 		price,
 		category,
-		creator: req.user,
+		creator: req.user.id,
 		team: id,
 	}
 

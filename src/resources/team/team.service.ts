@@ -134,10 +134,10 @@ export const createItem = async (data: Item): Promise<ItemDocument> => {
 
 	const newItem = await ItemModel.create(data)
 
-	return newItem
+	return newItem.populate('category').execPopulate()
 }
 
-export const getItems = async (
+export const getItems = (
 	id: string,
 	{
 		offset = 0,
@@ -171,13 +171,13 @@ export const getItems = async (
 	return query.exec()
 }
 
-export const deleteItem = async (item: ItemDocument): Promise<ItemDocument> => {
+export const deleteItem = (item: ItemDocument): Promise<ItemDocument> => {
 	logger.debug(`Delete item with id: ${item.id}`)
 
 	return item.remove()
 }
 
-export const updateItem = async (
+export const updateItem = (
 	item: ItemDocument,
 	itemUpdate: ItemInput,
 ): Promise<ItemDocument> => {
