@@ -15,6 +15,9 @@ import {
 	updateCategory,
 	createItem,
 	getItems,
+	deleteItem,
+	updateItem,
+	parseItemIdParam,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
@@ -22,15 +25,15 @@ import {TeamDocument} from '../../../resources/team/team.model'
 import {CategoryDocument} from '../../../resources/category/category.model'
 import {CategoryType} from '../../../resources/category/category.interface'
 import {ApiError} from '../../../utils/apiError'
-import Item from '../../../resources/item/item.interface'
 import _ from 'lodash'
+import {ItemDocument} from '../../../resources/item/item.model'
 
 describe('[Team service]', () => {
 	let user: UserDocument
 	let user2: UserDocument
 	let team: TeamDocument
 	let team2: TeamDocument
-	let teamItems: Item[]
+	let teamItems: ItemDocument[]
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
@@ -106,6 +109,30 @@ describe('[Team service]', () => {
 		})
 	})
 
+	describe('parseItemIdParam', () => {
+		it('should return item when id is valid', async () => {
+			// Arange
+			const item = teamItems[0]
+
+			// Act
+			const foundItem = await parseItemIdParam(item.id)
+
+			// Expect
+			expect(foundItem.id).toEqual(item.id)
+		})
+
+		it('should throw error when id is invalid', async () => {
+			// Arrange
+			const randomId = createMockId()
+
+			// Act
+			const foundItem = parseTeamIdParam(randomId)
+
+			// Expect
+			await expect(foundItem).rejects.toThrow(ApiError)
+		})
+	})
+
 	describe('createCategory', () => {
 		it('should return new category', async () => {
 			try {
@@ -114,7 +141,7 @@ describe('[Team service]', () => {
 				const mockCategory = createMockCategory(team.id, CategoryType.Expense)
 
 				// Act
-				const createdCategory = await createCategory(mockCategory, user)
+				const createdCategory = await createCategory(mockCategory)
 
 				// Expect
 				expect(createdCategory.name).toEqual(mockCategory.name)
@@ -130,12 +157,12 @@ describe('[Team service]', () => {
 			// Arrange
 			const existedCategory = teamCategories[0]
 			const mockCategory = {
-				...createMockCategory(user.id),
+				...createMockCategory(team.id),
 				name: existedCategory.name,
 			}
 
 			// Act
-			const createdCategory = createCategory(mockCategory, user)
+			const createdCategory = createCategory(mockCategory)
 
 			// Expect
 			await expect(createdCategory).rejects.toThrow(ApiError)
@@ -233,7 +260,7 @@ describe('[Team service]', () => {
 			const mockItem = createMockItem(team.id, user.id, category.id)
 
 			// Act
-			const createdItem = await createItem(user, mockItem)
+			const createdItem = await createItem(mockItem)
 
 			// Expect
 			expect(createdItem.creator.toString()).toEqual(mockItem.creator)
@@ -244,19 +271,6 @@ describe('[Team service]', () => {
 			expect(createdItem.date).toEqual(mockItem.date)
 			expect(createdItem.quantity).toEqual(mockItem.quantity)
 			expect(createdItem.price).toEqual(mockItem.price)
-		})
-
-		it('should throw error when create item with wrong team', async () => {
-			// Arrange
-			const category = teamCategories[0]
-
-			const mockItem = createMockItem(team2.id, user.id, category.id)
-
-			// Act
-			const item = createItem(user, mockItem)
-
-			// Expect
-			await expect(item).rejects.toThrow(ApiError)
 		})
 	})
 
@@ -278,6 +292,37 @@ describe('[Team service]', () => {
 
 			// Expect
 			expect(items.length).toEqual(limit)
+		})
+	})
+
+	describe('deleteItem', () => {
+		it('should delete item', async () => {
+			// Arrange
+			const item = teamItems[0]
+
+			// Act
+			const deletedItem = await deleteItem(item)
+
+			// Expect
+			expect(deletedItem.id).toEqual(item.id)
+		})
+	})
+
+	describe('updateItem', () => {
+		it('should update item', async () => {
+			// Arrange
+			const item = teamItems[0]
+			const itemUpdate = createMockItem(team.id, user.id, teamCategories[0].id)
+
+			// Act
+			const updatedItem = await updateItem(item, itemUpdate)
+
+			// Expect
+			expect(updatedItem.note).toEqual(itemUpdate.note)
+			expect(updatedItem.price).toEqual(itemUpdate.price)
+			expect(updatedItem.quantity).toEqual(itemUpdate.quantity)
+			expect(updatedItem.date).toEqual(itemUpdate.date)
+			expect(updatedItem.name).toEqual(itemUpdate.name)
 		})
 	})
 })

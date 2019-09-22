@@ -63,6 +63,28 @@ components:
             - price
             - date
 
+    #-------------------------------
+    # ItemUpdate
+
+    ItemUpdate: # Can be referenced as '#/components/requestBodies/ItemUpdate'
+      description: Item to create
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              note:
+                type: string
+              quantity:
+                type: number
+                min: 1
+              price:
+                type: number
+                min: 1
+
   #-------------------------------
   # Reusable responses
   #-------------------------------

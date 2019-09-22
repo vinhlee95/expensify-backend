@@ -1,7 +1,7 @@
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
 import ItemModel, {ItemDocument} from '../item/item.model'
-import Item from '../item/item.interface'
+import Item, {ItemInput} from '../item/item.interface'
 import {
 	Category,
 	CategoryInput,
@@ -37,6 +37,16 @@ export const parseCategoryIdParam = async (
 	return category
 }
 
+export const parseItemIdParam = async (id: string): Promise<ItemDocument> => {
+	const item = await ItemModel.findById(id).exec()
+
+	if (!item) {
+		throw notFound('Cannot find item with that id')
+	}
+
+	return item
+}
+
 /**
  * Get all categories
  *
@@ -68,40 +78,27 @@ export const getCategories = async (
 
 export const createCategory = async (
 	data: Category,
-	user: User,
 ): Promise<CategoryDocument> => {
 	logger.debug(`Create new category: %o`, data)
 
-	// Check if user is in the provided team id
-	if (!user.teams.includes(data.team)) {
-		return Promise.reject(
-			apiError.badRequest(
-				'This user does not belong to the team with that id',
-				ErrorCode.notATeamMember,
-			),
-		)
-	}
-
 	// Check if team already had that category
-	const existingCategory = await await CategoryModel.findOne({
-		name: data.name,
+	const existingCategory = await CategoryModel.findOne({
 		team: data.team,
+		name: data.name,
 	})
 		.lean()
 		.exec()
 
 	if (existingCategory) {
-		return Promise.reject(
-			apiError.badRequest(
-				'There is already an existing category with that name',
-				ErrorCode.categoryNameNotUnique,
-			),
+		throw apiError.badRequest(
+			'There is already an existing category with that name',
+			ErrorCode.categoryNameNotUnique,
 		)
 	}
 
 	const newCategory = await CategoryModel.create(data)
 
-	return Promise.resolve(newCategory)
+	return newCategory
 }
 
 export const deleteCategory = async (
@@ -123,19 +120,8 @@ export const updateCategory = async (
 	return category.save()
 }
 
-export const createItem = async (
-	user: User,
-	data: Item,
-): Promise<ItemDocument> => {
+export const createItem = async (data: Item): Promise<ItemDocument> => {
 	logger.debug(`Create new item: %o`, data)
-
-	// Check if user is in the provided team id
-	if (!user.teams.includes(data.team)) {
-		throw apiError.badRequest(
-			'This user does not belong to the team with that id',
-			ErrorCode.notATeamMember,
-		)
-	}
 
 	// Check valid category
 	const category = await CategoryModel.findById(data.category)
@@ -166,4 +152,21 @@ export const getItems = async (
 		.exec()
 
 	return items
+}
+
+export const deleteItem = async (item: ItemDocument): Promise<ItemDocument> => {
+	logger.debug(`Delete item with id: ${item.id}`)
+
+	return item.remove()
+}
+
+export const updateItem = async (
+	item: ItemDocument,
+	itemUpdate: ItemInput,
+): Promise<ItemDocument> => {
+	logger.debug(`Update item with id: ${item.id}`)
+
+	_.merge(item, itemUpdate)
+
+	return item.save()
 }
