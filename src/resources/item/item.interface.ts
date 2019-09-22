@@ -4,6 +4,7 @@ export default interface Item {
 	note?: string
 	quantity: number
 	price: number
+	total?: number
 	category: string
 	team: string
 	creator: string
