@@ -265,7 +265,6 @@ describe('[Team service]', () => {
 
 			// Expect
 			expect(createdItem.creator.toString()).toEqual(mockItem.creator)
-			expect(createdItem.category.toString()).toEqual(mockItem.category)
 			expect(createdItem.team.toString()).toEqual(mockItem.team)
 			expect(createdItem.name).toEqual(mockItem.name)
 			expect(createdItem.note).toEqual(mockItem.note)
