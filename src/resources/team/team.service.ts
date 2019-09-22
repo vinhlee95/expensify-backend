@@ -139,7 +139,7 @@ export const createItem = async (data: Item): Promise<ItemDocument> => {
 
 export const getItems = async (
 	id: string,
-	{offset = 0, field = '', sort = Sort.asc, search = '', limit = 20} = {},
+	{offset = 0, field = '', sort = Sort.asc, search = '', limit = 9999} = {},
 ): Promise<ItemDocument[]> => {
 	logger.debug(`Get items for team id: ${id}`)
 
