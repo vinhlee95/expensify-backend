@@ -15,4 +15,5 @@ export interface ItemInput {
 	note?: string
 	quantity: number
 	price: number
+	category: string
 }
