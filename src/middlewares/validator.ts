@@ -7,6 +7,7 @@ import {
 	param,
 } from 'express-validator/check'
 import apiError from '../utils/apiError'
+import {isISO8601} from 'validator'
 
 export enum Sort {
 	asc = 'asc',
@@ -32,6 +33,14 @@ export const validateCommonQueries = () => {
 			.optional()
 			.toInt()
 			.isInt({min: 1}),
+		query('from', 'Invalid from date time')
+			.optional()
+			.isString()
+			.custom(value => isISO8601(value)),
+		query('to', 'Invalid to date time')
+			.optional()
+			.isString()
+			.custom(value => isISO8601(value)),
 	]
 }
 
