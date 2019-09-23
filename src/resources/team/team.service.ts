@@ -12,6 +12,7 @@ import {TeamDocument} from './team.model'
 import TeamModel from './team.model'
 import * as _ from 'lodash'
 import {Sort} from '../../middlewares/validator'
+import {getMonthBounds} from '../../utils/util'
 
 const logger = createLogger(module)
 
@@ -145,6 +146,8 @@ export const getItems = (
 		sort = Sort.desc,
 		search = '',
 		limit = 9999,
+		from = getMonthBounds().firstDay,
+		to = getMonthBounds().today,
 	} = {},
 ): Promise<ItemDocument[]> => {
 	logger.debug(`Get items for team id: ${id}`)
@@ -161,6 +164,7 @@ export const getItems = (
 		.skip(offset)
 		.limit(limit)
 		.lean()
+		.where({date: {$gte: from, $lte: to}})
 
 	if (search) {
 		const searchRegex = new RegExp(`^${search}`, 'i')

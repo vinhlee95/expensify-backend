@@ -70,6 +70,13 @@ router
 	 */
 	.post(writeCategory, validateCreateCategory(), teamController.createCategory)
 
+/**
+ * @swagger
+ *
+ * /api/teams/{id}/items:
+ *   parameters:
+ *     - $ref: '#/components/parameters/id'
+ */
 router
 	.route('/:id/items')
 	/**
@@ -87,6 +94,8 @@ router
 	 *     - $ref: '#/components/parameters/offset'
 	 *     - $ref: '#/components/parameters/limit'
 	 *     - $ref: '#/components/parameters/search'
+	 *     - $ref: '#/components/parameters/from'
+	 *     - $ref: '#/components/parameters/to'
 	 *     responses:
 	 *       '200':
 	 *         $ref: '#/components/responses/ItemsResponse'
@@ -118,7 +127,7 @@ router
  * /api/teams/{id}/items/{itemId}:
  *   parameters:
  *     - $ref: '#/components/parameters/id'
- *     - $ref: '#/components/parameters/categoryId'
+ *     - $ref: '#/components/parameters/itemId'
  */
 router
 	.route('/:id/items/:itemId')
