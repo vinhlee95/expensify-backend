@@ -141,6 +141,20 @@ components:
       schema:
         type: string
 
+    from: # Can be referenced as '#/components/parameters/from'
+      in: query
+      name: from
+      description: Start time that results will be retrieved from
+      schema:
+        type: date
+
+    to: # Can be referenced as '#/components/parameters/to'
+      in: query
+      name: to
+      description: End time that results will be retrieved to
+      schema:
+        type: date
+
     description: # Can be referenced as '#/components/parameters/description'
       in: query
       name: description
