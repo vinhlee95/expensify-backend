@@ -29,7 +29,7 @@ import {ApiError} from '../../../utils/apiError'
 import _ from 'lodash'
 import {ItemDocument} from '../../../resources/item/item.model'
 import {filterArrayBySearchText} from '../../utils/common'
-import {getMonthBounds} from '../../../utils/util'
+import {getMonthBounds} from '../../utils/common'
 
 const period1 = {
 	from: getMonthBounds(1, 2019).firstDay,
