@@ -12,9 +12,18 @@ import {TeamDocument} from './team.model'
 import TeamModel from './team.model'
 import * as _ from 'lodash'
 import {Sort} from '../../middlewares/validator'
-import {getMonthBounds} from '../../utils/util'
 
 const logger = createLogger(module)
+
+export interface GetItemsOptions {
+	offset?: number
+	field?: string
+	sort?: Sort
+	search?: string
+	limit?: number
+	from?: Date
+	to?: Date
+}
 
 export const parseTeamIdParam = async (id: string): Promise<TeamDocument> => {
 	const team = await TeamModel.findById(id).exec()
@@ -138,6 +147,7 @@ export const createItem = async (data: Item): Promise<ItemDocument> => {
 	return newItem.populate('category', 'name').execPopulate()
 }
 
+const options: GetItemsOptions = {}
 export const getItems = (
 	id: string,
 	{
@@ -146,9 +156,9 @@ export const getItems = (
 		sort = Sort.desc,
 		search = '',
 		limit = 9999,
-		from = getMonthBounds().firstDay,
-		to = getMonthBounds().today,
-	} = {},
+		from,
+		to,
+	}: GetItemsOptions = {},
 ): Promise<ItemDocument[]> => {
 	logger.debug(`Get items for team id: ${id}`)
 
@@ -164,12 +174,15 @@ export const getItems = (
 		.skip(offset)
 		.limit(limit)
 		.lean()
-		.where({date: {$gte: from, $lte: to}})
 
 	if (search) {
 		const searchRegex = new RegExp(`^${search}`, 'i')
 
 		query.where({name: {$regex: searchRegex, $options: 'i'}})
+	}
+
+	if (from && to) {
+		query.where({date: {$gte: from, $lte: to}})
 	}
 
 	return query.exec()

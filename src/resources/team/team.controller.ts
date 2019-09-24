@@ -109,7 +109,15 @@ export const createItem: RequestHandler = (req, res, next) => {
 
 export const getItems: RequestHandler = (req, res, next) => {
 	const {id} = req.params
-	const {offset, limit, search, field, sort, from, to} = req.query
+	const {
+		offset,
+		limit,
+		search,
+		field,
+		sort,
+		from,
+		to,
+	}: services.GetItemsOptions = req.query
 
 	services
 		.getItems(id, {
