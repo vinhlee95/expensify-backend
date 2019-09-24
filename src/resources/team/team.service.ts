@@ -144,7 +144,7 @@ export const createItem = async (data: Item): Promise<ItemDocument> => {
 
 	const newItem = await ItemModel.create(data)
 
-	return newItem.populate('category', 'name').execPopulate()
+	return newItem.populate('category', 'name type').execPopulate()
 }
 
 export const getItems = (
@@ -193,7 +193,7 @@ export const deleteItem = (item: ItemDocument): Promise<ItemDocument> => {
 	return item.remove()
 }
 
-export const updateItem = (
+export const updateItem = async (
 	item: ItemDocument,
 	itemUpdate: ItemInput,
 ): Promise<ItemDocument> => {
@@ -201,5 +201,7 @@ export const updateItem = (
 
 	_.merge(item, itemUpdate)
 
-	return item.save()
+	const updatedItem = await item.save()
+
+	return updatedItem.populate('category', 'name type').execPopulate()
 }
