@@ -311,7 +311,7 @@ describe('[Team service]', () => {
 			const items = await getItems(team.id)
 
 			// Expect
-			expect(items.length).toEqual(teamItems.length)
+			expect(items.length).toEqual(teamItems.length + teamItems2.length)
 		})
 
 		it('should get items with correct pagination', async () => {
