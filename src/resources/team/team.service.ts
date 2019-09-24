@@ -147,7 +147,6 @@ export const createItem = async (data: Item): Promise<ItemDocument> => {
 	return newItem.populate('category', 'name').execPopulate()
 }
 
-const options: GetItemsOptions = {}
 export const getItems = (
 	id: string,
 	{
