@@ -1,4 +1,5 @@
 import request from 'supertest'
+import moment from 'moment'
 import {app} from '../../server'
 import {enumToValues} from '../../utils/util'
 import {UserRole} from '../../resources/user/user.interface'
@@ -100,3 +101,16 @@ export const getRecordsWithPagination = (
 	const end = offset + limit + 1
 	return array.slice(offset, end)
 }
+
+export const getMonthBounds = (month: number, year: number) => ({
+	firstDay: moment()
+		.month(month)
+		.year(year)
+		.startOf('month')
+		.toDate(),
+	lastDay: moment()
+		.month(month)
+		.year(year)
+		.endOf('month')
+		.toDate(),
+})

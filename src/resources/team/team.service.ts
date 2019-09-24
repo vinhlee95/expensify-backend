@@ -15,6 +15,16 @@ import {Sort} from '../../middlewares/validator'
 
 const logger = createLogger(module)
 
+export interface GetItemsOptions {
+	offset?: number
+	field?: string
+	sort?: Sort
+	search?: string
+	limit?: number
+	from?: Date
+	to?: Date
+}
+
 export const parseTeamIdParam = async (id: string): Promise<TeamDocument> => {
 	const team = await TeamModel.findById(id).exec()
 
@@ -145,7 +155,9 @@ export const getItems = (
 		sort = Sort.desc,
 		search = '',
 		limit = 9999,
-	} = {},
+		from,
+		to,
+	}: GetItemsOptions = {},
 ): Promise<ItemDocument[]> => {
 	logger.debug(`Get items for team id: ${id}`)
 
@@ -166,6 +178,10 @@ export const getItems = (
 		const searchRegex = new RegExp(`^${search}`, 'i')
 
 		query.where({name: {$regex: searchRegex, $options: 'i'}})
+	}
+
+	if (from && to) {
+		query.where({date: {$gte: from, $lte: to}})
 	}
 
 	return query.exec()

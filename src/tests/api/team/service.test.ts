@@ -1,3 +1,4 @@
+import faker from 'faker'
 import {addCategory, addItem, addTeam, addUser} from '../../utils/db'
 import {
 	createMockItem,
@@ -28,6 +29,16 @@ import {ApiError} from '../../../utils/apiError'
 import _ from 'lodash'
 import {ItemDocument} from '../../../resources/item/item.model'
 import {filterArrayBySearchText} from '../../utils/common'
+import {getMonthBounds} from '../../utils/common'
+
+const period1 = {
+	from: getMonthBounds(1, 2019).firstDay,
+	to: getMonthBounds(1, 2019).lastDay,
+}
+const period2 = {
+	from: getMonthBounds(2, 2019).firstDay,
+	to: getMonthBounds(2, 2019).lastDay,
+}
 
 describe('[Team service]', () => {
 	let user: UserDocument
@@ -35,6 +46,7 @@ describe('[Team service]', () => {
 	let team: TeamDocument
 	let team2: TeamDocument
 	let teamItems: ItemDocument[]
+	let teamItems2: ItemDocument[]
 	let teamCategories: CategoryDocument[]
 
 	beforeEach(async () => {
@@ -59,8 +71,27 @@ describe('[Team service]', () => {
 		const expenseCategory = teamCategories[1]
 
 		teamItems = await Promise.all(
-			_.times(6, () =>
-				addItem(createMockItem(team.id, user.id, expenseCategory.id)),
+			_.times(4, () =>
+				addItem(
+					createMockItem(
+						team.id,
+						user.id,
+						expenseCategory.id,
+						faker.date.between(period1.from, period1.to),
+					),
+				),
+			),
+		)
+		teamItems2 = await Promise.all(
+			_.times(2, () =>
+				addItem(
+					createMockItem(
+						team.id,
+						user.id,
+						expenseCategory.id,
+						faker.date.between(period2.from, period2.to),
+					),
+				),
 			),
 		)
 	})
@@ -280,7 +311,7 @@ describe('[Team service]', () => {
 			const items = await getItems(team.id)
 
 			// Expect
-			expect(items.length).toEqual(teamItems.length)
+			expect(items.length).toEqual(teamItems.length + teamItems2.length)
 		})
 
 		it('should get items with correct pagination', async () => {
@@ -313,6 +344,24 @@ describe('[Team service]', () => {
 
 			// Expect
 			expect(foundItems.length).toEqual(expectedFoundItems.length)
+		})
+
+		it('should return proper amount of items for a period', async () => {
+			// Act
+			const [foundItems, foundItems2] = await Promise.all([
+				getItems(team.id, {
+					from: period1.from,
+					to: period1.to,
+				}),
+				getItems(team.id, {
+					from: period2.from,
+					to: period2.to,
+				}),
+			])
+
+			// Expect
+			expect(foundItems.length).toEqual(teamItems.length)
+			expect(foundItems2.length).toEqual(teamItems2.length)
 		})
 	})
 

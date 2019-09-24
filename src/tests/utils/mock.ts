@@ -56,10 +56,11 @@ export const createMockItem = (
 	teamId: string,
 	creatorId: string,
 	categoryId: string,
+	date?: Date,
 ): Item => ({
 	name: faker.random.word(),
 	note: faker.lorem.sentence(),
-	date: faker.date.recent(),
+	date: date || faker.date.recent(),
 	quantity: faker.random.number({
 		min: 1,
 		max: 5,
