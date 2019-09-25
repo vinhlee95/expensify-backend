@@ -1,6 +1,3 @@
-import {Category} from '../category/category.interface'
-import {CategoryDocument} from '../category/category.model'
-
 export default interface Item {
 	date: Date
 	name: string

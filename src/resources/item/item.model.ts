@@ -49,7 +49,7 @@ const itemSchema = new Schema({
 })
 
 itemSchema.pre<ItemDocument>('save', function(next) {
-	if (!this.isModified('price') || !this.isModified('quantity')) {
+	if (!this.isModified('price') && !this.isModified('quantity')) {
 		return next()
 	}
 
