@@ -19,6 +19,7 @@ import {
 	deleteItem,
 	updateItem,
 	parseItemIdParam,
+	getTotal,
 } from '../../../resources/team/team.service'
 import {getUserById} from '../../../resources/user/user.service'
 import UserModel, {UserDocument} from '../../../resources/user/user.model'
@@ -28,8 +29,12 @@ import {CategoryType} from '../../../resources/category/category.interface'
 import {ApiError} from '../../../utils/apiError'
 import _ from 'lodash'
 import {ItemDocument} from '../../../resources/item/item.model'
-import {filterArrayBySearchText} from '../../utils/common'
+import {
+	filterArrayBySearchText,
+	getTotalByCategoryType,
+} from '../../utils/common'
 import {getMonthBounds} from '../../utils/common'
+import moment from 'moment'
 
 const period1 = {
 	from: getMonthBounds(1, 2019).firstDay,
@@ -39,6 +44,15 @@ const period2 = {
 	from: getMonthBounds(2, 2019).firstDay,
 	to: getMonthBounds(2, 2019).lastDay,
 }
+
+const quantity = faker.random.number({
+	min: 1,
+	max: 5,
+})
+const price = faker.random.number({
+	min: 1,
+	max: 100,
+})
 
 describe('[Team service]', () => {
 	let user: UserDocument
@@ -68,7 +82,7 @@ describe('[Team service]', () => {
 			addCategory(createMockCategory(team2.id, CategoryType.Income)),
 		])
 
-		const expenseCategory = teamCategories[1]
+		const expenseCategory = teamCategories[0]
 
 		teamItems = await Promise.all(
 			_.times(4, () =>
@@ -78,6 +92,8 @@ describe('[Team service]', () => {
 						user.id,
 						expenseCategory.id,
 						faker.date.between(period1.from, period1.to),
+						quantity,
+						price,
 					),
 				),
 			),
@@ -94,6 +110,19 @@ describe('[Team service]', () => {
 				),
 			),
 		)
+	})
+
+	describe('getTotal', () => {
+		it('should return correct total value of items for each category type', async () => {
+			const totals = await getTotal(
+				team.id,
+				moment(period1.from).toDate(),
+				moment(period1.to).toDate(),
+			)
+
+			const expenseTotal = getTotalByCategoryType(totals, CategoryType.Expense)
+			expect(expenseTotal).toEqual(4 * price * quantity)
+		})
 	})
 
 	describe('parseTeamIdParam', () => {
