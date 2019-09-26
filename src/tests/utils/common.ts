@@ -8,6 +8,8 @@ import {UserDocument} from '../../resources/user/user.model'
 import {newToken} from '../../utils/auth'
 import _ from 'lodash'
 import {Sort} from '../../middlewares/validator'
+import {Total} from '../../resources/team/team.service'
+import {CategoryType} from '../../resources/category/category.interface'
 
 export const apiRequest = request(app)
 
@@ -114,3 +116,8 @@ export const getMonthBounds = (month: number, year: number) => ({
 		.endOf('month')
 		.toDate(),
 })
+
+export const getTotalByCategoryType = (totals: Total[], type: CategoryType) => {
+	const categoryTotal = totals.find(total => total.type === type)
+	return categoryTotal.total
+}
