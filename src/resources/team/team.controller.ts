@@ -159,10 +159,9 @@ export const updateItem: RequestHandler = (req, res, next) => {
 
 export const getTotalByCategory: RequestHandler = (req, res, next) => {
 	const {id} = req.params
-	const categoryIds = req.body
 
 	services
-		.getTotalByCategory(id, categoryIds)
+		.getTotalByCategory(id)
 		.then((totals: services.TotalByCategory[]) =>
 			res.json(successResponse(totals)),
 		)

@@ -26,6 +26,13 @@ export interface GetItemsOptions {
 	to?: Date
 }
 
+export interface TotalByCategory {
+	_id: string
+	name: string
+	type: CategoryType
+	total: number
+}
+
 export const parseTeamIdParam = async (id: string): Promise<TeamDocument> => {
 	const team = await TeamModel.findById(id).exec()
 
@@ -207,17 +214,16 @@ export const updateItem = async (
 	return updatedItem.populate('category', 'name type').execPopulate()
 }
 
-export interface TotalByCategory {
-	_id: string
-	name: string
-	type: CategoryType
-	total: number
-}
-export const getTotalByCategory = (
+export const getTotalByCategory = async (
 	teamId: string,
-	categoryIds: [string],
 ): Promise<TotalByCategory[]> => {
-	const categoryObjIds = categoryIds.map(id => mongoose.Types.ObjectId(id))
+	const categories = await CategoryModel.find({team: teamId}).exec()
+
+	if (!categories) {
+		throw apiError.notFound('Cannot find any category in this team')
+	}
+
+	const categoryObjIds = categories.map(category => category._id)
 	return ItemModel.aggregate()
 		.match({
 			team: mongoose.Types.ObjectId(teamId),
