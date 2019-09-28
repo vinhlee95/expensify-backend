@@ -213,16 +213,22 @@ export interface TotalByCategory {
 	type: CategoryType
 	total: number
 }
-export const getTotalByCategory = (teamId: string, categoryIds: [string]): Promise<TotalByCategory[]> => {
+export const getTotalByCategory = (
+	teamId: string,
+	categoryIds: [string],
+): Promise<TotalByCategory[]> => {
 	const categoryObjIds = categoryIds.map(id => mongoose.Types.ObjectId(id))
 	return ItemModel.aggregate()
-		.match({team: mongoose.Types.ObjectId(teamId), category: {$in: categoryObjIds}})
+		.match({
+			team: mongoose.Types.ObjectId(teamId),
+			category: {$in: categoryObjIds},
+		})
 		.group({_id: '$category', total: {$sum: '$total'}})
 		.lookup({
 			from: 'categories',
 			localField: '_id',
 			foreignField: '_id',
-			as: 'category'
+			as: 'category',
 		})
 		.unwind('category')
 		.project({_id: 1, name: '$category.name', type: '$category.type', total: 1})

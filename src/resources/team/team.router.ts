@@ -9,6 +9,7 @@ import {
 	checkTeamCreator,
 	validateUpdateItem,
 	checkBelongToTeam,
+	validateGetTotalByCategory,
 } from './team.validator'
 import * as teamController from './team.controller'
 const router = Router()
@@ -211,5 +212,16 @@ router
 		validateUpdateCategory(),
 		teamController.updateCategory,
 	)
+
+/**
+ * @swagger
+ *
+ * /api/teams/{id}/total:
+ *   parameters:
+ *     - $ref: '#/components/parameters/id'
+ */
+router
+	.route('/:id/total/category')
+	.get(readItem, validateGetTotalByCategory(), teamController.getTotalByCategory)
 
 export default router

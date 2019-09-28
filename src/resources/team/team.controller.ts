@@ -161,7 +161,10 @@ export const getTotalByCategory: RequestHandler = (req, res, next) => {
 	const {id} = req.params
 	const categoryIds = req.body
 
-	services.getTotalByCategory(id, categoryIds)
-		.then((totals: services.TotalByCategory[]) => res.json(successResponse(totals)))
+	services
+		.getTotalByCategory(id, categoryIds)
+		.then((totals: services.TotalByCategory[]) =>
+			res.json(successResponse(totals)),
+		)
 		.catch(next)
 }

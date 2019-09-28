@@ -74,6 +74,14 @@ export const validateUpdateCategory = () => {
 	]
 }
 
+export const validateGetTotalByCategory = () => {
+	return [
+		body('', 'Category ids must exist and be an array')
+			.isArray(),
+		handleValidationError,
+	]
+}
+
 export const checkTeamCreator: RequestHandler = (req, res, next) => {
 	const {team, user} = req
 
