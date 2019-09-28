@@ -222,6 +222,10 @@ router
  */
 router
 	.route('/:id/total/category')
-	.get(readItem, validateGetTotalByCategory(), teamController.getTotalByCategory)
+	.get(
+		readItem,
+		validateGetTotalByCategory(),
+		teamController.getTotalByCategory,
+	)
 
 export default router

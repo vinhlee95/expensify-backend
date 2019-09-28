@@ -76,8 +76,7 @@ export const validateUpdateCategory = () => {
 
 export const validateGetTotalByCategory = () => {
 	return [
-		body('', 'Category ids must exist and be an array')
-			.isArray(),
+		body('', 'Category ids must exist and be an array').isArray(),
 		handleValidationError,
 	]
 }
