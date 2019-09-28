@@ -12,6 +12,7 @@ import {TeamDocument} from './team.model'
 import TeamModel from './team.model'
 import * as _ from 'lodash'
 import {Sort} from '../../middlewares/validator'
+import mongoose from 'mongoose'
 
 const logger = createLogger(module)
 
@@ -204,4 +205,26 @@ export const updateItem = async (
 	const updatedItem = await item.save()
 
 	return updatedItem.populate('category', 'name type').execPopulate()
+}
+
+export interface TotalByCategory {
+	_id: string
+	name: string
+	type: CategoryType
+	total: number
+}
+export const getTotalByCategory = (teamId: string, categoryIds: [string]): Promise<TotalByCategory[]> => {
+	const categoryObjIds = categoryIds.map(id => mongoose.Types.ObjectId(id))
+	return ItemModel.aggregate()
+		.match({team: mongoose.Types.ObjectId(teamId), category: {$in: categoryObjIds}})
+		.group({_id: '$category', total: {$sum: '$total'}})
+		.lookup({
+			from: 'categories',
+			localField: '_id',
+			foreignField: '_id',
+			as: 'category'
+		})
+		.unwind('category')
+		.project({_id: 1, name: '$category.name', type: '$category.type', total: 1})
+		.exec()
 }

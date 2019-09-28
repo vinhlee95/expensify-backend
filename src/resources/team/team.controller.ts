@@ -156,3 +156,12 @@ export const updateItem: RequestHandler = (req, res, next) => {
 		.then(updatedItem => res.json(successResponse(updatedItem)))
 		.catch(next)
 }
+
+export const getTotalByCategory: RequestHandler = (req, res, next) => {
+	const {id} = req.params
+	const categoryIds = req.body
+
+	services.getTotalByCategory(id, categoryIds)
+		.then((totals: services.TotalByCategory[]) => res.json(successResponse(totals)))
+		.catch(next)
+}
