@@ -1,0 +1,49 @@
+components:
+#-------------------------------
+# Reusable schemas (data models)
+#-------------------------------
+  schemas:
+
+    #-------------------------------
+    # TotalCategory
+
+    TotalCategory:  # Can be referenced as '#/components/schemas/TotalCategory'
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        total:
+          type: number
+      required:
+        - _id
+        - name
+        - type
+        - total
+
+#-------------------------------
+# Reusable responses
+#-------------------------------
+
+  responses:
+
+    #-------------------------------
+    # TotalCategory
+
+    TotalCategoryResponse:  # Can be referenced as '#/components/responses/TotalCategoryResponse'
+      description: A JSON array contains total value for each category
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/TotalCategory'
+              required:
+              - data
