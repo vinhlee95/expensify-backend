@@ -216,11 +216,19 @@ export const getTotal = async (
 	to: Date,
 ): Promise<Total[]> => {
 	const teamObjectId = mongoose.Types.ObjectId(teamId)
-	return ItemModel.aggregate()
-		.match({
-			team: {$eq: teamObjectId},
+	const query = ItemModel.aggregate()
+
+	query.match({
+		team: {$eq: teamObjectId},
+	})
+
+	if (from && to) {
+		query.match({
 			date: {$gte: from, $lte: to},
 		})
+	}
+
+	query
 		.lookup({
 			from: 'categories',
 			localField: 'category',
@@ -231,5 +239,6 @@ export const getTotal = async (
 		.project({_id: 1, total: 1, type: '$category.type'})
 		.group({_id: '$type', total: {$sum: '$total'}})
 		.project({_id: 0, type: '$_id', total: 1})
-		.exec()
+
+	return query.exec()
 }

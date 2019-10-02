@@ -160,10 +160,11 @@ export const updateItem: RequestHandler = (req, res, next) => {
 
 export const getTotal: RequestHandler = (req, res, next) => {
 	const {id} = req.params
-	const {from, to} = req.query
+	const from = req.query.from ? moment(req.query.from).toDate() : null
+	const to = req.query.to ? moment(req.query.to).toDate() : null
 
 	services
-		.getTotal(id, moment(from).toDate(), moment(to).toDate())
+		.getTotal(id, from, to)
 		.then((total: services.Total[]) => res.json(successResponse(total)))
 		.catch(next)
 }
