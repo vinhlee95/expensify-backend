@@ -1,4 +1,5 @@
 import {RequestHandler, RequestParamHandler} from 'express'
+import moment from 'moment'
 import {successResponse} from '../../utils/apiResponse'
 import * as services from './team.service'
 import {CategoryInput} from '../category/category.interface'
@@ -154,5 +155,16 @@ export const updateItem: RequestHandler = (req, res, next) => {
 	services
 		.updateItem(req.item, updateItem)
 		.then(updatedItem => res.json(successResponse(updatedItem)))
+		.catch(next)
+}
+
+export const getTotal: RequestHandler = (req, res, next) => {
+	const {id} = req.params
+	const from = req.query.from ? moment(req.query.from).toDate() : null
+	const to = req.query.to ? moment(req.query.to).toDate() : null
+
+	services
+		.getTotal(id, from, to)
+		.then((total: services.Total[]) => res.json(successResponse(total)))
 		.catch(next)
 }

@@ -57,18 +57,24 @@ export const createMockItem = (
 	creatorId: string,
 	categoryId: string,
 	date?: Date,
+	quantity?: number,
+	price?: number,
 ): Item => ({
 	name: faker.random.word(),
 	note: faker.lorem.sentence(),
 	date: date || faker.date.recent(),
-	quantity: faker.random.number({
-		min: 1,
-		max: 5,
-	}),
-	price: faker.random.number({
-		min: 1,
-		max: 500,
-	}),
+	quantity:
+		quantity ||
+		faker.random.number({
+			min: 1,
+			max: 5,
+		}),
+	price:
+		price ||
+		faker.random.number({
+			min: 1,
+			max: 500,
+		}),
 	category: categoryId,
 	team: teamId,
 	creator: creatorId,

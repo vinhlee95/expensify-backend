@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import createLogger from '../../utils/logger'
 import CategoryModel, {CategoryDocument} from '../category/category.model'
 import ItemModel, {ItemDocument} from '../item/item.model'
@@ -23,6 +24,11 @@ export interface GetItemsOptions {
 	limit?: number
 	from?: Date
 	to?: Date
+}
+
+export interface Total {
+	type: CategoryType
+	total: number
 }
 
 export const parseTeamIdParam = async (id: string): Promise<TeamDocument> => {
@@ -204,4 +210,37 @@ export const updateItem = async (
 	const updatedItem = await item.save()
 
 	return updatedItem.populate('category', 'name type').execPopulate()
+}
+
+export const getTotal = async (
+	teamId: string,
+	from: Date,
+	to: Date,
+): Promise<Total[]> => {
+	const teamObjectId = mongoose.Types.ObjectId(teamId)
+	const query = ItemModel.aggregate()
+
+	query.match({
+		team: {$eq: teamObjectId},
+	})
+
+	if (from && to) {
+		query.match({
+			date: {$gte: from, $lte: to},
+		})
+	}
+
+	query
+		.lookup({
+			from: 'categories',
+			localField: 'category',
+			foreignField: '_id',
+			as: 'category',
+		})
+		.unwind('category')
+		.project({_id: 1, total: 1, type: '$category.type'})
+		.group({_id: '$type', total: {$sum: '$total'}})
+		.project({_id: 0, type: '$_id', total: 1})
+
+	return query.exec()
 }

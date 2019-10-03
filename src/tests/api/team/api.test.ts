@@ -61,6 +61,18 @@ describe('[TEAMS API]', () => {
 		token = signInUser(user1)
 	})
 
+	describe('GET /api/teams/:id/total', () => {
+		it(`[${roleWithReadItem}]. should return 200 with total values of each category type`, async () => {
+			// Action
+			const result = await apiRequest
+				.get(`/api/teams/${team1.id}/total`)
+				.set('Authorization', token)
+
+			// Expect
+			expect(result.status).toEqual(httpStatus.OK)
+		})
+	})
+
 	describe('GET /api/teams/:id/categories', () => {
 		it(`[${roleWithReadCategory}]. should return 400 with wrong category type`, async () => {
 			// Action

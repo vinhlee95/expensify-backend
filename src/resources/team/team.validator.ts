@@ -4,7 +4,6 @@ import {CategoryType} from '../category/category.interface'
 import {enumToValues} from '../../utils/util'
 import {RequestHandler} from 'express'
 import apiError, {ErrorCode} from '../../utils/apiError'
-import TeamModel from './team.model'
 
 export const validateGetCategories = () => {
 	return [

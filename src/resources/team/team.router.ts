@@ -212,4 +212,32 @@ router
 		teamController.updateCategory,
 	)
 
+/**
+ * @swagger
+ *
+ * /api/teams/{id}/total:
+ *   parameters:
+ *     - $ref: '#/components/parameters/id'
+ */
+router
+	.route('/:id/total')
+	/**
+	 * @swagger
+	 *
+	 * /api/teams/{id}/total:
+	 *   get:
+	 *     tags:
+	 *       - Total
+	 *     summary: Get an accumulation in total of items for each category type
+	 *     parameters:
+	 *       - $ref: '#/components/parameters/from'
+	 *       - $ref: '#/components/parameters/to'
+	 *     responses:
+	 *       '200':
+	 *         $ref: '#/components/responses/TotalCategoryResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.get(readItem, teamController.getTotal)
+
 export default router
