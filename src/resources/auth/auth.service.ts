@@ -197,16 +197,3 @@ export const activateAccount = async (
 
 	return await user.save()
 }
-
-export const unLinkOath = async (
-	userId: string,
-	provider: OathProvider,
-): Promise<UserDocument> => {
-	const user = await UserModel.findById(userId)
-
-	user.unlinkOathProvider(provider)
-
-	logger.debug(`Unlink ${provider} from user with email ${user.email}`)
-
-	return await user.save()
-}

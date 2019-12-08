@@ -7,7 +7,6 @@ import {
 	validateForgetPassword,
 	validateResetPassword,
 	validateActivateAccount,
-	validateOathUnlink,
 } from './auth.validator'
 import {checkToken} from '../../middlewares/auth'
 
@@ -118,26 +117,6 @@ router
 router
 	.route('/active/:resetToken')
 	.get(validateActivateAccount(), authController.getActivateAccount)
-
-/**
- * @swagger
- *
- * /auth/unlink/{provider}:
- *   get:
- *     tags:
- *       - Authentication
- *     summary: Unlink Oath provider from user account
- *     parameters:
- *      - $ref: '#/components/parameters/provider'
- *     responses:
- *       '201':
- *         $ref: '#/components/responses/MessageResponse'
- *       default:
- *         $ref: '#/components/responses/ErrorResponse'
- */
-router
-	.route('/unlink/:provider')
-	.get(checkToken(), validateOathUnlink(), authController.getOathUnLink)
 
 /**
  * @swagger
