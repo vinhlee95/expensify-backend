@@ -1,12 +1,13 @@
-language: node_js
-services: mongodb
-cache:
-  directories:
-  - "node_modules"
-install:
-  - npm install
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t dinhhuyams/exppensify-backend -f Dockerfile.dev .
+
 script:
-  - npm run test
+  - docker run dinhhuyams/exppensify-backend npm run test
+
 notifications:
   slack: kentsclub:usyDxwg8QdASFIucMiO06rWF
   email: false
