@@ -61,9 +61,9 @@ export const getMany = async ({
 		const searchRegex = new RegExp(`^${search}`, 'i')
 
 		query.or([
-			{firstName: {$regex: searchRegex, $options: 'i'}},
-			{lastName: {$regex: searchRegex, $options: 'i'}},
-			{email: {$regex: searchRegex, $options: 'i'}},
+			{firstName: {$regex: searchRegex}},
+			{lastName: {$regex: searchRegex}},
+			{email: {$regex: searchRegex}},
 		])
 	}
 

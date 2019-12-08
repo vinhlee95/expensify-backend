@@ -183,7 +183,7 @@ export const getItems = (
 	if (search) {
 		const searchRegex = new RegExp(`^${search}`, 'i')
 
-		query.where({name: {$regex: searchRegex, $options: 'i'}})
+		query.where({name: {$regex: searchRegex}})
 	}
 
 	if (from && to) {

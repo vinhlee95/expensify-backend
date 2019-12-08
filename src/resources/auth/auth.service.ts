@@ -1,4 +1,4 @@
-import {OathProvider, User, UserStatus} from '../user/user.interface'
+import {User, UserStatus} from '../user/user.interface'
 import {generateResetToken} from '../../utils/util'
 import {Message, sendEmail} from '../../services/mail'
 import config from '../../config'

@@ -1,5 +1,4 @@
 import {Router} from 'express'
-import passport from 'passport'
 import * as authController from './auth.controller'
 import {
 	validateSignIn,
@@ -8,7 +7,6 @@ import {
 	validateResetPassword,
 	validateActivateAccount,
 } from './auth.validator'
-import {checkToken} from '../../middlewares/auth'
 
 /**
  * @swagger
@@ -117,29 +115,5 @@ router
 router
 	.route('/active/:resetToken')
 	.get(validateActivateAccount(), authController.getActivateAccount)
-
-/**
- * @swagger
- *
- * /auth/google:
- *   get:
- *     tags:
- *       - Authentication
- *     summary: Google authentication
- *     description: Click [/auth/google](/auth/google) for Google Authentication
- */
-router
-	.route('/google')
-	.get(
-		checkToken(true),
-		passport.authenticate('google', {scope: 'profile email'}),
-	)
-
-router
-	.route('/google/callback')
-	.get(
-		passport.authenticate('google', {session: false}),
-		authController.handleGoogleCallback,
-	)
 
 export default router
