@@ -5,12 +5,14 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     volumes:
-    - /app/node_modules
-    - .:/app
+      - /app/node_modules
+      - .:/app
     ports:
-    - "3000:3000"
+      - "3000:3000"
     depends_on:
-    - mongo
+      - mongo
+    environment:
+      SENDGRID_API_KEY: "${SENDGRID_API_KEY}"
   mongo:
     image: mongo:4.0.6
     ports:
