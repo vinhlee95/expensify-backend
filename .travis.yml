@@ -8,6 +8,15 @@ before_script:
 script:
   - docker-compose exec api npm run test
 
+deploy:
+  provider: heroku
+  api_key:
+    master: $HEROKU_MASTER_KEY
+    develop: $HEROKU_QA_KEY
+  app:
+    master: awesome-expensify
+    develop: awesome-expensify-qa
+
 notifications:
   slack: kentsclub:usyDxwg8QdASFIucMiO06rWF
   email: false
