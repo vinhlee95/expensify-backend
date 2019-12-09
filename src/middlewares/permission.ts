@@ -8,15 +8,31 @@ import apiError, {ErrorCode} from '../utils/apiError'
  * Declare user's permissions
  */
 export enum Permission {
-	UserRead = 'user:read',
-	UserWrite = 'user:write',
+	ReadUser = 'user:read',
+	WriteUser = 'user:write',
+	WriteTeam = 'team:write',
+	ReadTeam = 'team:read',
+	ReadCategory = 'category:read',
+	WriteCategory = 'category:write',
+	ReadItem = 'item:read',
+	WriteItem = 'item:write',
 }
 
 type PermissionRole = {[key in UserRole]: Permission[]}
 
+const commonPermissions = [
+	Permission.ReadUser,
+	Permission.WriteTeam,
+	Permission.ReadTeam,
+	Permission.ReadCategory,
+	Permission.WriteCategory,
+	Permission.ReadItem,
+	Permission.WriteItem,
+]
+
 export const permissionRole: PermissionRole = {
-	[UserRole.Admin]: [Permission.UserRead, Permission.UserWrite],
-	[UserRole.User]: [Permission.UserRead],
+	[UserRole.Admin]: [...commonPermissions, Permission.WriteUser],
+	[UserRole.User]: commonPermissions,
 }
 
 /**

@@ -1,4 +1,4 @@
-import {OathProvider, User, UserStatus} from '../user/user.interface'
+import {User, UserStatus} from '../user/user.interface'
 import {generateResetToken} from '../../utils/util'
 import {Message, sendEmail} from '../../services/mail'
 import config from '../../config'
@@ -59,7 +59,7 @@ export const signup = async (
 
 	const token = newToken(user)
 
-	return Promise.resolve({token})
+	return Promise.resolve({token, userId: user._id})
 }
 
 /**
@@ -194,19 +194,6 @@ export const activateAccount = async (
 	// and deleteOne reset token and expired time
 	user.status = UserStatus.Active
 	user.clearResetToken()
-
-	return await user.save()
-}
-
-export const unLinkOath = async (
-	userId: string,
-	provider: OathProvider,
-): Promise<UserDocument> => {
-	const user = await UserModel.findById(userId)
-
-	user.unlinkOathProvider(provider)
-
-	logger.debug(`Unlink ${provider} from user with email ${user.email}`)
 
 	return await user.save()
 }

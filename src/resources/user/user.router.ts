@@ -5,7 +5,10 @@ import {
 	validateGetUsers,
 	validateUpdateMe,
 	validateUpdateUser,
+	validateCreateTeam,
+	validateGetTeamBySlug,
 } from './user.validator'
+import {checkToken} from '../../middlewares/auth'
 
 /**
  * @swagger
@@ -15,8 +18,10 @@ import {
  */
 const router = Router()
 
-const writeUser = protect([Permission.UserWrite])
-const readUser = protect([Permission.UserRead])
+const writeUser = protect([Permission.WriteUser])
+const readUser = protect([Permission.ReadUser])
+const readTeam = protect([Permission.ReadTeam])
+const writeTeam = protect([Permission.WriteTeam])
 
 /**
  * @swagger
@@ -56,7 +61,7 @@ router
 	 *       default:
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
-	.get(readUser, userController.getMe)
+	.get(checkToken(), userController.getMe)
 	/**
 	 * @swagger
 	 *
@@ -134,5 +139,60 @@ router
 	 *         $ref: '#/components/responses/ErrorResponse'
 	 */
 	.delete(writeUser, userController.deleteOne)
+
+router
+	.route('/me/teams')
+	/**
+	 * @swagger
+	 *
+	 * /api/users/me/teams:
+	 *   get:
+	 *     tags:
+	 *       - User
+	 *     summary: Get user's own teams
+	 *     responses:
+	 *       '201':
+	 *         $ref: '#/components/responses/TeamsResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.get(readTeam, userController.getMyTeams)
+	/**
+	 * @swagger
+	 *
+	 * /api/users/me/teams:
+	 *   post:
+	 *     tags:
+	 *       - User
+	 *     summary: Create a new team
+	 *     requestBody:
+	 *       $ref: '#/components/requestBodies/TeamCreate'
+	 *     responses:
+	 *       '201':
+	 *         $ref: '#/components/responses/TeamResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.post(writeTeam, validateCreateTeam(), userController.createTeam)
+
+router
+	.route('/me/teams/:slug')
+	/**
+	 * @swagger
+	 *
+	 * /api/users/me/teams/{slug}:
+	 *   get:
+	 *     tags:
+	 *       - User
+	 *     summary: Get user's team by slug
+	 *     parameters:
+	 *       - $ref: '#/components/parameters/slug'
+	 *     responses:
+	 *       '201':
+	 *         $ref: '#/components/responses/TeamResponse'
+	 *       default:
+	 *         $ref: '#/components/responses/ErrorResponse'
+	 */
+	.get(readTeam, validateGetTeamBySlug(), userController.getTeamBySlug)
 
 export default router

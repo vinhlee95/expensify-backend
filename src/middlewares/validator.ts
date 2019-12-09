@@ -1,6 +1,14 @@
+import mongoose from 'mongoose'
 import {RequestHandler} from 'express'
-import {query, ErrorFormatter, validationResult} from 'express-validator/check'
+import {
+	query,
+	ErrorFormatter,
+	validationResult,
+	param,
+} from 'express-validator/check'
+import moment from 'moment'
 import apiError from '../utils/apiError'
+import {isISO8601} from 'validator'
 
 export enum Sort {
 	asc = 'asc',
@@ -26,6 +34,44 @@ export const validateCommonQueries = () => {
 			.optional()
 			.toInt()
 			.isInt({min: 1}),
+		query('from', 'Invalid from date time')
+			.optional()
+			.isString()
+			.custom(value => isISO8601(value)),
+		query('to', 'Invalid to date time')
+			.optional()
+			.isString()
+			.custom((value, {req}) => {
+				const {from} = req.query
+				console.log(moment(value).isAfter(moment(from)))
+				return isISO8601(value) && moment(value).isAfter(moment(from))
+			}),
+		handleValidationError,
+	]
+}
+
+const hasObjectIdType = (id: any) => mongoose.Types.ObjectId.isValid(id)
+/**
+ * Middleware to validate MongoDB id
+ */
+export const validateId = () => {
+	return [
+		query('userId', 'must be a hash string')
+			.optional()
+			.custom(value => {
+				return hasObjectIdType(value)
+			}),
+		param('id', 'must be a hash string')
+			.optional()
+			.custom(value => {
+				return hasObjectIdType(value)
+			}),
+		param('categoryId', 'must be a hash string')
+			.optional()
+			.custom(value => {
+				return hasObjectIdType(value)
+			}),
+		handleValidationError,
 	]
 }
 

@@ -5,6 +5,7 @@ export interface User {
 	role?: UserRole
 	status?: UserStatus
 	passport: Passport
+	teams?: [string]
 }
 
 interface Passport {
@@ -14,11 +15,6 @@ interface Passport {
 	resetTokenExp?: number
 
 	tokenId?: string
-	googleId?: string
-}
-
-export enum OathProvider {
-	Google = 'google',
 }
 
 export enum UserStatus {

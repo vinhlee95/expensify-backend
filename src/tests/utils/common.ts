@@ -1,4 +1,5 @@
 import request from 'supertest'
+import moment from 'moment'
 import {app} from '../../server'
 import {enumToValues} from '../../utils/util'
 import {UserRole} from '../../resources/user/user.interface'
@@ -7,6 +8,8 @@ import {UserDocument} from '../../resources/user/user.model'
 import {newToken} from '../../utils/auth'
 import _ from 'lodash'
 import {Sort} from '../../middlewares/validator'
+import {Total} from '../../resources/team/team.service'
+import {CategoryType} from '../../resources/category/category.interface'
 
 export const apiRequest = request(app)
 
@@ -15,7 +18,7 @@ export const apiRequest = request(app)
  *
  * @param user
  */
-export const siginUser = (user: UserDocument) => {
+export const signInUser = (user: UserDocument) => {
 	return `Bearer ${newToken(user)}`
 }
 
@@ -30,7 +33,7 @@ export const findUserWithRoleAndSignIn = (
 	role: UserRole,
 ) => {
 	const user = users.find(user => user.role === role)
-	const token = siginUser(user)
+	const token = signInUser(user)
 	return {token, user}
 }
 
@@ -99,4 +102,22 @@ export const getRecordsWithPagination = (
 ) => {
 	const end = offset + limit + 1
 	return array.slice(offset, end)
+}
+
+export const getMonthBounds = (month: number, year: number) => ({
+	firstDay: moment()
+		.month(month)
+		.year(year)
+		.startOf('month')
+		.toDate(),
+	lastDay: moment()
+		.month(month)
+		.year(year)
+		.endOf('month')
+		.toDate(),
+})
+
+export const getTotalByCategoryType = (totals: Total[], type: CategoryType) => {
+	const categoryTotal = totals.find(total => total.type === type)
+	return categoryTotal.total
 }

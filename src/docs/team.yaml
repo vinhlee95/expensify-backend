@@ -1,0 +1,78 @@
+components:
+#-------------------------------
+# Reusable schemas (data models)
+#-------------------------------
+  schemas:
+
+    #-------------------------------
+    # Team
+
+    Team:  # Can be referenced as '#/components/schemas/Team'
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+
+#-------------------------------
+# Reusable bodies
+#-------------------------------
+
+  requestBodies:
+    #-------------------------------
+    # TeamCreate
+
+    TeamCreate: # Can be referenced as '#/components/requestBodies/TeamCreate'
+      description: Team to create
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+
+#-------------------------------
+# Reusable responses
+#-------------------------------
+
+  responses:
+
+    #-------------------------------
+    # TeamResponse
+
+    TeamResponse:  # Can be referenced as '#/components/responses/TeamResponse'
+      description: A JSON object containing team
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  $ref: '#/components/schemas/Team'
+              required:
+              - data
+
+    TeamsResponse:  # Can be referenced as '#/components/responses/TeamsResponse'
+      description: A JSON array containing teams
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Team'
+              required:
+              - data

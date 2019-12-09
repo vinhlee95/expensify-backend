@@ -1,0 +1,110 @@
+components:
+#-------------------------------
+# Reusable schemas (data models)
+#-------------------------------
+  schemas:
+
+    #-------------------------------
+    # Categories
+
+    Category:  # Can be referenced as '#/components/schemas/Category'
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        teamId:
+          type: string
+      required:
+        - name
+        - type
+        - team
+
+#-------------------------------
+# Reusable bodies
+#-------------------------------
+
+  requestBodies:
+    #-------------------------------
+    # CategoryCreate
+
+    CategoryCreate: # Can be referenced as '#/components/requestBodies/CategoryCreate'
+      description: Category to create
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              type:
+                type: string
+            required:
+              - name
+              - type
+              - teamId
+
+    #-------------------------------
+    # CategoryUpdate
+
+    CategoryUpdate: # Can be referenced as '#/components/requestBodies/CategoryUpdate'
+      description: Category to update
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+              type:
+                type: string
+
+#-------------------------------
+# Reusable responses
+#-------------------------------
+
+  responses:
+
+    #-------------------------------
+    # Category
+
+    CategoriesResponse:  # Can be referenced as '#/components/responses/CategoriesResponse'
+      description: A JSON array containing categories
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#components/schemas/Category'
+              required:
+              - data
+
+    CategoryResponse:  # Can be referenced as '#/components/responses/CategoryResponse'
+      description: A JSON object containing category
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/Response'
+            - properties:
+                data:
+                  type: object
+                  properties:
+                    $ref: '#components/schemas/Category'
+              required:
+              - data

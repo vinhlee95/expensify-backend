@@ -1,12 +1,21 @@
-language: node_js
-services: mongodb
-cache:
-  directories:
-  - "node_modules"
-install:
-  - npm install
+sudo: required
+services:
+  - docker
+
+before_script:
+  - docker-compose up -d --build
+
 script:
-  - npm run test
+  - docker-compose exec api npm run test
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: $HEROKU_KEY
+  app:
+    master: awesome-expensify
+    develop: awesome-expensify-qa
+
 notifications:
   slack: kentsclub:usyDxwg8QdASFIucMiO06rWF
   email: false
