@@ -11,8 +11,7 @@ script:
 deploy:
   provider: heroku
   api_key:
-    master: $HEROKU_MASTER_KEY
-    develop: $HEROKU_QA_KEY
+    secure: $HEROKU_KEY
   app:
     master: awesome-expensify
     develop: awesome-expensify-qa
